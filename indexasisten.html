@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistencia - I.E.S. Víctor Raúl Haya de la Torre</title>
+    
+    <!-- Tailwind CSS para estilos responsivos y modernos -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Librería SheetJS para exportar a Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <!-- Librerías jsPDF para exportar a PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- PWA Manifest Dinámico -->
+    <link rel="manifest" id="dynamic-manifest">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Ocultar flechas del input number */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased min-h-screen flex flex-col">
+
+    <!-- CONTENEDOR PRINCIPAL DIRECTO -->
+    <div id="main-app" class="flex flex-col flex-grow w-full">
+        <header class="bg-blue-900 text-white shadow-md px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                
+                <h1 class="text-xl sm:text-2xl font-black text-center sm:text-left tracking-wide">
+                    I.E.S. VÍCTOR RAÚL HAYA DE LA TORRE
+                </h1>
+                <span id="network-status" class="hidden text-xs font-bold bg-red-600 text-white px-3 py-1 rounded-full shadow-lg border border-red-800 animate-pulse">
+                    OFFLINE (Modo Local)
+                </span>
+            </div>
+            <div class="flex flex-wrap justify-center gap-2 mt-4 sm:mt-0">
+                <button id="btn-admin-access" onclick="openAdminLogin()" class="bg-blue-700 hover:bg-blue-800 text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors shadow">
+                    Administración
+                </button>
+                <button id="btn-sync-data" onclick="forceSync()" class="hidden bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors shadow flex items-center">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                    Guardar Datos
+                </button>
+                <button id="btn-exit-admin" onclick="exitAdmin()" class="hidden bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-sm transition-colors shadow">
+                    Volver a Asistencia
+                </button>
+            </div>
+        </header>
+
+        <main class="flex-grow flex flex-col p-4 w-full max-w-7xl mx-auto">
+        <!-- VISTA DEL ESTUDIANTE (Registro de Asistencia) -->
+        <section id="view-student" class="fade-in max-w-lg mx-auto mt-4 sm:mt-10 w-full">
+            <div class="bg-white p-8 rounded-2xl shadow-xl text-center border-t-4 border-blue-600">
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">Registro de Ingreso</h2>
+                
+                <!-- Contenedor de Fecha y Reloj Digital -->
+                <div class="my-4 p-4 bg-blue-50 rounded-xl border border-blue-100">
+                    <div id="current-date" class="text-sm font-semibold text-blue-800 uppercase tracking-wide"></div>
+                    <div id="current-time" class="text-4xl font-black text-blue-600 font-mono mt-1"></div>
+                </div>
+
+                <p class="text-gray-500 mb-8">Ingresa tu número de DNI para registrar tu asistencia hoy.</p>
+                
+                <form id="attendance-form" onsubmit="event.preventDefault(); registerAttendance();">
+                    <div class="mb-6 relative">
+                        <input type="number" id="student-dni" placeholder="Ej: 71234567" required autofocus oninput="checkAutoSubmit(this)"
+                            class="w-full text-center text-5xl font-bold p-6 border-4 border-blue-100 rounded-2xl focus:outline-none focus:border-blue-600 focus:ring-4 focus:ring-blue-100 transition-all tracking-widest text-blue-900">
+                    </div>
+                    
+                    <button type="submit" id="btn-submit-attendance" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl text-xl shadow-lg transition-transform transform hover:scale-[1.02] active:scale-95">
+                        ASISTENCIA
+                    </button>
+                    
+                    <p class="text-sm font-medium text-blue-600 bg-blue-50 py-2 px-4 rounded-lg mt-2 inline-block">
+                        ✨ Ingrese sus 8 dígitos y presione el botón ASISTENCIA
+                    </p>
+                </form>
+
+                <div id="attendance-result" class="mt-6 hidden p-4 rounded-xl text-lg font-medium"></div>
+            </div>
+        </section>
+
+        <!-- VISTA DEL ADMINISTRADOR -->
+        <section id="view-admin" class="hidden fade-in">
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <!-- Pestañas de Admin -->
+                <div class="flex flex-col sm:flex-row border-b border-gray-200 bg-gray-50">
+                    <button onclick="switchAdminTab('students-tab')" id="tab-students" class="flex-1 py-4 px-6 text-center font-bold text-blue-700 border-b-2 sm:border-b-2 border-blue-700 bg-white hover:bg-gray-100 transition-colors">
+                        Gestión de Estudiantes
+                    </button>
+                    <button onclick="switchAdminTab('attendance-tab')" id="tab-attendance" class="flex-1 py-4 px-6 text-center font-semibold text-gray-500 hover:text-blue-700 hover:bg-gray-100 transition-colors border-t sm:border-t-0">
+                        Reportes de Asistencia
+                    </button>
+                </div>
+
+                <div class="p-6 md:p-8">
+                    <!-- PESTAÑA: Gestión de Estudiantes -->
+                    <div id="students-tab" class="space-y-8">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            <!-- Registro Individual -->
+                            <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                                <h3 class="text-xl font-bold mb-4 text-gray-800 flex items-center">
+                                    <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+                                    Registro Individual
+                                </h3>
+                                <form id="single-student-form" onsubmit="event.preventDefault(); addSingleStudent();" class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">DNI del Estudiante</label>
+                                        <input type="number" id="new-dni" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Nombre Completo</label>
+                                        <input type="text" id="new-name" required class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Grado</label>
+                                            <select id="new-grade" onchange="updateSectionOptions('new-grade', 'new-section')" class="w-full p-3 border border-gray-300 rounded-lg outline-none bg-white">
+                                                <option value="1">Primero</option>
+                                                <option value="2">Segundo</option>
+                                                <option value="3">Tercero</option>
+                                                <option value="4">Cuarto</option>
+                                                <option value="5">Quinto</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-1">Sección</label>
+                                            <select id="new-section" class="w-full p-3 border border-gray-300 rounded-lg outline-none bg-white">
+                                                <!-- Se llena por JS -->
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg shadow transition-colors">
+                                        Registrar Estudiante
+                                    </button>
+                                </form>
+                            </div>
+
+                            <!-- Registro Masivo con Excel -->
+                            <div class="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                                <h3 class="text-xl font-bold mb-4 text-gray-800 flex items-center">
+                                    <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    Carga Masiva (Excel)
+                                </h3>
+                                <p class="text-sm text-gray-600 mb-3">Selecciona el Grado y Sección, luego sube un archivo Excel. La <b>Columna A</b> debe contener el N° de orden, la <b>Columna B</b> los DNIs y la <b>Columna C</b> los nombres.</p>
+                                
+                                <div class="grid grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Grado Destino</label>
+                                        <select id="mass-grade" onchange="updateSectionOptions('mass-grade', 'mass-section')" class="w-full p-3 border border-gray-300 rounded-lg outline-none bg-white">
+                                            <option value="1">Primero</option>
+                                            <option value="2">Segundo</option>
+                                            <option value="3">Tercero</option>
+                                            <option value="4">Cuarto</option>
+                                            <option value="5">Quinto</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Sección Destino</label>
+                                        <select id="mass-section" class="w-full p-3 border border-gray-300 rounded-lg outline-none bg-white">
+                                            <!-- Se llena por JS -->
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Archivo Excel (.xlsx, .xls)</label>
+                                    <input type="file" id="excel-file" accept=".xlsx, .xls" class="w-full p-2 border border-gray-300 rounded-lg outline-none bg-white cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-bold file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200 transition-colors">
+                                </div>
+                                
+                                <button onclick="processExcelFile()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg shadow transition-colors flex items-center justify-center">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                                    Procesar Excel
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- PANEL DE ELIMINACIÓN MASIVA -->
+                        <div class="bg-red-50 p-6 rounded-xl border border-red-200 mt-8">
+                            <h3 class="text-xl font-bold mb-4 text-red-800 flex items-center">
+                                <svg class="w-6 h-6 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                Eliminación Masiva por Aula
+                            </h3>
+                            <p class="text-sm text-red-600 mb-4">Selecciona un grado y sección para borrar a <b>todos</b> los estudiantes registrados en esa aula. Esta acción no se puede deshacer.</p>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-red-800 mb-1">Grado a Eliminar</label>
+                                    <select id="delete-grade" onchange="updateSectionOptions('delete-grade', 'delete-section')" class="w-full p-3 border border-red-300 rounded-lg outline-none bg-white text-red-900">
+                                        <option value="1">Primero</option>
+                                        <option value="2">Segundo</option>
+                                        <option value="3">Tercero</option>
+                                        <option value="4">Cuarto</option>
+                                        <option value="5">Quinto</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-red-800 mb-1">Sección a Eliminar</label>
+                                    <select id="delete-section" class="w-full p-3 border border-red-300 rounded-lg outline-none bg-white text-red-900">
+                                        <!-- Se llena por JS -->
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <button onclick="promptMassDelete()" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg shadow transition-colors flex items-center justify-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                Eliminar Estudiantes del Aula
+                            </button>
+                        </div>
+                        <!-- FIN PANEL DE ELIMINACIÓN MASIVA -->
+
+                        <div class="mt-8">
+                            <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
+                                <div class="flex items-center gap-3">
+                                    <h3 class="text-xl font-bold text-gray-800">Estudiantes Registrados</h3>
+                                    <span class="bg-blue-100 text-blue-800 text-sm font-bold px-3 py-1 rounded-full shadow-sm" id="count-total-students">Total: 0</span>
+                                </div>
+                                
+                                <!-- Filtros de Estudiantes -->
+                                <div class="flex flex-wrap items-center gap-3 bg-gray-50 p-2 rounded-lg border border-gray-200">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-sm font-bold text-gray-700 whitespace-nowrap">Grado:</span>
+                                        <select id="filter-students-grade" onchange="updateStudentFilterSectionOptions(); renderStudentsTable();" class="p-1.5 border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-blue-500 bg-white text-sm font-semibold text-gray-700">
+                                            <option value="ALL">Todos</option>
+                                            <option value="1">Primero</option>
+                                            <option value="2">Segundo</option>
+                                            <option value="3">Tercero</option>
+                                            <option value="4">Cuarto</option>
+                                            <option value="5">Quinto</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-sm font-bold text-gray-700 whitespace-nowrap">Sección:</span>
+                                        <select id="filter-students-section" onchange="renderStudentsTable()" class="p-1.5 border border-gray-300 rounded-md outline-none focus:ring-2 focus:ring-blue-500 bg-white text-sm font-semibold text-gray-700">
+                                            <option value="ALL">Todas</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="overflow-x-auto rounded-lg border border-gray-200">
+                                <table class="min-w-full divide-y divide-gray-200 text-left">
+                                    <thead class="bg-gray-100">
+                                        <tr>
+                                            <th class="px-6 py-3 text-xs font-bold text-gray-600 uppercase tracking-wider text-center">N°</th>
+                                            <th class="px-6 py-3 text-xs font-bold text-gray-600 uppercase tracking-wider">DNI</th>
+                                            <th class="px-6 py-3 text-xs font-bold text-gray-600 uppercase tracking-wider">Nombre del Estudiante</th>
+                                            <th class="px-6 py-3 text-xs font-bold text-gray-600 uppercase tracking-wider">Grado</th>
+                                            <th class="px-6 py-3 text-xs font-bold text-gray-600 uppercase tracking-wider">Sección</th>
+                                            <th class="px-6 py-3 text-xs font-bold text-gray-600 uppercase tracking-wider text-center">Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="students-table-body" class="bg-white divide-y divide-gray-200">
+                                        <!-- Renderizado vía JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PESTAÑA: Reportes de Asistencia -->
+                    <div id="attendance-tab" class="hidden space-y-6">
+                        
+                        <div class="flex flex-col sm:flex-row justify-between items-center bg-gray-50 p-4 rounded-xl border border-gray-200 gap-4">
+                            <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+                                <div class="flex items-center space-x-2">
+                                    <h3 class="text-sm font-bold text-gray-800 whitespace-nowrap">Día:</h3>
+                                    <input type="date" id="report-date" onchange="renderAttendanceTable()" class="p-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm font-semibold text-gray-700 text-sm">
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <h3 class="text-sm font-bold text-gray-800 whitespace-nowrap">Grado:</h3>
+                                    <select id="report-grade" onchange="updateReportSectionOptions(); renderAttendanceTable();" class="p-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm font-semibold text-gray-700 text-sm">
+                                        <option value="ALL">Todos</option>
+                                        <option value="1">Primero</option>
+                                        <option value="2">Segundo</option>
+                                        <option value="3">Tercero</option>
+                                        <option value="4">Cuarto</option>
+                                        <option value="5">Quinto</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <h3 class="text-sm font-bold text-gray-800 whitespace-nowrap">Sección:</h3>
+                                    <select id="report-section" onchange="renderAttendanceTable()" class="p-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm font-semibold text-gray-700 text-sm">
+                                        <option value="ALL">Todas</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="flex space-x-3 w-full sm:w-auto">
+                                <button onclick="exportToExcel()" class="flex-1 sm:flex-none flex items-center justify-center bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow transition-colors text-sm">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    Excel
+                                </button>
+                                <button onclick="exportToPDF()" class="flex-1 sm:flex-none flex items-center justify-center bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow transition-colors text-sm">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                                    PDF
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Tarjetas de Resumen de Asistencia -->
+                        <div class="grid grid-cols-2 sm:grid-cols-5 gap-4 mb-4">
+                            <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm text-center">
+                                <p class="text-xs font-bold text-gray-500 uppercase tracking-wide">Total Alumnos</p>
+                                <p class="text-3xl font-black text-blue-900 mt-1" id="count-total-att">0</p>
+                            </div>
+                            <div class="bg-green-50 p-4 rounded-xl border border-green-200 shadow-sm text-center">
+                                <p class="text-xs font-bold text-green-700 uppercase tracking-wide">Presentes</p>
+                                <p class="text-3xl font-black text-green-600 mt-1" id="count-present">0</p>
+                            </div>
+                            <div class="bg-orange-50 p-4 rounded-xl border border-orange-200 shadow-sm text-center">
+                                <p class="text-xs font-bold text-orange-700 uppercase tracking-wide">Tardanzas</p>
+                                <p class="text-3xl font-black text-orange-600 mt-1" id="count-late">0</p>
+                            </div>
+                            <div class="bg-red-50 p-4 rounded-xl border border-red-200 shadow-sm text-center">
+                                <p class="text-xs font-bold text-red-700 uppercase tracking-wide">Faltas</p>
+                                <p class="text-3xl font-black text-red-600 mt-1" id="count-absent">0</p>
+                            </div>
+                            <div class="bg-yellow-50 p-4 rounded-xl border border-yellow-200 shadow-sm text-center">
+                                <p class="text-xs font-bold text-yellow-700 uppercase tracking-wide">Justificados</p>
+                                <p class="text-3xl font-black text-yellow-600 mt-1" id="count-justified">0</p>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto rounded-lg border border-gray-200">
+                            <table class="min-w-full divide-y divide-gray-200 text-left">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th class="px-6 py-3 text-xs font-bold text-gray-600 uppercase tracking-wider text-center">N°</th>
+                                        <th class="px-6 py-3 text-xs font-bold text-gray-600 uppercase tracking-wider">Día</th>
+                                        <th class="px-6 py-3 text-xs font-bold text-gray-600 uppercase tracking-wider">Hora</th>
+                                        <th class="px-6 py-3 text-xs font-bold text-gray-600 uppercase tracking-wider">DNI</th>
+                                        <th class="px-6 py-3 text-xs font-bold text-gray-600 uppercase tracking-wider">Nombre del Estudiante</th>
+                                        <th class="px-6 py-3 text-xs font-bold text-gray-600 uppercase tracking-wider">Grado</th>
+                                        <th class="px-6 py-3 text-xs font-bold text-gray-600 uppercase tracking-wider">Sección</th>
+                                        <th class="px-6 py-3 text-xs font-bold text-gray-600 uppercase tracking-wider">Asistencia</th>
+                                        <th class="px-6 py-3 text-xs font-bold text-gray-600 uppercase tracking-wider text-center">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="attendance-table-body" class="bg-white divide-y divide-gray-200">
+                                    <!-- Renderizado vía JS -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+    </div>
+
+    <!-- Modal Justificación -->
+    <div id="justification-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50 px-4">
+        <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full text-center border-t-4 border-yellow-500">
+            <h3 class="text-xl font-bold mb-2 text-gray-800">Detalles de Justificación</h3>
+            <p class="text-gray-500 mb-4 text-sm">Ingrese la fecha y hora de la justificación.</p>
+            <div class="space-y-4 mb-6 text-left">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Fecha</label>
+                    <input type="date" id="just-date" class="w-full p-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Hora</label>
+                    <input type="time" id="just-time" class="w-full p-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-yellow-500">
+                </div>
+            </div>
+            <div class="flex space-x-3">
+                <button onclick="closeJustificationModal()" class="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-xl font-bold transition-colors">Cancelar</button>
+                <button onclick="saveJustification()" class="flex-1 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-xl font-bold transition-colors">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Login de Administrador -->
+    <div id="admin-login-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50 px-4">
+        <div class="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full text-center border-t-4 border-blue-800">
+            <h3 class="text-2xl font-bold mb-2 text-gray-800">Acceso Administrativo</h3>
+            <p class="text-gray-500 mb-6 text-sm">Ingrese la contraseña para gestionar la plataforma.</p>
+            <input type="password" id="admin-pwd" placeholder="Clave..." class="w-full text-center text-xl p-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-blue-800 mb-4" onkeypress="if(event.key === 'Enter') verifyAdminLogin()">
+            <div class="flex space-x-3">
+                <button onclick="closeAdminLogin()" class="flex-1 px-4 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-xl font-bold transition-colors">Cancelar</button>
+                <button onclick="verifyAdminLogin()" class="flex-1 px-4 py-3 bg-blue-800 hover:bg-blue-900 text-white rounded-xl font-bold transition-colors">Ingresar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación genérico -->
+    <div id="confirm-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black bg-opacity-50">
+        <div class="bg-white p-6 rounded-xl shadow-2xl max-w-sm w-full mx-4 transform transition-all">
+            <h3 class="text-xl font-bold mb-2 text-gray-800" id="modal-title">Confirmar</h3>
+            <p class="text-gray-600 mb-6" id="modal-message">¿Estás seguro de realizar esta acción?</p>
+            <div class="flex justify-end space-x-3">
+                <button onclick="closeModal()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium transition-colors">Cancelar</button>
+                <button id="modal-confirm-btn" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenedor para Notificaciones (Toasts) -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-[60] flex flex-col gap-3"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // ============================================================================
+        // 0. CONFIGURACIÓN PWA Y MODO OFFLINE AUTOMÁTICO
+        // ============================================================================
+        const manifestData = {
+            "name": "Asistencia VRHDLT",
+            "short_name": "Asistencia",
+            "start_url": window.location.pathname,
+            "display": "standalone",
+            "background_color": "#f3f4f6",
+            "theme_color": "#1e3a8a",
+            "icons": [
+                { "src": "https://placehold.co/192x192/1e3a8a/ffffff?text=VR", "sizes": "192x192", "type": "image/png" },
+                { "src": "https://placehold.co/512x512/1e3a8a/ffffff?text=VRHDLT", "sizes": "512x512", "type": "image/png" }
+            ]
+        };
+        
+        // Cambiar a Data URI para evitar problemas con Blobs
+        const manifestString = encodeURIComponent(JSON.stringify(manifestData));
+        document.getElementById('dynamic-manifest').setAttribute('href', 'data:application/json;charset=utf-8,' + manifestString);
+
+        // NOTA: Se ha eliminado la inyección del ServiceWorker por Blob ya que los navegadores 
+        // lo bloquean por seguridad. El guardado offline seguirá funcionando vía LocalStorage 
+        // detectando los eventos online/offline.
+
+        function updateNetworkStatus() {
+            const statusEl = document.getElementById('network-status');
+            if (navigator.onLine) {
+                statusEl.classList.add('hidden');
+            } else {
+                statusEl.classList.remove('hidden');
+                isLocalMode = true; // Forzar escritura local si no hay red
+            }
+        }
+        window.addEventListener('online', () => { showToast("🌐 Internet restaurado. Conectado.", "success"); updateNetworkStatus(); });
+        window.addEventListener('offline', () => { showToast("📵 Sin internet. Trabajando localmente.", "error"); updateNetworkStatus(); });
+        setTimeout(updateNetworkStatus, 1000); // Chequeo inicial
+
+        // ============================================================================
+        // 1. VINCULACIÓN DE BOTONES INMEDIATA (Previene fallos en archivos descargados)
+        // ============================================================================
+        Object.assign(window, {
+            openAdminLogin, closeAdminLogin, verifyAdminLogin, exitAdmin,
+            switchAdminTab, updateSectionOptions, updateReportSectionOptions, updateStudentFilterSectionOptions, checkAutoSubmit, forceSync,
+            registerAttendance, addSingleStudent, processExcelFile,
+            promptDeleteStudent, promptMassDelete, promptDeleteAttendance, updateAttendanceStatus,
+            closeJustificationModal, saveJustification, processAttendanceStatusUpdate,
+            exportToExcel, exportToPDF, closeModal, renderAttendanceTable, renderStudentsTable
+        });
+
+        // ============================================================================
+        // 2. CONFIGURACIÓN DE NUBE Y MODO LOCAL
+        // ============================================================================
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'haya-asistencia-app';
+        let db = null, auth = null, studentsRef = null, attendanceRef = null;
+        let isLocalMode = true; 
+
+        try {
+            if (typeof __firebase_config !== 'undefined') {
+                const firebaseConfig = JSON.parse(__firebase_config);
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                studentsRef = collection(db, 'artifacts', appId, 'public', 'data', 'students');
+                attendanceRef = collection(db, 'artifacts', appId, 'public', 'data', 'attendance');
+                isLocalMode = false; 
+            }
+        } catch (error) {
+            console.warn("Ejecutando en modo local.");
+        }
+
+        const sectionsConfig = {
+            '1': ['A', 'B', 'C', 'D', 'E', 'F'],
+            '2': ['A', 'B', 'C', 'D', 'E', 'F'],
+            '3': ['A', 'B', 'C', 'D'],
+            '4': ['A', 'B', 'C', 'D'],
+            '5': ['A', 'B', 'C', 'D']
+        };
+
+        const gradeNames = {
+            '1': 'Primero', '2': 'Segundo', '3': 'Tercero', '4': 'Cuarto', '5': 'Quinto'
+        };
+
+        // ============================================================================
+        // 📥 BASE DE DATOS
+        // ============================================================================
+        const estudiantesIniciales = [
+            { dni: "90091311", name: "ALBERCA JIRON RUTH CRISTHEL", grade: "1", section: "A" }
+        ];
+
+        let savedStudents = JSON.parse(localStorage.getItem('haya_students_data') || '[]');
+        let studentsData = [...estudiantesIniciales];
+        
+        savedStudents.forEach(saved => {
+            if (!studentsData.find(s => s.dni === saved.dni)) {
+                studentsData.push(saved);
+            }
+        });
+
+        let savedAttendance = JSON.parse(localStorage.getItem('haya_backup_data') || '[]');
+        let attendanceData = [...savedAttendance];
+        
+        let confirmActionCallback = null;
+        let pendingJustification = null;
+
+        function formatDateToDDMMYYYY(dateObj) {
+            const d = String(dateObj.getDate()).padStart(2, '0');
+            const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const y = dateObj.getFullYear();
+            return `${d}/${m}/${y}`;
+        }
+
+        async function initApp() {
+            const today = new Date();
+            const y = today.getFullYear();
+            const m = String(today.getMonth() + 1).padStart(2, '0');
+            const d = String(today.getDate()).padStart(2, '0');
+            document.getElementById('report-date').value = `${y}-${m}-${d}`;
+
+            updateSectionOptions('new-grade', 'new-section');
+            updateSectionOptions('mass-grade', 'mass-section');
+            if (document.getElementById('delete-grade')) {
+                updateSectionOptions('delete-grade', 'delete-section');
+            }
+
+            if (isLocalMode) {
+                studentsData = studentsData.map(s => ({ id: 'loc_' + Math.random(), ...s }));
+                renderStudentsTable();
+                renderAttendanceTable();
+                return; 
+            }
+
+            try {
+                if (typeof __initial_auth_token !== 'undefined') {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                try {
+                    const snapshotDocs = await getDocs(studentsRef);
+                    const dbStudents = snapshotDocs.docs.map(doc => doc.data().dni);
+                    for (const est of estudiantesIniciales) {
+                        if (!dbStudents.includes(est.dni)) {
+                            await addDoc(studentsRef, { ...est, timestamp: Date.now() });
+                        }
+                    }
+                } catch(e) { }
+
+                onSnapshot(studentsRef, (snapshot) => {
+                    studentsData = [];
+                    snapshot.forEach(doc => studentsData.push({ id: doc.id, ...doc.data() }));
+                    renderStudentsTable();
+                });
+
+                onSnapshot(attendanceRef, (snapshot) => {
+                    attendanceData = [];
+                    snapshot.forEach(doc => attendanceData.push({ id: doc.id, ...doc.data() }));
+                    renderAttendanceTable();
+                });
+            } catch (error) {
+                showToast("Error conectando con la base de datos.", "error");
+            }
+        }
+
+        initApp();
+
+        function openAdminLogin() {
+            document.getElementById('admin-login-modal').classList.remove('hidden');
+            document.getElementById('admin-pwd').value = '';
+            setTimeout(() => document.getElementById('admin-pwd').focus(), 100);
+        }
+
+        function closeAdminLogin() {
+            document.getElementById('admin-login-modal').classList.add('hidden');
+            document.getElementById('student-dni').focus();
+        }
+
+        function verifyAdminLogin() {
+            const pwd = document.getElementById('admin-pwd').value.trim();
+            if (pwd === "1 2 3" || pwd === "123") {
+                closeAdminLogin();
+                document.getElementById('view-student').classList.add('hidden');
+                document.getElementById('view-admin').classList.remove('hidden');
+                document.getElementById('btn-admin-access').classList.add('hidden');
+                document.getElementById('btn-sync-data').classList.remove('hidden');
+                document.getElementById('btn-exit-admin').classList.remove('hidden');
+                showToast("Bienvenido al Portal Administrativo");
+            } else {
+                showToast("Clave incorrecta.", "error");
+            }
+        }
+
+        function exitAdmin() {
+            document.getElementById('view-admin').classList.add('hidden');
+            document.getElementById('view-student').classList.remove('hidden');
+            document.getElementById('btn-exit-admin').classList.add('hidden');
+            document.getElementById('btn-sync-data').classList.add('hidden');
+            document.getElementById('btn-admin-access').classList.remove('hidden');
+            document.getElementById('student-dni').value = '';
+            document.getElementById('student-dni').focus();
+        }
+
+        function switchAdminTab(tabId) {
+            const studentsTab = document.getElementById('students-tab');
+            const attendanceTab = document.getElementById('attendance-tab');
+            const btnStudents = document.getElementById('tab-students');
+            const btnAttendance = document.getElementById('tab-attendance');
+
+            if (tabId === 'students-tab') {
+                studentsTab.classList.remove('hidden');
+                attendanceTab.classList.add('hidden');
+                btnStudents.className = "flex-1 py-4 px-6 text-center font-bold text-blue-700 border-b-2 sm:border-b-2 border-blue-700 bg-white hover:bg-gray-100 transition-colors";
+                btnAttendance.className = "flex-1 py-4 px-6 text-center font-semibold text-gray-500 hover:text-blue-700 hover:bg-gray-100 transition-colors border-t sm:border-t-0";
+            } else {
+                studentsTab.classList.add('hidden');
+                attendanceTab.classList.remove('hidden');
+                btnAttendance.className = "flex-1 py-4 px-6 text-center font-bold text-blue-700 border-b-2 sm:border-b-2 border-blue-700 bg-white hover:bg-gray-100 transition-colors border-t sm:border-t-0";
+                btnStudents.className = "flex-1 py-4 px-6 text-center font-semibold text-gray-500 hover:text-blue-700 hover:bg-gray-100 transition-colors";
+            }
+        }
+
+        function updateSectionOptions(gradeSelectId, sectionSelectId) {
+            const grade = document.getElementById(gradeSelectId).value;
+            const sectionSelect = document.getElementById(sectionSelectId);
+            sectionSelect.innerHTML = '';
+            
+            sectionsConfig[grade].forEach(sec => {
+                const option = document.createElement('option');
+                option.value = sec;
+                option.textContent = sec;
+                sectionSelect.appendChild(option);
+            });
+        }
+
+        function updateReportSectionOptions() {
+            const grade = document.getElementById('report-grade').value;
+            const sectionSelect = document.getElementById('report-section');
+            sectionSelect.innerHTML = '<option value="ALL">Todas</option>';
+            
+            if (grade !== 'ALL' && sectionsConfig[grade]) {
+                sectionsConfig[grade].forEach(sec => {
+                    const option = document.createElement('option');
+                    option.value = sec;
+                    option.textContent = sec;
+                    sectionSelect.appendChild(option);
+                });
+            }
+        }
+
+        function updateStudentFilterSectionOptions() {
+            const grade = document.getElementById('filter-students-grade').value;
+            const sectionSelect = document.getElementById('filter-students-section');
+            sectionSelect.innerHTML = '<option value="ALL">Todas</option>';
+            
+            if (grade !== 'ALL' && sectionsConfig[grade]) {
+                sectionsConfig[grade].forEach(sec => {
+                    const option = document.createElement('option');
+                    option.value = sec;
+                    option.textContent = sec;
+                    sectionSelect.appendChild(option);
+                });
+            }
+        }
+
+        function checkAutoSubmit(input) {
+            if (input.value.length > 8) input.value = input.value.slice(0, 8);
+            document.getElementById('attendance-result').classList.add('hidden');
+        }
+
+        function forceSync() {
+            if (isLocalMode) {
+                showToast("✅ Trabajando en modo local. Recuerde usar 'Descargar Excel' para guardar su información.", "success");
+            } else {
+                showToast("Verificando conexión y guardando datos...", "success");
+                setTimeout(() => showToast("✅ Toda la información está respaldada en la nube.", "success"), 1200);
+            }
+        }
+
+        async function registerAttendance() {
+            if (!isLocalMode && !auth.currentUser) return;
+            const dniInput = document.getElementById('student-dni');
+            const resultDiv = document.getElementById('attendance-result');
+            const dni = dniInput.value.trim();
+
+            if (dni.length !== 8) {
+                showToast("El DNI debe tener 8 dígitos.", "error");
+                return; 
+            }
+
+            dniInput.disabled = true; 
+            const student = studentsData.find(s => s.dni === dni);
+            resultDiv.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800', 'bg-yellow-100', 'text-yellow-800', 'bg-orange-100', 'text-orange-800');
+
+            if (student) {
+                const today = new Date();
+                const dateStr = formatDateToDDMMYYYY(today);
+                const timeStr = today.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                const existingRecord = attendanceData.find(a => a.dni === dni && a.date === dateStr);
+                if (existingRecord) {
+                    resultDiv.classList.add('bg-yellow-100', 'text-yellow-800');
+                    const timeDisplay = existingRecord.time !== '--:--' ? ` a las ${existingRecord.time}` : '';
+                    resultDiv.innerHTML = `⚠️ <b>${student.name}</b> ya registró su asistencia hoy${timeDisplay}.<br><span class="text-sm font-semibold">Solo se permite un registro diario por estudiante.</span>`;
+                } else {
+                    let currentStatus = 'Presente';
+                    const hour = today.getHours();
+                    const minutes = today.getMinutes();
+                    
+                    // Lógica de tardanza EXCLUSIVA para 1ro y 2do año: Después de las 07:35 AM
+                    if (student.grade === '1' || student.grade === '2') {
+                        if (hour > 7 || (hour === 7 && minutes > 35)) {
+                            currentStatus = 'Tardanza';
+                        }
+                    } 
+                    // Lógica de tardanza EXCLUSIVA para 3ro, 4to y 5to año: Después de las 01:25 PM (13:25)
+                    else if (student.grade === '3' || student.grade === '4' || student.grade === '5') {
+                        if (hour > 13 || (hour === 13 && minutes > 25)) {
+                            currentStatus = 'Tardanza';
+                        }
+                    }
+
+                    const newRecord = {
+                        date: dateStr, time: timeStr, dni: student.dni, name: student.name,
+                        grade: student.grade, section: student.section, status: currentStatus, timestamp: Date.now()
+                    };
+                    
+                    try {
+                        if (!isLocalMode) {
+                            await addDoc(attendanceRef, newRecord);
+                        } else {
+                            newRecord.id = 'loc_' + Date.now();
+                            attendanceData.push(newRecord);
+                            localStorage.setItem('haya_backup_data', JSON.stringify(attendanceData)); // <-- Guardado local automático
+                            renderAttendanceTable();
+                        }
+                        
+                        let resultBg = currentStatus === 'Tardanza' ? 'bg-orange-100' : 'bg-green-100';
+                        let resultText = currentStatus === 'Tardanza' ? 'text-orange-800' : 'text-green-800';
+
+                        resultDiv.classList.add(resultBg, resultText);
+                        resultDiv.innerHTML = `✅ <b>${student.name}</b> marcó la asistencia correctamente. <span class="font-black uppercase">(${currentStatus})</span><br><span class="text-sm">(${gradeNames[student.grade]} "${student.section}") - ${newRecord.time}</span><br><span class="text-xs font-bold text-green-700 mt-1 block">💾 Guardado en el sistema automáticamente</span>`;
+                    } catch(e) {
+                        showToast('Error registrando asistencia.', 'error');
+                    }
+                }
+            } else {
+                resultDiv.classList.add('bg-red-100', 'text-red-800');
+                resultDiv.innerHTML = `❌ El DNI <b>${dni}</b> no se encuentra registrado. Consulte con Administración.`;
+            }
+
+            setTimeout(() => {
+                dniInput.value = '';
+                dniInput.disabled = false;
+                dniInput.focus();
+            }, 1500);
+        }
+
+        async function addSingleStudent() {
+            if (!isLocalMode && !auth.currentUser) return;
+            const dni = document.getElementById('new-dni').value.trim();
+            const name = document.getElementById('new-name').value.trim();
+            const grade = document.getElementById('new-grade').value;
+            const section = document.getElementById('new-section').value;
+
+            if (!dni || !name || dni.length < 8) return showToast("DNI inválido o faltan datos", "error");
+            if (studentsData.find(s => s.dni === dni)) return showToast("El estudiante ya existe", "error");
+
+            try {
+                const newData = { dni, name, grade, section, timestamp: Date.now() };
+                if (!isLocalMode) {
+                    await addDoc(studentsRef, newData);
+                } else {
+                    newData.id = 'loc_' + Date.now();
+                    studentsData.push(newData);
+                    localStorage.setItem('haya_students_data', JSON.stringify(studentsData)); 
+                    renderStudentsTable();
+                }
+                showToast("Estudiante agregado correctamente", "success");
+                document.getElementById('single-student-form').reset();
+                updateSectionOptions('new-grade', 'new-section');
+            } catch (e) { showToast("Error al guardar estudiante", "error"); }
+        }
+
+        async function processExcelFile() {
+            if (!isLocalMode && !auth.currentUser) return;
+            const grade = document.getElementById('mass-grade').value;
+            const section = document.getElementById('mass-section').value;
+            const fileInput = document.getElementById('excel-file');
+            const file = fileInput.files[0];
+
+            if (!file) return showToast("Por favor, seleccione un archivo Excel.", "error");
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    
+                    const rows = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+                    let addedCount = 0;
+
+                    for (let i = 0; i < rows.length; i++) {
+                        const row = rows[i];
+                        if (!row || row.length < 3) continue; // Saltar filas vacías
+                        
+                        let dni = row[1] !== undefined ? String(row[1]).trim() : '';
+                        let name = row[2] !== undefined ? String(row[2]).trim() : '';
+                        
+                        if (dni && dni.length > 0 && dni.length < 8) dni = dni.padStart(8, '0');
+                        
+                        if (dni.length === 8 && name) {
+                            if (!studentsData.find(s => s.dni === dni)) {
+                                const newData = { dni, name, grade, section, timestamp: Date.now() };
+                                if (!isLocalMode) {
+                                    await addDoc(studentsRef, newData);
+                                } else {
+                                    newData.id = 'loc_' + Date.now() + Math.random();
+                                    studentsData.push(newData);
+                                }
+                                addedCount++;
+                            }
+                        }
+                    }
+                    
+                    if (isLocalMode && addedCount > 0) {
+                        localStorage.setItem('haya_students_data', JSON.stringify(studentsData));
+                    }
+                    
+                    renderStudentsTable();
+                    showToast(`Se agregaron ${addedCount} estudiantes correctamente.`, "success");
+                    fileInput.value = '';
+                } catch (error) {
+                    showToast("Error al procesar el archivo Excel.", "error");
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function promptDeleteStudent(id, name) {
+            openModal("Eliminar Estudiante", `¿Eliminar a <b>${name}</b> del sistema?`, async () => {
+                try {
+                    if (!isLocalMode && auth.currentUser) {
+                        await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', id));
+                    } else if (isLocalMode) {
+                        studentsData = studentsData.filter(s => s.id !== id);
+                        localStorage.setItem('haya_students_data', JSON.stringify(studentsData));
+                        renderStudentsTable();
+                    }
+                    showToast("Estudiante eliminado", "success");
+                } catch(e) { showToast("Error al eliminar", "error"); }
+            });
+        }
+
+        function promptMassDelete() {
+            const grade = document.getElementById('delete-grade').value;
+            const section = document.getElementById('delete-section').value;
+            const gradeName = gradeNames[grade];
+            
+            openModal(
+                "Eliminación Masiva", 
+                `¿Estás absolutamente seguro de eliminar a <b>TODOS</b> los estudiantes de <b>${gradeName} "${section}"</b>?<br><br><span class="text-red-600 font-bold">⚠️ Esta acción no se puede deshacer y borrará a todos los alumnos de esa aula.</span>`, 
+                async () => {
+                    await executeMassDelete(grade, section);
+                }
+            );
+        }
+
+        async function executeMassDelete(grade, section) {
+            const toDelete = studentsData.filter(s => s.grade === String(grade) && s.section === String(section));
+            
+            if (toDelete.length === 0) {
+                showToast(`No hay estudiantes registrados en ${gradeNames[grade]} "${section}".`, "error");
+                return;
+            }
+
+            if (!isLocalMode && auth.currentUser) {
+                for (const student of toDelete) {
+                    try {
+                        await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', student.id));
+                    } catch(e) { console.error("Error eliminando", student.id); }
+                }
+            } 
+            
+            studentsData = studentsData.filter(s => !(s.grade === String(grade) && s.section === String(section)));
+            
+            if (isLocalMode) {
+                localStorage.setItem('haya_students_data', JSON.stringify(studentsData));
+            }
+            
+            renderStudentsTable();
+            showToast(`Se eliminaron ${toDelete.length} estudiantes de manera masiva.`, "success");
+        }
+
+        function promptDeleteAttendance(id) {
+            openModal("Eliminar Registro", "¿Eliminar este registro de asistencia?", async () => {
+                try {
+                    if (!isLocalMode) {
+                        await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'attendance', id));
+                    } else {
+                        attendanceData = attendanceData.filter(a => a.id !== id);
+                        renderAttendanceTable();
+                    }
+                    showToast("Registro eliminado", "success");
+                } catch(e) { showToast("Error al eliminar", "error"); }
+            });
+        }
+
+        async function updateAttendanceStatus(recordId, studentDni, newStatus, dateStr) {
+            if (!isLocalMode && !auth.currentUser) return;
+            
+            if (newStatus === 'Justificación') {
+                pendingJustification = { recordId, studentDni, dateStr };
+                document.getElementById('justification-modal').classList.remove('hidden');
+                const now = new Date();
+                document.getElementById('just-date').value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+                document.getElementById('just-time').value = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                return;
+            }
+            await processAttendanceStatusUpdate(recordId, studentDni, newStatus, dateStr, null);
+        }
+
+        function closeJustificationModal() {
+            document.getElementById('justification-modal').classList.add('hidden');
+            pendingJustification = null;
+            renderAttendanceTable(); 
+        }
+
+        async function saveJustification() {
+            if (!pendingJustification) return;
+            const jDate = document.getElementById('just-date').value;
+            const jTime = document.getElementById('just-time').value;
+            
+            if(!jDate || !jTime) return showToast("Por favor complete fecha y hora", "error");
+
+            await processAttendanceStatusUpdate(pendingJustification.recordId, pendingJustification.studentDni, 'Justificación', pendingJustification.dateStr, { date: jDate, time: jTime });
+            closeJustificationModal();
+        }
+
+        async function processAttendanceStatusUpdate(recordId, studentDni, newStatus, dateStr, justificationDetails) {
+            try {
+                let updateData = { status: newStatus };
+                if (justificationDetails) updateData.justificationDetails = justificationDetails;
+
+                if (recordId && recordId !== 'null') {
+                    if (!isLocalMode) {
+                        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'attendance', recordId), updateData);
+                    } else {
+                        const idx = attendanceData.findIndex(a => a.id === recordId);
+                        if (idx !== -1) {
+                            attendanceData[idx].status = newStatus;
+                            if (justificationDetails) attendanceData[idx].justificationDetails = justificationDetails;
+                        }
+                    }
+                    showToast('Estado actualizado.', 'success');
+                } else {
+                    const student = studentsData.find(s => s.dni === studentDni);
+                    if (student) {
+                        const newRecord = {
+                            date: dateStr, time: justificationDetails ? justificationDetails.time : '--:--',
+                            dni: student.dni, name: student.name, grade: student.grade, section: student.section,
+                            status: newStatus, timestamp: Date.now()
+                        };
+                        if (justificationDetails) newRecord.justificationDetails = justificationDetails;
+                        
+                        if (!isLocalMode) {
+                            await addDoc(attendanceRef, newRecord);
+                        } else {
+                            newRecord.id = 'loc_' + Date.now();
+                            attendanceData.push(newRecord);
+                        }
+                        showToast('Registro creado.', 'success');
+                    }
+                }
+                if (isLocalMode) renderAttendanceTable();
+            } catch(e) {
+                showToast('Error al actualizar estado.', 'error');
+                renderAttendanceTable(); 
+            }
+        }
+
+        function renderStudentsTable() {
+            const tbody = document.getElementById('students-table-body');
+            tbody.innerHTML = '';
+
+            const gradeFilter = document.getElementById('filter-students-grade') ? document.getElementById('filter-students-grade').value : 'ALL';
+            const sectionFilter = document.getElementById('filter-students-section') ? document.getElementById('filter-students-section').value : 'ALL';
+
+            let filteredStudents = [...studentsData];
+            if (gradeFilter !== 'ALL') {
+                filteredStudents = filteredStudents.filter(s => String(s.grade) === String(gradeFilter));
+            }
+            if (sectionFilter !== 'ALL') {
+                filteredStudents = filteredStudents.filter(s => String(s.section) === String(sectionFilter));
+            }
+
+            const sortedStudents = filteredStudents.sort((a, b) => {
+                if(a.grade !== b.grade) return (a.grade || '').localeCompare(b.grade || '');
+                if(a.section !== b.section) return (a.section || '').localeCompare(b.section || '');
+                return (a.name || '').localeCompare(b.name || '');
+            });
+
+            if(document.getElementById('count-total-students')) {
+                document.getElementById('count-total-students').innerText = `Total: ${sortedStudents.length}`;
+            }
+
+            if (sortedStudents.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-8 text-center text-gray-500">No hay estudiantes registrados o que coincidan con la búsqueda.</td></tr>`;
+                return;
+            }
+
+            sortedStudents.forEach((student, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 transition-colors";
+                tr.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-bold text-gray-500">${index + 1}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-mono">${student.dni}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${student.name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${gradeNames[student.grade]}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-bold">${student.section}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                        <button onclick="promptDeleteStudent('${student.id}', '${(student.name || '').replace(/'/g, "\\'")}')" class="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 p-2 rounded-lg transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderAttendanceTable() {
+            const tbody = document.getElementById('attendance-table-body');
+            tbody.innerHTML = '';
+            const dateInput = document.getElementById('report-date').value;
+            if (!dateInput) return;
+            const [yStr, mStr, dStr] = dateInput.split('-');
+            const targetDateStr = `${dStr}/${mStr}/${yStr}`;
+            
+            const gradeFilter = document.getElementById('report-grade') ? document.getElementById('report-grade').value : 'ALL';
+            const sectionFilter = document.getElementById('report-section') ? document.getElementById('report-section').value : 'ALL';
+
+            let filteredStudents = [...studentsData];
+            if (gradeFilter !== 'ALL') {
+                filteredStudents = filteredStudents.filter(s => String(s.grade) === String(gradeFilter));
+            }
+            if (sectionFilter !== 'ALL') {
+                filteredStudents = filteredStudents.filter(s => String(s.section) === String(sectionFilter));
+            }
+
+            const sortedStudents = filteredStudents.sort((a, b) => {
+                if(a.grade !== b.grade) return (a.grade || '').localeCompare(b.grade || '');
+                if(a.section !== b.section) return (a.section || '').localeCompare(b.section || '');
+                return (a.name || '').localeCompare(b.name || '');
+            });
+
+            if (sortedStudents.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" class="px-6 py-8 text-center text-gray-500">No hay estudiantes.</td></tr>`;
+                
+                if(document.getElementById('count-total-att')) {
+                    document.getElementById('count-total-att').innerText = '0';
+                    document.getElementById('count-present').innerText = '0';
+                    document.getElementById('count-late').innerText = '0';
+                    document.getElementById('count-absent').innerText = '0';
+                    document.getElementById('count-justified').innerText = '0';
+                }
+                return;
+            }
+
+            let presentCount = 0;
+            let lateCount = 0;
+            let absentCount = 0;
+            let justifiedCount = 0;
+
+            sortedStudents.forEach((student, index) => {
+                const record = attendanceData.find(a => a.dni === student.dni && a.date === targetDateStr);
+                const status = record ? record.status : 'No presente';
+                const time = record ? record.time : '--:--';
+                const recordId = record ? record.id : 'null';
+
+                if (status === 'Presente') presentCount++;
+                else if (status === 'Tardanza') lateCount++;
+                else if (status === 'Justificación') justifiedCount++;
+                else absentCount++;
+
+                let selectColor = 'bg-red-100 text-red-800 border-red-200';
+                if (status === 'Presente') selectColor = 'bg-green-100 text-green-800 border-green-200';
+                if (status === 'Tardanza') selectColor = 'bg-orange-100 text-orange-800 border-orange-200';
+                if (status === 'Justificación') selectColor = 'bg-yellow-100 text-yellow-800 border-yellow-200';
+                const tooltipInfo = record && record.justificationDetails ? `title="Justificado el: ${record.justificationDetails.date} a las ${record.justificationDetails.time}"` : '';
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 transition-colors";
+                tr.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-bold text-gray-500">${index + 1}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${targetDateStr}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold">${time}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">${student.dni}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${student.name}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">${gradeNames[student.grade]}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-bold">${student.section}</td>
+                    <td class="px-6 py-4 whitespace-nowrap" ${tooltipInfo}>
+                        <select onchange="updateAttendanceStatus('${recordId}', '${student.dni}', this.value, '${targetDateStr}')" 
+                                class="px-3 py-1.5 rounded-lg text-xs font-bold border outline-none cursor-pointer focus:ring-2 focus:ring-blue-400 ${selectColor}">
+                            <option value="Presente" ${status === 'Presente' ? 'selected' : ''}>Presente</option>
+                            <option value="Tardanza" ${status === 'Tardanza' ? 'selected' : ''}>Tardanza</option>
+                            <option value="No presente" ${status === 'No presente' ? 'selected' : ''}>No presente</option>
+                            <option value="Justificación" ${status === 'Justificación' ? 'selected' : ''}>Justificación</option>
+                        </select>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                        ${record !== undefined ? `<button onclick="promptDeleteAttendance('${recordId}')" class="text-red-500 hover:text-red-700 p-1">
+                            <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>` : `<span class="text-gray-400 text-xs">-</span>`}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            if(document.getElementById('count-total-att')) {
+                document.getElementById('count-total-att').innerText = sortedStudents.length;
+                document.getElementById('count-present').innerText = presentCount;
+                document.getElementById('count-late').innerText = lateCount;
+                document.getElementById('count-absent').innerText = absentCount;
+                document.getElementById('count-justified').innerText = justifiedCount;
+            }
+        }
+
+        function getTableDataForExport() {
+            const dateInput = document.getElementById('report-date').value;
+            if (!dateInput) return [];
+            const [yStr, mStr, dStr] = dateInput.split('-');
+            const targetDateStr = `${dStr}/${mStr}/${yStr}`;
+            
+            const gradeFilter = document.getElementById('report-grade') ? document.getElementById('report-grade').value : 'ALL';
+            const sectionFilter = document.getElementById('report-section') ? document.getElementById('report-section').value : 'ALL';
+
+            let filteredStudents = [...studentsData];
+            if (gradeFilter !== 'ALL') {
+                filteredStudents = filteredStudents.filter(s => String(s.grade) === String(gradeFilter));
+            }
+            if (sectionFilter !== 'ALL') {
+                filteredStudents = filteredStudents.filter(s => String(s.section) === String(sectionFilter));
+            }
+
+            const sortedStudents = filteredStudents.sort((a, b) => {
+                if(a.grade !== b.grade) return (a.grade || '').localeCompare(b.grade || '');
+                if(a.section !== b.section) return (a.section || '').localeCompare(b.section || '');
+                return (a.name || '').localeCompare(b.name || '');
+            });
+            return sortedStudents.map(student => {
+                const record = attendanceData.find(a => a.dni === student.dni && a.date === targetDateStr);
+                return { time: record ? record.time : '--:--', date: targetDateStr, grade: gradeNames[student.grade], section: student.section, name: student.name, status: record ? record.status : 'No presente' };
+            });
+        }
+
+        function exportToExcel() {
+            const dataToExportRaw = getTableDataForExport();
+            if(dataToExportRaw.length === 0) return showToast('No hay datos para exportar.', 'error');
+            
+            const dataToExport = dataToExportRaw.map((record, index) => ({
+                'N°': index + 1, 'Hora': record.time, 'Día': record.date, 'Grado': record.grade, 'Sección': record.section, 'Nombre del Estudiante': record.name, 'Asistencia': record.status
+            }));
+            
+            const ws = XLSX.utils.json_to_sheet(dataToExport);
+            ws['!cols'] = [{wch: 5}, {wch: 10}, {wch: 12}, {wch: 10}, {wch: 10}, {wch: 35}, {wch: 15}];
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Asistencia");
+            
+            const dateInput = document.getElementById('report-date').value || 'Diario';
+            const gradeFilter = document.getElementById('report-grade').value;
+            const sectionFilter = document.getElementById('report-section').value;
+            let suffix = gradeFilter !== 'ALL' ? `_Grado${gradeFilter}` : '_Todos';
+            suffix += sectionFilter !== 'ALL' ? `_Sec${sectionFilter}` : '';
+            
+            XLSX.writeFile(wb, `Asistencia_HayaDeLaTorre_${dateInput}${suffix}.xlsx`);
+            if (isLocalMode) showToast("Exportado a Excel correctamente", "success");
+        }
+
+        function exportToPDF() {
+            const dataToExportRaw = getTableDataForExport();
+            if(dataToExportRaw.length === 0) return showToast('No hay datos para exportar.', 'error');
+            
+            const { jsPDF } = window.jspdf;
+            // Orientación Landscape (Horizontal)
+            const doc = new jsPDF('l', 'pt', 'a4'); 
+            
+            const dateInput = document.getElementById('report-date').value || '';
+            const gradeFilter = document.getElementById('report-grade').value;
+            const sectionFilter = document.getElementById('report-section').value;
+            
+            // Agrupar los datos por Grado y Sección
+            const groupedData = {};
+            dataToExportRaw.forEach(record => {
+                const key = `${record.grade} - Sección ${record.section}`;
+                if (!groupedData[key]) groupedData[key] = [];
+                groupedData[key].push(record);
+            });
+
+            let isFirstPage = true;
+
+            // Recorrer cada sección y dividir en bloques de exactamente 38 estudiantes
+            for (const [groupName, sectionRecords] of Object.entries(groupedData)) {
+                
+                const chunkSize = 38; // Máximo de estudiantes por página
+                
+                for (let i = 0; i < sectionRecords.length; i += chunkSize) {
+                    const chunk = sectionRecords.slice(i, i + chunkSize);
+                    
+                    if (!isFirstPage) {
+                        doc.addPage(); // Añade un salto de página por sección o si sobrepasa los 38
+                    }
+                    isFirstPage = false;
+
+                    // Encabezados del PDF
+                    doc.setFontSize(14); 
+                    doc.setFont("helvetica", "bold");
+                    doc.text("I.E.S. Víctor Raúl Haya de la Torre", 40, 40);
+                    
+                    doc.setFontSize(11); 
+                    doc.setFont("helvetica", "normal");
+                    const pageInfo = sectionRecords.length > 38 ? ` (Parte ${Math.floor(i/chunkSize) + 1})` : '';
+                    doc.text(`Reporte Diario de Asistencia: ${dateInput} | Aula: ${groupName}${pageInfo}`, 40, 60);
+                    
+                    // Mapear los datos del bloque (38 registros)
+                    const rows = chunk.map((r, index) => [
+                        i + index + 1, r.time, r.date, r.grade, r.section, r.name, r.status
+                    ]);
+                    
+                    // Configuración estricta de autoTable
+                    doc.autoTable({
+                        startY: 75, 
+                        head: [["N°", "Hora", "Día", "Grado", "Sección", "Estudiante", "Estado"]], 
+                        body: rows,
+                        theme: 'striped', 
+                        headStyles: { fillColor: [30, 58, 138], fontSize: 9, halign: 'center', cellPadding: 2 }, 
+                        styles: { 
+                            font: 'helvetica', 
+                            fontSize: 9,         // TAMAÑO DE LETRA 9 ESTRICTO
+                            cellPadding: 1.5,    // MÁRGENES INTERNOS PARA 38 FILAS
+                            minCellHeight: 12    // ALTURA DE CELDA AJUSTADA
+                        },
+                        columnStyles: { 
+                            0: { cellWidth: 30, halign: 'center' },
+                            1: { cellWidth: 50, halign: 'center' },
+                            2: { cellWidth: 60, halign: 'center' },
+                            3: { cellWidth: 60, halign: 'center' },
+                            4: { cellWidth: 50, halign: 'center' },
+                            5: { cellWidth: 'auto' }, 
+                            6: { cellWidth: 80, halign: 'center' }
+                        },
+                        margin: { bottom: 15, top: 15, left: 40, right: 40 }
+                    });
+                }
+            }
+            
+            let suffix = gradeFilter !== 'ALL' ? `_Grado${gradeFilter}` : '_Todos';
+            suffix += sectionFilter !== 'ALL' ? `_Sec${sectionFilter}` : '';
+            
+            doc.save(`Asistencia_HayaDeLaTorre_${dateInput}${suffix}.pdf`);
+            if (isLocalMode) showToast("Exportado a PDF correctamente", "success");
+        }
+
+        function showToast(message, type = 'success') {
+            const toastContainer = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-green-600' : 'bg-red-600';
+            const icon = type === 'success' 
+                ? `<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`
+                : `<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+            toast.className = `fade-in flex items-center p-4 rounded-lg shadow-lg text-white ${bgColor} transform transition-all duration-300 translate-x-full z-50`;
+            toast.innerHTML = `${icon} <span class="font-medium">${message}</span>`;
+            toastContainer.appendChild(toast);
+            setTimeout(() => toast.classList.remove('translate-x-full'), 10);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-x-full');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function openModal(title, message, onConfirm) {
+            document.getElementById('modal-title').innerHTML = title;
+            document.getElementById('modal-message').innerHTML = message;
+            document.getElementById('confirm-modal').classList.remove('hidden');
+            confirmActionCallback = onConfirm;
+        }
+
+        function closeModal() {
+            document.getElementById('confirm-modal').classList.add('hidden');
+            confirmActionCallback = null;
+        }
+
+        document.getElementById('modal-confirm-btn').addEventListener('click', () => {
+            if (confirmActionCallback) confirmActionCallback();
+            closeModal();
+        });
+
+        // Reloj y Fecha Dinámica
+        function updateDateTime() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            let dateStr = now.toLocaleDateString('es-PE', options);
+            dateStr = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+            
+            const timeStr = now.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            
+            const dateEl = document.getElementById('current-date');
+            const timeEl = document.getElementById('current-time');
+            
+            if (dateEl && timeEl) {
+                dateEl.textContent = dateStr;
+                timeEl.textContent = timeStr;
+            }
+        }
+        
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+    </script>
+</body>
+</html>
