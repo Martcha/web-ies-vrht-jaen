@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>I.E.S. Víctor Raúl Haya de la Torre - Jaén</title>
-    <!-- Uso de fuente de Google Fonts para un look moderno -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        /* --- Variables de Color basadas en el Escudo --- */
+        /* --- Variables de Color --- */
         :root {
             --primary-blue: #005bac;
             --secondary-red: #d92e2e;
@@ -18,7 +17,7 @@
             --white: #ffffff;
         }
 
-        /* --- Reseteo Básico y Estilos Globales --- */
+        /* --- Reseteo Básico --- */
         * {
             margin: 0;
             padding: 0;
@@ -33,33 +32,32 @@
             overflow-x: hidden;
         }
 
-        /* --- Header y Navegación --- */
+        /* --- Header y Navegación (Centrado y Grande) --- */
         header {
             background-color: var(--primary-blue);
             color: var(--white);
-            padding: 1rem 5%;
+            padding: 1.5rem 5%;
             position: sticky;
             top: 0;
             z-index: 100;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             display: flex;
-            flex-direction: column; /* Modificado: Apila el título y los botones verticalmente */
+            flex-direction: column;
             justify-content: center;
-            align-items: center;    /* Modificado: Centra los elementos horizontalmente */
-            gap: 15px;              /* Nuevo: Espacio entre el logo/título y el menú */
+            align-items: center;
+            gap: 15px;
         }
 
         .logo-container {
             display: flex;
-            flex-direction: column; /* Nuevo: Apila el logo y el texto verticalmente si prefieres, o lo dejamos centrado */
+            flex-direction: column;
             align-items: center;
             text-align: center;
         }
 
         .logo-img {
-            height: 90px; /* Aumentado de 60px para que haga juego con el texto más grande */
-            margin-right: 0;
-            margin-bottom: 10px; /* Separación con el texto */
+            height: 90px;
+            margin-bottom: 10px;
             border-radius: 50%;
             border: 3px solid var(--accent-yellow);
             background: white;
@@ -67,7 +65,7 @@
 
         .school-name {
             font-weight: 800;
-            font-size: 2.2rem; /* ¡Letra mucho más grande! (Antes era 1.2rem) */
+            font-size: 2.2rem;
             line-height: 1.2;
             text-align: center;
         }
@@ -75,8 +73,8 @@
         .school-name span {
             color: var(--accent-yellow);
             display: block;
-            font-size: 1.3rem; /* ¡Letra más grande! (Antes era 0.9rem) */
-            font-weight: 600; /* Letra un poco más gruesa */
+            font-size: 1.3rem;
+            font-weight: 600;
             margin-top: 5px;
         }
 
@@ -84,8 +82,8 @@
             list-style: none;
             display: flex;
             gap: 15px;
-            justify-content: center; /* Nuevo: Asegura que los botones estén centrados */
-            flex-wrap: wrap;         /* Nuevo: Permite que los botones bajen si no caben */
+            justify-content: center;
+            flex-wrap: wrap;
         }
 
         nav ul li a {
@@ -107,13 +105,12 @@
             box-shadow: 0 4px 8px rgba(242, 201, 0, 0.4);
         }
 
-        /* --- Contenedor Principal y Secciones --- */
+        /* --- Contenedor Principal --- */
         main {
             padding: 40px 5%;
             min-height: 80vh;
         }
 
-        /* Ocultar secciones por defecto, la clase .active las muestra */
         .content-section {
             display: none;
             animation: fadeIn 0.5s ease-in-out;
@@ -157,115 +154,39 @@
         }
 
         /* --- Estilos Específicos por Sección --- */
+        #inicio { text-align: center; }
+        .hero-logo { width: 200px; height: 200px; margin-bottom: 30px; border-radius: 50%; box-shadow: 0 15px 35px rgba(0,91,172,0.3); }
+        .welcome-text h1 { color: var(--primary-blue); font-size: 3rem; margin-bottom: 20px; }
+        .welcome-text p { font-size: 1.2rem; color: #666; max-width: 800px; margin: 0 auto; }
 
-        /* Inicio */
-        #inicio {
-            text-align: center;
-        }
-        .hero-logo {
-            width: 200px;
-            height: 200px;
-            margin-bottom: 30px;
-            border-radius: 50%;
-            box-shadow: 0 15px 35px rgba(0,91,172,0.3);
-        }
-        .welcome-text h1 {
-            color: var(--primary-blue);
-            font-size: 3rem;
-            margin-bottom: 20px;
-        }
-        .welcome-text p {
-            font-size: 1.2rem;
-            color: #666;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        /* Nosotros (Grid de 3 columnas) */
-        .nosotros-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-        }
+        .nosotros-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
         .nosotros-card h3 { color: var(--primary-blue); margin-bottom: 15px; }
 
-        /* Docentes (Grid de áreas) */
-        .areas-grid {
-             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-        }
-        .area-card {
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
-        .area-header {
-            background: var(--primary-blue);
-            color: white;
-            padding: 15px;
-            text-align: center;
-            font-weight: bold;
-        }
-        /* Colores dinámicos para las tarjetas de áreas */
+        .areas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+        .area-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .area-header { background: var(--primary-blue); color: white; padding: 15px; text-align: center; font-weight: bold; }
         .area-card.math .area-header { background: var(--secondary-red); }
         .area-card.comu .area-header { background: var(--accent-green); }
         .area-card.tecnica .area-header { background: #8e44ad; } 
-        
         .teacher-list { list-style: none; padding: 20px; }
         .teacher-list li { margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
         .teacher-list li:last-child { border-bottom: none; }
-        /* Resaltar al usuario */
         .highlight-teacher { color: var(--secondary-red); font-weight: 700; }
 
-        /* Padres (Tabla de horarios) */
-        .schedule-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
-        .schedule-table th, .schedule-table td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
+        .schedule-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .schedule-table th, .schedule-table td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
         .schedule-table th { background-color: var(--primary-blue); color: white; }
 
-        /* Asistencia (Simulador) */
-        .attendance-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            background: #eef2f7;
-            padding: 15px;
-            border-radius: 10px;
-        }
+        .attendance-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #eef2f7; padding: 15px; border-radius: 10px; }
         .date-display { font-weight: bold; color: var(--primary-blue); }
-        .live-indicator {
-            display: inline-block;
-            width: 12px; height: 12px; background: var(--accent-green);
-            border-radius: 50%; margin-right: 8px;
-            animation: pulse 1.5s infinite;
-        }
+        .live-indicator { display: inline-block; width: 12px; height: 12px; background: var(--accent-green); border-radius: 50%; margin-right: 8px; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(0,151,57, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(0,151,57, 0); } 100% { box-shadow: 0 0 0 0 rgba(0,151,57, 0); } }
 
-        .status-badge {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
+        .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; }
         .status-presente { background-color: #d4edda; color: var(--accent-green); }
         .status-tardanza { background-color: #fff3cd; color: #856404; }
         .status-falta { background-color: #f8d7da; color: var(--secondary-red); }
 
-        /* Estilos Login Asistencia */
         .login-form { max-width: 400px; margin: 0 auto; text-align: center; }
         .login-input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; }
         .login-btn { background-color: var(--primary-blue); color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; font-weight: 600; width: 100%; transition: 0.3s; }
@@ -274,7 +195,6 @@
         .student-profile { background: #eef2f7; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: left; border-left: 4px solid var(--primary-blue); }
         .logout-btn { background-color: var(--secondary-red); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; float: right; font-size: 0.9rem;}
 
-        /* Estilos de Administración */
         .admin-link { border: 2px solid var(--accent-yellow) !important; color: var(--accent-yellow) !important; font-weight: 800 !important; }
         .admin-link:hover, .admin-link.active { background-color: var(--accent-yellow) !important; color: var(--primary-blue) !important; }
         .admin-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; text-align: left; margin-top: 20px; }
@@ -283,19 +203,12 @@
         .admin-form-group input, .admin-form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; }
         .success-msg { color: var(--accent-green); font-size: 0.9rem; margin-top: 10px; display: none; font-weight: bold; background: #d4edda; padding: 10px; border-radius: 5px; text-align: center; }
 
-        /* Footer */
-        footer {
-            background: var(--primary-blue);
-            color: white;
-            text-align: center;
-            padding: 20px;
-            margin-top: 40px;
-        }
+        footer { background: var(--primary-blue); color: white; text-align: center; padding: 20px; margin-top: 40px; }
 
-        /* Responsive Design */
+        /* Responsive */
         @media (max-width: 768px) {
             header { padding: 15px; gap: 10px; }
-            .school-name { font-size: 1.5rem; } /* Ajuste de tamaño para celulares */
+            .school-name { font-size: 1.5rem; }
             .school-name span { font-size: 1rem; }
             .logo-img { height: 70px; }
             nav ul { margin-top: 5px; flex-wrap: wrap; justify-content: center; gap: 10px; }
@@ -307,10 +220,8 @@
 </head>
 <body>
 
-    <!-- ENCABEZADO Y NAVEGACIÓN -->
     <header>
         <div class="logo-container">
-            <!-- Asegúrate de que el archivo de imagen esté en la misma carpeta -->
             <img src="logo VRHT 1.jpg" alt="Escudo I.E.S. VRHT" class="logo-img">
             <div class="school-name">
                 I.E.S. Víctor Raúl Haya de la Torre
@@ -319,7 +230,6 @@
         </div>
         <nav>
             <ul>
-                <!-- Los botones de navegación. "data-target" indica qué sección mostrar -->
                 <li><a href="#" class="nav-link active" data-target="inicio">Inicio</a></li>
                 <li><a href="#" class="nav-link" data-target="nosotros">Nosotros</a></li>
                 <li><a href="#" class="nav-link" data-target="docentes">Docentes</a></li>
@@ -330,18 +240,15 @@
         </nav>
     </header>
 
-    <!-- CONTENEDOR PRINCIPAL DE SECCIONES -->
     <main>
-        <!-- SECCIÓN 1: INICIO -->
         <section id="inicio" class="content-section active">
             <img src="logo VRHT 1.jpg" alt="Escudo Gigante VRHT" class="hero-logo">
             <div class="welcome-text">
-                <h1>Bienvenidos a la Familia Víctorina</h1>
+                <h1>Bienvenidos a la Familia Haya de la Torre</h1>
                 <p>Un espacio interactivo para nuestros estudiantes. Comprometidos con la educación secundaria de calidad en Jaén desde 1984. ¡Explora tus recursos!</p>
             </div>
         </section>
 
-        <!-- SECCIÓN 2: NOSOTROS (Visión, Misión, Historia) -->
         <section id="nosotros" class="content-section">
             <h2 class="section-title">Nuestra Institución</h2>
             <div class="nosotros-grid">
@@ -361,22 +268,16 @@
             </div>
         </section>
 
-        <!-- SECCIÓN 3: DOCENTES POR ÁREAS -->
         <section id="docentes" class="content-section">
             <h2 class="section-title">Plana Docente</h2>
-            <p style="text-align: center; margin-bottom: 20px;">Organización académica por áreas (Actualizado en tiempo real).</p>
-            
-            <!-- Contenedor Dinámico: JS creará las tarjetas según las áreas registradas -->
-            <div class="areas-grid" id="docentes-areas-container">
-                <!-- Se llenará dinámicamente -->
-            </div>
+            <p style="text-align: center; margin-bottom: 20px;">Organización académica por áreas.</p>
+            <div class="areas-grid" id="docentes-areas-container"></div>
         </section>
 
-        <!-- SECCIÓN 4: ATENCIÓN A PADRES -->
         <section id="padres" class="content-section">
             <h2 class="section-title">Atención a Familias</h2>
             <div class="card">
-                <p>Estimados padres de familia, la comunicación es vital para el éxito de nuestros estudiantes. A continuación, los horarios de atención de dirección y coordinación.</p>
+                <p>Estimados padres de familia, a continuación, los horarios de atención de dirección y coordinación.</p>
                 <table class="schedule-table">
                     <thead>
                         <tr>
@@ -385,141 +286,105 @@
                             <th>Horario</th>
                         </tr>
                     </thead>
-                    <tbody id="padres-schedule-body">
-                        <!-- Llenado dinámico por JS -->
-                    </tbody>
+                    <tbody id="padres-schedule-body"></tbody>
                 </table>
-                <p style="margin-top: 20px; font-size: 0.9rem; color: #666;">* Para atención con docentes específicos, por favor solicitar cita a través de la agenda escolar.</p>
             </div>
         </section>
 
-        <!-- SECCIÓN 5: ASISTENCIA AUTOMÁTICA (Portal de Padres) -->
         <section id="asistencia" class="content-section">
             <h2 class="section-title">Portal de Asistencia</h2>
-            
-            <!-- Contenedor de Login -->
             <div class="card login-form" id="login-container">
                 <h3>Acceso para Padres</h3>
-                <p style="font-size: 0.9rem; margin-bottom: 15px;">Por favor, ingrese el DNI del estudiante como usuario y contraseña para ver su reporte de asistencia.</p>
-                
-                <input type="text" id="dni-user" class="login-input" placeholder="Usuario (DNI del estudiante)">
-                <input type="password" id="dni-pass" class="login-input" placeholder="Contraseña (DNI del estudiante)">
-                
+                <p style="font-size: 0.9rem; margin-bottom: 15px;">Ingrese el DNI del estudiante como usuario y contraseña.</p>
+                <input type="text" id="dni-user" class="login-input" placeholder="Usuario (DNI)">
+                <input type="password" id="dni-pass" class="login-input" placeholder="Contraseña (DNI)">
                 <button id="btn-ingresar" class="login-btn">Consultar Asistencia</button>
-                <p id="login-error" class="error-msg">DNI incorrecto o no coinciden. Intente nuevamente.</p>
-                
+                <p id="login-error" class="error-msg">DNI incorrecto o no coinciden.</p>
                 <div style="margin-top: 20px; font-size: 0.8rem; color: #666; text-align: left; background: #f9f9f9; padding: 10px; border-radius: 5px;">
-                    <strong>Datos de prueba para el profesor Martín:</strong> Use <em>71234567</em>, <em>72345678</em> o <em>73456789</em> en ambos campos.
+                    <strong>Datos de prueba:</strong> <em>71234567</em>, <em>72345678</em> o <em>73456789</em>
                 </div>
             </div>
 
-            <!-- Contenedor de Datos (Oculto inicialmente) -->
             <div class="card" id="data-container" style="display: none;">
                 <button id="btn-salir" class="logout-btn">Cerrar Sesión</button>
-                
                 <div class="student-profile">
-                    <h3 id="student-name">Nombre del Estudiante</h3>
+                    <h3 id="student-name">Nombre</h3>
                     <p><strong>DNI:</strong> <span id="student-dni"></span> | <strong>Sección:</strong> <span id="student-section"></span></p>
                 </div>
-
                 <div class="attendance-header">
-                    <div><span class="live-indicator"></span>Reporte de los últimos 5 días hábiles</div>
+                    <div><span class="live-indicator"></span>Reporte de Asistencia</div>
                     <div class="date-display" id="currentDate">Fecha: Cargando...</div>
                 </div>
-
                 <table class="schedule-table">
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Estado</th>
-                            <th>Hora de Registro</th>
-                        </tr>
-                    </thead>
-                    <tbody id="attendance-body">
-                        <!-- Llenado por JS -->
-                    </tbody>
+                    <thead><tr><th>Fecha</th><th>Estado</th><th>Hora de Registro</th></tr></thead>
+                    <tbody id="attendance-body"></tbody>
                 </table>
             </div>
         </section>
 
-        <!-- SECCIÓN 6: ADMINISTRACIÓN (Exclusivo para Directivos) -->
         <section id="admin" class="content-section">
             <h2 class="section-title">Panel de Administración</h2>
-            
-            <!-- Login de Administrador -->
             <div class="card login-form" id="admin-login-container">
                 <h3>Acceso Restringido</h3>
-                <p style="font-size: 0.9rem; margin-bottom: 15px;">Solo personal autorizado de la I.E.S. Víctor Raúl Haya de la Torre.</p>
-                
                 <input type="text" id="admin-user" class="login-input" placeholder="Usuario administrador">
                 <input type="password" id="admin-pass" class="login-input" placeholder="Contraseña">
-                
                 <button id="btn-admin-ingresar" class="login-btn">Entrar al Sistema</button>
                 <p id="admin-error" class="error-msg">Credenciales incorrectas.</p>
-
                 <div style="margin-top: 20px; font-size: 0.8rem; color: #666; text-align: left; background: #f9f9f9; padding: 10px; border-radius: 5px;">
-                    <strong>Credenciales de prueba:</strong> Usuario: <em>admin</em> | Contraseña: <em>123456</em>
+                    <strong>Credenciales de prueba:</strong> admin | 123456
                 </div>
             </div>
 
-            <!-- Dashboard de Administración -->
             <div class="card" id="admin-dashboard-container" style="display: none;">
                 <button id="btn-admin-salir" class="logout-btn">Cerrar Sesión Segura</button>
                 <h3 style="margin-bottom: 20px; color: var(--primary-blue);">Gestión de Datos Escolares</h3>
-                
                 <div class="admin-dashboard">
-                    <!-- Formulario 1: Ingreso de Asistencia -->
                     <div style="background: #f4f7f9; padding: 20px; border-radius: 10px; border: 1px solid #e1e8ed;">
-                        <h4 style="margin-bottom: 15px; color: var(--secondary-red);">Registrar Asistencia Diaria (Masiva)</h4>
+                        <h4 style="margin-bottom: 15px; color: var(--secondary-red);">Registrar Asistencia (Masiva)</h4>
                         <form id="form-asistencia">
                             <div class="admin-form-group">
                                 <label for="asist-grado">Grado:</label>
                                 <select id="asist-grado" required>
-                                    <option value="" disabled selected>Seleccione el grado...</option>
-                                    <option value="1ro">1ro de Secundaria</option>
-                                    <option value="2do">2do de Secundaria</option>
-                                    <option value="3ro">3ro de Secundaria</option>
-                                    <option value="4to">4to de Secundaria</option>
-                                    <option value="5to">5to de Secundaria</option>
+                                    <option value="" disabled selected>Seleccione...</option>
+                                    <option value="1ro">1ro</option>
+                                    <option value="2do">2do</option>
+                                    <option value="3ro">3ro</option>
+                                    <option value="4to">4to</option>
+                                    <option value="5to">5to</option>
                                 </select>
                             </div>
                             <div class="admin-form-group">
                                 <label for="asist-seccion">Sección:</label>
                                 <select id="asist-seccion" required>
-                                    <option value="" disabled selected>Seleccione la sección...</option>
-                                    <option value="A">Sección "A"</option>
-                                    <option value="B">Sección "B"</option>
-                                    <option value="C">Sección "C"</option>
-                                    <option value="D">Sección "D"</option>
-                                    <option value="E">Sección "E"</option>
+                                    <option value="" disabled selected>Seleccione...</option>
+                                    <option value="A">A</option><option value="B">B</option>
+                                    <option value="C">C</option><option value="D">D</option><option value="E">E</option>
                                 </select>
                             </div>
                             <div class="admin-form-group">
-                                <label for="asist-fecha">Fecha de Asistencia:</label>
+                                <label for="asist-fecha">Fecha:</label>
                                 <input type="date" id="asist-fecha" required>
                             </div>
                             <div class="admin-form-group">
-                                <label for="asist-archivo">Nómina de Asistencia (Excel/PDF):</label>
+                                <label for="asist-archivo">Nómina (Excel/PDF):</label>
                                 <input type="file" id="asist-archivo" accept=".xlsx, .xls, .csv, .pdf" required style="padding: 5px; background: white;">
                             </div>
-                            <button type="submit" class="login-btn" id="btn-submit-asistencia" style="background-color: var(--accent-green);">Subir Registro Masivo</button>
-                            <p id="msg-exito-asistencia" class="success-msg">✅ Archivo procesado correctamente.</p>
+                            <button type="submit" class="login-btn" id="btn-submit-asistencia" style="background-color: var(--accent-green);">Subir Registro</button>
+                            <p id="msg-exito-asistencia" class="success-msg"></p>
                         </form>
                     </div>
 
-                    <!-- Formulario 2: Ingreso de Docentes y Horarios -->
                     <div style="background: #f4f7f9; padding: 20px; border-radius: 10px; border: 1px solid #e1e8ed;">
                         <h4 style="margin-bottom: 15px; color: var(--secondary-red);">Registrar Docente y Horario</h4>
                         <form id="form-docente">
                             <div class="admin-form-group">
                                 <label for="doc-nombre">Nombre del Docente:</label>
-                                <input type="text" id="doc-nombre" required placeholder="Ej: Lic. Martín Chayán Alache">
+                                <input type="text" id="doc-nombre" required placeholder="Ej: Lic. Juan Pérez">
                             </div>
-                            <!-- Desplegable con las 10 áreas solicitadas -->
                             <div class="admin-form-group">
                                 <label for="doc-area">Área a cargo:</label>
                                 <select id="doc-area" required>
-                                    <option value="" disabled selected>Seleccione el área...</option>
+                                    <option value="" disabled selected>Seleccione...</option>
                                     <option value="Matemática">Matemática</option>
                                     <option value="Comunicación">Comunicación</option>
                                     <option value="Inglés">Inglés</option>
@@ -533,15 +398,15 @@
                                 </select>
                             </div>
                             <div class="admin-form-group">
-                                <label for="doc-dias">Días de Atención (Padres):</label>
+                                <label for="doc-dias">Días de Atención:</label>
                                 <input type="text" id="doc-dias" required placeholder="Ej: Lunes y Jueves">
                             </div>
                             <div class="admin-form-group">
-                                <label for="doc-horas">Horario de Atención:</label>
+                                <label for="doc-horas">Horario:</label>
                                 <input type="text" id="doc-horas" required placeholder="Ej: 10:00 AM - 11:30 AM">
                             </div>
                             <button type="submit" class="login-btn">Guardar Información</button>
-                            <p id="msg-exito-docente" class="success-msg">✅ Docente y horario guardados en el sistema.</p>
+                            <p id="msg-exito-docente" class="success-msg">✅ Docente guardado en la memoria.</p>
                         </form>
                     </div>
                 </div>
@@ -550,342 +415,221 @@
     </main>
 
     <footer>
-        <p>© 2024 I.E.S. Víctor Raúl Haya de la Torre - Jaén. Todos los derechos reservados. Educación para el futuro.</p>
+        <p>© 2024 I.E.S. Víctor Raúl Haya de la Torre - Jaén. Todos los derechos reservados.</p>
     </footer>
 
-    <!-- JAVASCRIPT PARA LA INTERACTIVIDAD Y CONEXIÓN EN LA NUBE -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // --- 1. CONFIGURACIÓN DE LA BASE DE DATOS EN LA NUBE ---
-        let firebaseConfig = {};
-        try {
-            if (typeof __firebase_config !== 'undefined') {
-                firebaseConfig = JSON.parse(__firebase_config);
-            }
-        } catch(e) { console.error("Configuración de nube no encontrada"); }
-        
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'vrht-app';
-
-        let currentUser = null;
-        let teachersDB = [];
-        let attendanceDB = [];
-
-        // Base de datos de estudiantes simulada (esto en la vida real vendría de la matrícula)
-        const defaultStudents = [
-            { dni: '71234567', nombre: 'Alvarado Rojas, Luis', grado: '5to', seccion: 'A' },
-            { dni: '72345678', nombre: 'Benites Quispe, María', grado: '5to', seccion: 'A' },
-            { dni: '73456789', nombre: 'Carrasco Vega, Jorge', grado: '3ro', seccion: 'B' },
-            { dni: '74567890', nombre: 'Díaz Guevara, Ana', grado: '3ro', seccion: 'B' }
-        ];
-
-        // --- 2. SISTEMA DE AUTENTICACIÓN ---
-        const initAuth = async () => {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-                await signInAnonymously(auth);
-            }
-        };
-        initAuth();
-
-        // --- 3. SINCRONIZACIÓN EN TIEMPO REAL ---
-        onAuthStateChanged(auth, (user) => {
-            currentUser = user;
-            if (user) {
-                // Escuchando los cambios de Docentes en la Nube
-                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'teachers'), (snapshot) => {
-                    teachersDB = [];
-                    snapshot.forEach(doc => teachersDB.push(doc.data()));
-                    renderTeachers(); // Pinta las tarjetas dinámicas
-                    renderSchedules(); // Pinta la tabla de padres
-                }, (error) => console.error(error));
-
-                // Escuchando los cambios de Asistencia en la Nube
-                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'attendance'), (snapshot) => {
-                    attendanceDB = [];
-                    snapshot.forEach(doc => attendanceDB.push(doc.data()));
-                    
-                    const currentDni = document.getElementById('student-dni')?.textContent;
-                    if(currentDni) {
-                        const asistenciasAlumno = attendanceDB.filter(a => a.dni === currentDni);
-                        renderStudentAttendance(asistenciasAlumno);
-                    }
-                }, (error) => console.error(error));
-            }
-        });
-
-        // --- 4. FUNCIONES DE GENERACIÓN VISUAL AUTOMÁTICA ---
-        
-        // Función: Generar tarjetas de áreas según los docentes registrados
-        const renderTeachers = () => {
-            const container = document.getElementById('docentes-areas-container');
-            container.innerHTML = ''; 
-
-            // Agrupar profesores por área
-            const areasMap = {};
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
             
-            // Forzamos que tú siempre aparezcas por defecto en Matemática para la demostración
-            areasMap['Matemática'] = [{ nombre: 'Lic. Martín Chayán Alache', area: 'Matemática' }];
+            // --- NAVEGACIÓN (Este era el código que se bloqueaba) ---
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.content-section');
 
-            teachersDB.forEach(t => {
-                if(!areasMap[t.area]) areasMap[t.area] = [];
-                // Evitamos duplicarte si ya te guardaste en la nube
-                if (!t.nombre.includes('Martín Chayán')) {
-                    areasMap[t.area].push(t);
-                }
-            });
-
-            // Creamos una tarjeta HTML por cada área que tenga al menos un docente
-            for (const [areaName, teachers] of Object.entries(areasMap)) {
-                // Asignar colores variados según el área
-                let colorClass = '';
-                if (['Matemática', 'Ciencia y Tecnología'].includes(areaName)) colorClass = 'math';
-                else if (['Comunicación', 'Inglés', 'Ciencias Sociales (CCSS)', 'Desarrollo Familia y Sociedad (PDCC)'].includes(areaName)) colorClass = 'comu';
-                else colorClass = 'tecnica'; // Para Arte, EPT, Religión, Educación Física
-
-                let cardHtml = `
-                    <div class="area-card ${colorClass}">
-                        <div class="area-header">${areaName}</div>
-                        <ul class="teacher-list">
-                `;
-                
-                teachers.forEach(t => {
-                    const highlight = t.nombre.includes('Martín Chayán') ? 'class="highlight-teacher"' : '';
-                    cardHtml += `<li ${highlight}>${t.nombre}</li>`;
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault(); 
+                    const targetId = link.getAttribute('data-target');
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    sections.forEach(s => s.classList.remove('active'));
+                    link.classList.add('active');
+                    document.getElementById(targetId).classList.add('active');
+                    if (window.innerWidth < 768) window.scrollTo({ top: 0, behavior: 'smooth' });
                 });
-                
-                cardHtml += `</ul></div>`;
-                container.innerHTML += cardHtml; // Añade la tarjeta al contenedor principal
-            }
-
-            // Si está completamente vacío (muy raro por el default)
-            if (Object.keys(areasMap).length === 0) {
-                container.innerHTML = '<p style="text-align:center; width:100%;">No hay docentes registrados aún.</p>';
-            }
-        };
-
-        // Función: Generar la tabla de horarios de atención para Padres
-        const renderSchedules = () => {
-            const tbody = document.getElementById('padres-schedule-body');
-            tbody.innerHTML = `
-                <tr><td><strong>Dirección</strong></td><td>Lunes, Miérc. y Viernes</td><td>8:00 AM - 10:00 AM</td></tr>
-                <tr><td><strong>Coordinación Académica</strong></td><td>Lunes a Viernes</td><td>10:30 AM - 12:30 PM</td></tr>
-                <tr><td><strong>Psicología</strong></td><td>Martes y Jueves (Cita)</td><td>9:00 AM - 1:00 PM</td></tr>
-                <tr><td>Lic. Martín Chayán Alache (Matemática)</td><td>Lunes y Miércoles</td><td>10:00 AM - 11:30 AM</td></tr>
-            `;
-            
-            teachersDB.forEach(t => {
-                if(t.dias && t.horas && !t.nombre.includes('Martín Chayán')) {
-                    tbody.innerHTML += `<tr><td>${t.nombre} (${t.area})</td><td>${t.dias}</td><td>${t.horas}</td></tr>`;
-                }
             });
-        };
 
-        // --- 5. LÓGICA DE NAVEGACIÓN ENTRE PESTAÑAS ---
-        const navLinks = document.querySelectorAll('.nav-link');
-        const sections = document.querySelectorAll('.content-section');
+            // --- BASE DE DATOS LOCAL ---
+            const defaultTeachers = [
+                { nombre: 'Lic. Martín Chayán Alache', area: 'Matemática', dias: 'Lunes y Miércoles', horas: '10:00 AM - 11:30 AM' }
+            ];
 
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault(); 
-                const targetId = link.getAttribute('data-target');
-                navLinks.forEach(l => l.classList.remove('active'));
-                sections.forEach(s => s.classList.remove('active'));
-                link.classList.add('active');
-                document.getElementById(targetId).classList.add('active');
-                if (window.innerWidth < 768) window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-        });
+            const defaultStudents = [
+                { dni: '71234567', nombre: 'Alvarado Rojas, Luis', grado: '5to', seccion: 'A', asistencia: [] },
+                { dni: '72345678', nombre: 'Benites Quispe, María', grado: '5to', seccion: 'A', asistencia: [] },
+                { dni: '73456789', nombre: 'Carrasco Vega, Jorge', grado: '3ro', seccion: 'B', asistencia: [] },
+                { dni: '74567890', nombre: 'Díaz Guevara, Ana', grado: '3ro', seccion: 'B', asistencia: [] }
+            ];
 
-        // --- 6. PORTAL DE ASISTENCIA PADRES ---
-        const loginContainer = document.getElementById('login-container');
-        const dataContainer = document.getElementById('data-container');
-        const btnIngresar = document.getElementById('btn-ingresar');
-        const errorMsg = document.getElementById('login-error');
-        const attendanceBody = document.getElementById('attendance-body');
-        
-        document.getElementById('currentDate').textContent = `Reporte histórico al: ${new Date().toLocaleDateString('es-PE')}`;
+            let teachersDB = JSON.parse(localStorage.getItem('vrht_teachers_v2')) || defaultTeachers;
+            let studentsDB = JSON.parse(localStorage.getItem('vrht_students_v2')) || defaultStudents;
 
-        btnIngresar.addEventListener('click', () => {
-            const user = document.getElementById('dni-user').value.trim();
-            const pass = document.getElementById('dni-pass').value.trim();
-            errorMsg.style.display = 'none';
-
-            if(user === '' || user !== pass) {
-                errorMsg.textContent = 'DNI incorrecto o no coinciden.';
-                errorMsg.style.display = 'block';
-                return;
-            }
-
-            const estudiante = defaultStudents.find(e => e.dni === user);
-
-            if(estudiante) {
-                loginContainer.style.display = 'none';
-                dataContainer.style.display = 'block';
-                
-                document.getElementById('student-name').textContent = estudiante.nombre;
-                document.getElementById('student-dni').textContent = estudiante.dni;
-                document.getElementById('student-section').textContent = `${estudiante.grado} "${estudiante.seccion}"`;
-
-                const asistenciasAlumno = attendanceDB.filter(a => a.dni === estudiante.dni);
-                renderStudentAttendance(asistenciasAlumno);
-            } else {
-                errorMsg.textContent = 'Estudiante no encontrado en el sistema.';
-                errorMsg.style.display = 'block';
-            }
-        });
-
-        const renderStudentAttendance = (asistenciaArray) => {
-            attendanceBody.innerHTML = '';
-            if(asistenciaArray.length === 0) {
-                attendanceBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">El administrador aún no ha cargado registros para este estudiante.</td></tr>';
-                return;
-            }
-            
-            // Ordenar por fecha de más reciente a más antigua
-            const sorted = [...asistenciaArray].sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
-            
-            sorted.forEach(reg => {
-                let claseBadge = 'status-presente';
-                if(reg.estado === 'Tardanza') claseBadge = 'status-tardanza';
-                if(reg.estado === 'Falta') claseBadge = 'status-falta';
-
-                attendanceBody.innerHTML += `
-                    <tr>
-                        <td>${reg.fecha}</td>
-                        <td><span class="status-badge ${claseBadge}">${reg.estado}</span></td>
-                        <td>${reg.hora}</td>
-                    </tr>
-                `;
-            });
-        };
-
-        document.getElementById('btn-salir').addEventListener('click', () => {
-            dataContainer.style.display = 'none';
-            loginContainer.style.display = 'block';
-            document.getElementById('dni-user').value = '';
-            document.getElementById('dni-pass').value = '';
-        });
-
-        // --- 7. PANEL DE ADMINISTRACIÓN (Input Data) ---
-        const adminLoginContainer = document.getElementById('admin-login-container');
-        const adminDashboardContainer = document.getElementById('admin-dashboard-container');
-        
-        document.getElementById('btn-admin-ingresar').addEventListener('click', () => {
-            const user = document.getElementById('admin-user').value.trim();
-            const pass = document.getElementById('admin-pass').value.trim();
-            if(user === 'admin' && pass === '123456') {
-                adminLoginContainer.style.display = 'none';
-                adminDashboardContainer.style.display = 'block';
-                document.getElementById('asist-fecha').valueAsDate = new Date();
-            } else {
-                document.getElementById('admin-error').style.display = 'block';
-            }
-        });
-
-        document.getElementById('btn-admin-salir').addEventListener('click', () => {
-            adminDashboardContainer.style.display = 'none';
-            adminLoginContainer.style.display = 'block';
-        });
-
-        // Guardar Docente en la Nube
-        document.getElementById('form-docente').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (!currentUser) return;
-
-            const btnSubmit = document.querySelector('#form-docente button[type="submit"]');
-            btnSubmit.textContent = 'Guardando...';
-            btnSubmit.disabled = true;
-
-            const nuevoDocente = {
-                nombre: document.getElementById('doc-nombre').value,
-                area: document.getElementById('doc-area').value,
-                dias: document.getElementById('doc-dias').value,
-                horas: document.getElementById('doc-horas').value,
-                timestamp: new Date().toISOString()
+            const saveDB = () => {
+                localStorage.setItem('vrht_teachers_v2', JSON.stringify(teachersDB));
+                localStorage.setItem('vrht_students_v2', JSON.stringify(studentsDB));
             };
 
-            try {
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'teachers'), nuevoDocente);
-                
+            // --- GENERACIÓN VISUAL AUTOMÁTICA ---
+            const renderTeachers = () => {
+                const container = document.getElementById('docentes-areas-container');
+                container.innerHTML = ''; 
+
+                const areasMap = {};
+                areasMap['Matemática'] = [{ nombre: 'Lic. Martín Chayán Alache', area: 'Matemática' }];
+
+                teachersDB.forEach(t => {
+                    if(!areasMap[t.area]) areasMap[t.area] = [];
+                    if (!t.nombre.includes('Martín Chayán')) areasMap[t.area].push(t);
+                });
+
+                for (const [areaName, teachers] of Object.entries(areasMap)) {
+                    let colorClass = '';
+                    if (['Matemática', 'Ciencia y Tecnología'].includes(areaName)) colorClass = 'math';
+                    else if (['Comunicación', 'Inglés', 'Ciencias Sociales (CCSS)', 'Desarrollo Familia y Sociedad (PDCC)'].includes(areaName)) colorClass = 'comu';
+                    else colorClass = 'tecnica'; 
+
+                    let cardHtml = `<div class="area-card ${colorClass}"><div class="area-header">${areaName}</div><ul class="teacher-list">`;
+                    teachers.forEach(t => {
+                        const highlight = t.nombre.includes('Martín Chayán') ? 'class="highlight-teacher"' : '';
+                        cardHtml += `<li ${highlight}>${t.nombre}</li>`;
+                    });
+                    cardHtml += `</ul></div>`;
+                    container.innerHTML += cardHtml;
+                }
+            };
+
+            const renderSchedules = () => {
+                const tbody = document.getElementById('padres-schedule-body');
+                tbody.innerHTML = `
+                    <tr><td><strong>Dirección</strong></td><td>Lunes, Miérc. y Viernes</td><td>8:00 AM - 10:00 AM</td></tr>
+                    <tr><td><strong>Coordinación Académica</strong></td><td>Lunes a Viernes</td><td>10:30 AM - 12:30 PM</td></tr>
+                    <tr><td><strong>Psicología</strong></td><td>Martes y Jueves (Cita)</td><td>9:00 AM - 1:00 PM</td></tr>
+                `;
+                teachersDB.forEach(t => {
+                    if(t.dias && t.horas) {
+                        tbody.innerHTML += `<tr><td>${t.nombre} (${t.area})</td><td>${t.dias}</td><td>${t.horas}</td></tr>`;
+                    }
+                });
+            };
+
+            renderTeachers();
+            renderSchedules();
+
+            // --- PORTAL DE ASISTENCIA ---
+            const loginContainer = document.getElementById('login-container');
+            const dataContainer = document.getElementById('data-container');
+            const errorMsg = document.getElementById('login-error');
+            const attendanceBody = document.getElementById('attendance-body');
+            
+            document.getElementById('currentDate').textContent = `Actualizado al: ${new Date().toLocaleDateString('es-PE')}`;
+
+            document.getElementById('btn-ingresar').addEventListener('click', () => {
+                const user = document.getElementById('dni-user').value.trim();
+                const pass = document.getElementById('dni-pass').value.trim();
+                errorMsg.style.display = 'none';
+
+                if(user === '' || user !== pass) {
+                    errorMsg.textContent = 'DNI incorrecto o no coinciden.';
+                    errorMsg.style.display = 'block';
+                    return;
+                }
+
+                const estudiante = studentsDB.find(e => e.dni === user);
+                if(estudiante) {
+                    loginContainer.style.display = 'none';
+                    dataContainer.style.display = 'block';
+                    document.getElementById('student-name').textContent = estudiante.nombre;
+                    document.getElementById('student-dni').textContent = estudiante.dni;
+                    document.getElementById('student-section').textContent = `${estudiante.grado} "${estudiante.seccion}"`;
+                    
+                    attendanceBody.innerHTML = '';
+                    if(estudiante.asistencia.length === 0) {
+                        attendanceBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Sin registros.</td></tr>';
+                    } else {
+                        [...estudiante.asistencia].reverse().forEach(reg => {
+                            let claseBadge = reg.estado === 'Tardanza' ? 'status-tardanza' : (reg.estado === 'Falta' ? 'status-falta' : 'status-presente');
+                            attendanceBody.innerHTML += `<tr><td>${reg.fecha}</td><td><span class="status-badge ${claseBadge}">${reg.estado}</span></td><td>${reg.hora}</td></tr>`;
+                        });
+                    }
+                } else {
+                    errorMsg.textContent = 'Estudiante no encontrado en el sistema.';
+                    errorMsg.style.display = 'block';
+                }
+            });
+
+            document.getElementById('btn-salir').addEventListener('click', () => {
+                dataContainer.style.display = 'none';
+                loginContainer.style.display = 'block';
+                document.getElementById('dni-user').value = '';
+                document.getElementById('dni-pass').value = '';
+            });
+
+            // --- ADMINISTRACIÓN ---
+            const adminLoginContainer = document.getElementById('admin-login-container');
+            const adminDashboardContainer = document.getElementById('admin-dashboard-container');
+            
+            document.getElementById('btn-admin-ingresar').addEventListener('click', () => {
+                const user = document.getElementById('admin-user').value.trim();
+                const pass = document.getElementById('admin-pass').value.trim();
+                if(user === 'admin' && pass === '123456') {
+                    adminLoginContainer.style.display = 'none';
+                    adminDashboardContainer.style.display = 'block';
+                    document.getElementById('asist-fecha').valueAsDate = new Date();
+                } else {
+                    document.getElementById('admin-error').style.display = 'block';
+                }
+            });
+
+            document.getElementById('btn-admin-salir').addEventListener('click', () => {
+                adminDashboardContainer.style.display = 'none';
+                adminLoginContainer.style.display = 'block';
+            });
+
+            document.getElementById('form-docente').addEventListener('submit', (e) => {
+                e.preventDefault();
+                teachersDB.push({
+                    nombre: document.getElementById('doc-nombre').value,
+                    area: document.getElementById('doc-area').value,
+                    dias: document.getElementById('doc-dias').value,
+                    horas: document.getElementById('doc-horas').value
+                });
+                saveDB();
+                renderTeachers();
+                renderSchedules();
                 const msg = document.getElementById('msg-exito-docente');
                 msg.style.display = 'block';
-                btnSubmit.textContent = 'Guardar Información';
-                btnSubmit.disabled = false;
-
                 setTimeout(() => { msg.style.display = 'none'; document.getElementById('form-docente').reset(); }, 3000);
-            } catch (error) {
-                console.error("Error al guardar docente", error);
-            }
-        });
+            });
 
-        // Procesar Excel Masivo y Guardar Asistencias en la Nube
-        document.getElementById('form-asistencia').addEventListener('submit', (e) => {
-            e.preventDefault();
-            if (!currentUser) return; 
-            
-            const btnSubmit = document.getElementById('btn-submit-asistencia');
-            const grado = document.getElementById('asist-grado').value;
-            const seccion = document.getElementById('asist-seccion').value;
-            const fechaInput = document.getElementById('asist-fecha').value;
-            const msg = document.getElementById('msg-exito-asistencia');
-            
-            btnSubmit.textContent = 'Procesando archivo...';
-            btnSubmit.disabled = true;
-            btnSubmit.style.opacity = '0.7';
+            document.getElementById('form-asistencia').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const btnSubmit = document.getElementById('btn-submit-asistencia');
+                const grado = document.getElementById('asist-grado').value;
+                const seccion = document.getElementById('asist-seccion').value;
+                const fechaInput = document.getElementById('asist-fecha').value;
+                const msg = document.getElementById('msg-exito-asistencia');
+                
+                btnSubmit.textContent = 'Procesando archivo...';
+                btnSubmit.disabled = true;
 
-            setTimeout(async () => {
-                let alumnosModificados = 0;
-                
-                for (const student of defaultStudents) {
-                    if(student.grado === grado && student.seccion === seccion) {
-                        
-                        // Evitar duplicados de fecha en la memoria actual
-                        const existe = attendanceDB.some(a => a.dni === student.dni && a.fecha === fechaInput);
-                        if(!existe) {
-                            const estados = ['Presente', 'Presente', 'Presente', 'Tardanza', 'Falta'];
-                            const estadoAsignado = estados[Math.floor(Math.random() * estados.length)];
-                            const horaFormat = (estadoAsignado === 'Falta') ? '--:--' : `07:${Math.floor(Math.random() * 59).toString().padStart(2, '0')} AM`;
-                            
-                            try {
-                                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'attendance'), {
-                                    dni: student.dni,
-                                    fecha: fechaInput,
-                                    estado: estadoAsignado,
-                                    hora: horaFormat,
-                                    timestamp: new Date().toISOString()
-                                });
-                                alumnosModificados++;
-                            } catch (err) { console.error(err); }
-                        }
-                    }
-                }
-
-                btnSubmit.textContent = 'Subir Registro Masivo';
-                btnSubmit.disabled = false;
-                btnSubmit.style.opacity = '1';
-                
-                if(alumnosModificados > 0) {
-                    msg.innerHTML = `✅ Se guardaron en la nube los registros de ${alumnosModificados} estudiante(s) en <strong>${grado} "${seccion}"</strong> para la fecha ${fechaInput}.`;
-                } else {
-                    msg.innerHTML = `⚠️ No se encontraron estudiantes o la fecha ya estaba guardada.`;
-                    msg.style.color = "#d92e2e";
-                }
-                msg.style.display = 'block';
-                
                 setTimeout(() => {
-                    msg.style.display = 'none';
-                    msg.style.color = "var(--accent-green)";
-                    document.getElementById('form-asistencia').reset();
-                    document.getElementById('asist-fecha').valueAsDate = new Date();
-                }, 5000);
-            }, 1500);
+                    let modificados = 0;
+                    studentsDB.forEach(student => {
+                        if(student.grado === grado && student.seccion === seccion) {
+                            if(!student.asistencia.find(a => a.fecha === fechaInput)) {
+                                const estados = ['Presente', 'Presente', 'Presente', 'Tardanza', 'Falta'];
+                                const est = estados[Math.floor(Math.random() * estados.length)];
+                                const hr = est === 'Falta' ? '--:--' : `07:${Math.floor(Math.random() * 59).toString().padStart(2, '0')} AM`;
+                                student.asistencia.push({ fecha: fechaInput, estado: est, hora: hr });
+                                modificados++;
+                            }
+                        }
+                    });
+                    
+                    if (modificados > 0) saveDB();
+
+                    btnSubmit.textContent = 'Subir Registro';
+                    btnSubmit.disabled = false;
+                    
+                    msg.innerHTML = modificados > 0 ? `✅ Actualizados ${modificados} alumnos en ${grado} "${seccion}".` : `⚠️ Sin alumnos o fecha duplicada.`;
+                    msg.style.color = modificados > 0 ? "var(--accent-green)" : "#d92e2e";
+                    msg.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        msg.style.display = 'none';
+                        document.getElementById('form-asistencia').reset();
+                        document.getElementById('asist-fecha').valueAsDate = new Date();
+                    }, 4000);
+                }, 1000);
+            });
         });
     </script>
 </body>
