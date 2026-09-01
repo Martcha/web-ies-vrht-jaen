@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>I.E.S. Víctor Raúl Haya de la Torre - Jaén</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         /* --- Variables de Color --- */
         :root {
@@ -18,142 +19,31 @@
         }
 
         /* --- Reseteo Básico --- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--light-bg); color: var(--dark-text); line-height: 1.6; overflow-x: hidden; }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--light-bg);
-            color: var(--dark-text);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        /* --- Header y Navegación (Centrado y Grande) --- */
-        header {
-            background-color: var(--primary-blue);
-            color: var(--white);
-            padding: 1.5rem 5%;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .logo-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .logo-img {
-            height: 90px;
-            margin-bottom: 10px;
-            border-radius: 50%;
-            border: 3px solid var(--accent-yellow);
-            background: white;
-        }
-
-        .school-name {
-            font-weight: 800;
-            font-size: 2.2rem;
-            line-height: 1.2;
-            text-align: center;
-        }
-
-        .school-name span {
-            color: var(--accent-yellow);
-            display: block;
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-top: 5px;
-        }
-
-        nav ul {
-            list-style: none;
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        nav ul li a {
-            text-decoration: none;
-            color: var(--white);
-            font-weight: 600;
-            padding: 10px 20px;
-            border-radius: 25px;
-            transition: all 0.3s ease;
-            background-color: rgba(255,255,255,0.1);
-            display: block;
-            text-align: center;
-        }
-
-        nav ul li a:hover, nav ul li a.active {
-            background-color: var(--accent-yellow);
-            color: var(--primary-blue);
-            transform: translateY(-3px);
-            box-shadow: 0 4px 8px rgba(242, 201, 0, 0.4);
-        }
+        /* --- Header y Navegación --- */
+        header { background-color: var(--primary-blue); color: var(--white); padding: 1.5rem 5%; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 15px; }
+        .logo-container { display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .logo-img { height: 90px; margin-bottom: 10px; border-radius: 50%; border: 3px solid var(--accent-yellow); background: white; }
+        .school-name { font-weight: 800; font-size: 2.2rem; line-height: 1.2; text-align: center; }
+        .school-name span { color: var(--accent-yellow); display: block; font-size: 1.3rem; font-weight: 600; margin-top: 5px; }
+        
+        nav ul { list-style: none; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        nav ul li a { text-decoration: none; color: var(--white); font-weight: 600; padding: 10px 20px; border-radius: 25px; transition: all 0.3s ease; background-color: rgba(255,255,255,0.1); display: block; text-align: center; }
+        nav ul li a:hover, nav ul li a.active { background-color: var(--accent-yellow); color: var(--primary-blue); transform: translateY(-3px); box-shadow: 0 4px 8px rgba(242, 201, 0, 0.4); }
 
         /* --- Contenedor Principal --- */
-        main {
-            padding: 40px 5%;
-            min-height: 80vh;
-        }
+        main { padding: 40px 5%; min-height: 80vh; }
+        .content-section { display: none; animation: fadeIn 0.5s ease-in-out; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        h2.section-title { color: var(--primary-blue); font-size: 2.5rem; text-align: center; margin-bottom: 40px; position: relative; }
+        h2.section-title::after { content: ''; width: 80px; height: 4px; background: var(--secondary-red); position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); }
+        .card { background: var(--white); padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); margin-bottom: 30px; border-left: 5px solid var(--accent-yellow); }
 
-        .content-section {
-            display: none;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-
-        .content-section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        h2.section-title {
-            color: var(--primary-blue);
-            font-size: 2.5rem;
-            text-align: center;
-            margin-bottom: 40px;
-            position: relative;
-        }
-
-        h2.section-title::after {
-            content: '';
-            width: 80px;
-            height: 4px;
-            background: var(--secondary-red);
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        .card {
-            background: var(--white);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-            margin-bottom: 30px;
-            border-left: 5px solid var(--accent-yellow);
-        }
-
-        /* --- Estilos Específicos por Sección --- */
+        /* --- Estilos por Sección --- */
         #inicio { text-align: center; }
         .hero-logo { width: 200px; height: 200px; margin-bottom: 30px; border-radius: 50%; box-shadow: 0 15px 35px rgba(0,91,172,0.3); }
         .welcome-text h1 { color: var(--primary-blue); font-size: 3rem; margin-bottom: 20px; }
@@ -170,19 +60,13 @@
         .area-card.tecnica .area-header { background: #8e44ad; } 
         .teacher-list { list-style: none; padding: 20px; }
         .teacher-list li { margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-        .teacher-list li:last-child { border-bottom: none; }
         .highlight-teacher { color: var(--secondary-red); font-weight: 700; }
 
-        .schedule-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .schedule-table th, .schedule-table td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+        .schedule-table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); font-size: 0.9rem;}
+        .schedule-table th, .schedule-table td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
         .schedule-table th { background-color: var(--primary-blue); color: white; }
 
-        .attendance-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #eef2f7; padding: 15px; border-radius: 10px; }
-        .date-display { font-weight: bold; color: var(--primary-blue); }
-        .live-indicator { display: inline-block; width: 12px; height: 12px; background: var(--accent-green); border-radius: 50%; margin-right: 8px; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(0,151,57, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(0,151,57, 0); } 100% { box-shadow: 0 0 0 0 rgba(0,151,57, 0); } }
-
-        .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; }
+        .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; display: inline-block;}
         .status-presente { background-color: #d4edda; color: var(--accent-green); }
         .status-tardanza { background-color: #fff3cd; color: #856404; }
         .status-falta { background-color: #f8d7da; color: var(--secondary-red); }
@@ -192,20 +76,24 @@
         .login-btn { background-color: var(--primary-blue); color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; font-weight: 600; width: 100%; transition: 0.3s; }
         .login-btn:hover { background-color: #004685; }
         .error-msg { color: var(--secondary-red); font-size: 0.9rem; margin-top: 10px; display: none; }
-        .student-profile { background: #eef2f7; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: left; border-left: 4px solid var(--primary-blue); }
         .logout-btn { background-color: var(--secondary-red); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; float: right; font-size: 0.9rem;}
 
         .admin-link { border: 2px solid var(--accent-yellow) !important; color: var(--accent-yellow) !important; font-weight: 800 !important; }
         .admin-link:hover, .admin-link.active { background-color: var(--accent-yellow) !important; color: var(--primary-blue) !important; }
-        .admin-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; text-align: left; margin-top: 20px; }
+        .admin-dashboard { display: grid; grid-template-columns: 1fr; gap: 30px; text-align: left; margin-top: 20px; }
+        .admin-panel-section { background: #f4f7f9; padding: 25px; border-radius: 10px; border: 1px solid #e1e8ed; }
         .admin-form-group { margin-bottom: 15px; }
         .admin-form-group label { display: block; font-weight: 600; margin-bottom: 5px; color: var(--primary-blue); }
         .admin-form-group input, .admin-form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; }
-        .success-msg { color: var(--accent-green); font-size: 0.9rem; margin-top: 10px; display: none; font-weight: bold; background: #d4edda; padding: 10px; border-radius: 5px; text-align: center; }
+        .success-msg { color: var(--accent-green); font-size: 0.9rem; margin-top: 10px; display: none; font-weight: bold; text-align: center; }
+
+        /* Botones CRUD */
+        .btn-action { border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.8rem; margin-right: 5px; color: white;}
+        .btn-edit { background-color: var(--accent-yellow); color: var(--primary-blue); }
+        .btn-delete { background-color: var(--secondary-red); }
 
         footer { background: var(--primary-blue); color: white; text-align: center; padding: 20px; margin-top: 40px; }
 
-        /* Responsive */
         @media (max-width: 768px) {
             header { padding: 15px; gap: 10px; }
             .school-name { font-size: 1.5rem; }
@@ -244,7 +132,7 @@
         <section id="inicio" class="content-section active">
             <img src="logo VRHT 1.jpg" alt="Escudo Gigante VRHT" class="hero-logo">
             <div class="welcome-text">
-                <h1>Bienvenidos a la Familia Víctorina</h1>
+                <h1>Bienvenidos a la Familia Haya de la Torre</h1>
                 <p>Un espacio interactivo para nuestros estudiantes. Comprometidos con la educación secundaria de calidad en Jaén desde 1984. ¡Explora tus recursos!</p>
             </div>
         </section>
@@ -270,22 +158,14 @@
 
         <section id="docentes" class="content-section">
             <h2 class="section-title">Plana Docente</h2>
-            <p style="text-align: center; margin-bottom: 20px;">Organización académica por áreas.</p>
             <div class="areas-grid" id="docentes-areas-container"></div>
         </section>
 
         <section id="padres" class="content-section">
             <h2 class="section-title">Atención a Familias</h2>
             <div class="card">
-                <p>Estimados padres de familia, a continuación, los horarios de atención de dirección y coordinación.</p>
                 <table class="schedule-table">
-                    <thead>
-                        <tr>
-                            <th>Dependencia / Docente</th>
-                            <th>Días de Atención</th>
-                            <th>Horario</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Dependencia / Docente</th><th>Días de Atención</th><th>Horario</th></tr></thead>
                     <tbody id="padres-schedule-body"></tbody>
                 </table>
             </div>
@@ -295,28 +175,20 @@
             <h2 class="section-title">Portal de Asistencia</h2>
             <div class="card login-form" id="login-container">
                 <h3>Acceso para Padres</h3>
-                <p style="font-size: 0.9rem; margin-bottom: 15px;">Ingrese el DNI del estudiante como usuario y contraseña.</p>
                 <input type="text" id="dni-user" class="login-input" placeholder="Usuario (DNI)">
                 <input type="password" id="dni-pass" class="login-input" placeholder="Contraseña (DNI)">
                 <button id="btn-ingresar" class="login-btn">Consultar Asistencia</button>
                 <p id="login-error" class="error-msg">DNI incorrecto o no coinciden.</p>
-                <div style="margin-top: 20px; font-size: 0.8rem; color: #666; text-align: left; background: #f9f9f9; padding: 10px; border-radius: 5px;">
-                   // <strong>Datos de prueba:</strong> <em>71234567</em>, <em>72345678</em> o <em>73456789</em>
-                </div>
             </div>
 
             <div class="card" id="data-container" style="display: none;">
                 <button id="btn-salir" class="logout-btn">Cerrar Sesión</button>
-                <div class="student-profile">
+                <div style="background: #eef2f7; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid var(--primary-blue);">
                     <h3 id="student-name">Nombre</h3>
                     <p><strong>DNI:</strong> <span id="student-dni"></span> | <strong>Sección:</strong> <span id="student-section"></span></p>
                 </div>
-                <div class="attendance-header">
-                    <div><span class="live-indicator"></span>Reporte de Asistencia</div>
-                    <div class="date-display" id="currentDate">Fecha: Cargando...</div>
-                </div>
                 <table class="schedule-table">
-                    <thead><tr><th>Fecha</th><th>Estado</th><th>Hora de Registro</th></tr></thead>
+                    <thead><tr><th>Fecha</th><th>Estado</th><th>Hora</th></tr></thead>
                     <tbody id="attendance-body"></tbody>
                 </table>
             </div>
@@ -326,65 +198,26 @@
             <h2 class="section-title">Panel de Administración</h2>
             <div class="card login-form" id="admin-login-container">
                 <h3>Acceso Restringido</h3>
-                <input type="text" id="admin-user" class="login-input" placeholder="Usuario administrador">
-                <input type="password" id="admin-pass" class="login-input" placeholder="Contraseña">
-                <button id="btn-admin-ingresar" class="login-btn">Entrar al Sistema</button>
+                <input type="text" id="admin-user" class="login-input" placeholder="Usuario: admin">
+                <input type="password" id="admin-pass" class="login-input" placeholder="Clave: 123456">
+                <button id="btn-admin-ingresar" class="login-btn">Entrar</button>
                 <p id="admin-error" class="error-msg">Credenciales incorrectas.</p>
-                <div style="margin-top: 20px; font-size: 0.8rem; color: #666; text-align: left; background: #f9f9f9; padding: 10px; border-radius: 5px;">
-                  //  <strong>Credenciales de prueba:</strong> admin | 123456
-                </div>
             </div>
 
             <div class="card" id="admin-dashboard-container" style="display: none;">
-                <button id="btn-admin-salir" class="logout-btn">Cerrar Sesión Segura</button>
-                <h3 style="margin-bottom: 20px; color: var(--primary-blue);">Gestión de Datos Escolares</h3>
+                <button id="btn-admin-salir" class="logout-btn">Cerrar Sesión</button>
+                <h3 style="color: var(--primary-blue);">Gestión Escolar (CRUD)</h3>
+                
                 <div class="admin-dashboard">
-                    <div style="background: #f4f7f9; padding: 20px; border-radius: 10px; border: 1px solid #e1e8ed;">
-                        <h4 style="margin-bottom: 15px; color: var(--secondary-red);">Registrar Asistencia (Masiva)</h4>
-                        <form id="form-asistencia">
-                            <div class="admin-form-group">
-                                <label for="asist-grado">Grado:</label>
-                                <select id="asist-grado" required>
-                                    <option value="" disabled selected>Seleccione...</option>
-                                    <option value="1ro">1ro</option>
-                                    <option value="2do">2do</option>
-                                    <option value="3ro">3ro</option>
-                                    <option value="4to">4to</option>
-                                    <option value="5to">5to</option>
-                                </select>
-                            </div>
-                            <div class="admin-form-group">
-                                <label for="asist-seccion">Sección:</label>
-                                <select id="asist-seccion" required>
-                                    <option value="" disabled selected>Seleccione...</option>
-                                    <option value="A">A</option><option value="B">B</option>
-                                    <option value="C">C</option><option value="D">D</option><option value="E">E</option>
-                                </select>
-                            </div>
-                            <div class="admin-form-group">
-                                <label for="asist-fecha">Fecha:</label>
-                                <input type="date" id="asist-fecha" required>
-                            </div>
-                            <div class="admin-form-group">
-                                <label for="asist-archivo">Nómina (Excel/PDF):</label>
-                                <input type="file" id="asist-archivo" accept=".xlsx, .xls, .csv, .pdf" required style="padding: 5px; background: white;">
-                            </div>
-                            <button type="submit" class="login-btn" id="btn-submit-asistencia" style="background-color: var(--accent-green);">Subir Registro</button>
-                            <p id="msg-exito-asistencia" class="success-msg"></p>
-                        </form>
-                    </div>
-
-                    <div style="background: #f4f7f9; padding: 20px; border-radius: 10px; border: 1px solid #e1e8ed;">
-                        <h4 style="margin-bottom: 15px; color: var(--secondary-red);">Registrar Docente y Horario</h4>
-                        <form id="form-docente">
-                            <div class="admin-form-group">
-                                <label for="doc-nombre">Nombre del Docente:</label>
-                                <input type="text" id="doc-nombre" required placeholder="Ej: Lic. Juan Pérez">
-                            </div>
-                            <div class="admin-form-group">
-                                <label for="doc-area">Área a cargo:</label>
+                    
+                    <div class="admin-panel-section">
+                        <h4 style="color: var(--secondary-red); margin-bottom: 15px;"><i class="fas fa-chalkboard-teacher"></i> Gestión de Plana Docente</h4>
+                        
+                        <form id="form-docente" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                            <input type="hidden" id="edit-doc-index" value="-1">
+                            <div class="admin-form-group"><label>Nombre del Docente:</label><input type="text" id="doc-nombre" required></div>
+                            <div class="admin-form-group"><label>Área a cargo:</label>
                                 <select id="doc-area" required>
-                                    <option value="" disabled selected>Seleccione...</option>
                                     <option value="Matemática">Matemática</option>
                                     <option value="Comunicación">Comunicación</option>
                                     <option value="Inglés">Inglés</option>
@@ -397,18 +230,58 @@
                                     <option value="Religión">Religión</option>
                                 </select>
                             </div>
-                            <div class="admin-form-group">
-                                <label for="doc-dias">Días de Atención:</label>
-                                <input type="text" id="doc-dias" required placeholder="Ej: Lunes y Jueves">
+                            <div class="admin-form-group"><label>Días de Atención:</label><input type="text" id="doc-dias" required></div>
+                            <div class="admin-form-group"><label>Horario:</label><input type="text" id="doc-horas" required></div>
+                            <div style="grid-column: span 2;">
+                                <button type="submit" class="login-btn" id="btn-submit-docente">Guardar Docente</button>
+                                <button type="button" class="login-btn" id="btn-cancel-docente" style="background: #666; margin-top: 10px; display: none;">Cancelar Edición</button>
                             </div>
-                            <div class="admin-form-group">
-                                <label for="doc-horas">Horario:</label>
-                                <input type="text" id="doc-horas" required placeholder="Ej: 10:00 AM - 11:30 AM">
-                            </div>
-                            <button type="submit" class="login-btn">Guardar Información</button>
-                            <p id="msg-exito-docente" class="success-msg">✅ Docente guardado en la memoria.</p>
                         </form>
+
+                        <table class="schedule-table">
+                            <thead><tr><th>Docente</th><th>Área</th><th>Atención</th><th>Acciones</th></tr></thead>
+                            <tbody id="admin-table-docentes"></tbody>
+                        </table>
                     </div>
+
+                    <div class="admin-panel-section">
+                        <h4 style="color: var(--secondary-red); margin-bottom: 15px;"><i class="fas fa-clipboard-check"></i> Gestión de Asistencia Estudiantil</h4>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div style="background: white; padding: 15px; border-radius: 8px;">
+                                <h5>Carga Masiva (Excel/PDF)</h5>
+                                <form id="form-asistencia" style="margin-top: 10px;">
+                                    <div class="admin-form-group"><label>Grado y Sección:</label>
+                                        <div style="display: flex; gap: 10px;">
+                                            <select id="asist-grado" required><option value="1ro">1ro</option><option value="2do">2do</option><option value="3ro">3ro</option><option value="4to">4to</option><option value="5to" selected>5to</option></select>
+                                            <select id="asist-seccion" required><option value="A" selected>A</option><option value="B">B</option><option value="C">C</option></select>
+                                        </div>
+                                    </div>
+                                    <div class="admin-form-group"><label>Fecha:</label><input type="date" id="asist-fecha" required></div>
+                                    <div class="admin-form-group"><label>Archivo:</label><input type="file" required style="padding:5px;"></div>
+                                    <button type="submit" class="login-btn" style="background-color: var(--accent-green);">Procesar Archivo</button>
+                                    <p id="msg-asistencia-masiva" class="success-msg"></p>
+                                </form>
+                            </div>
+
+                            <div style="background: white; padding: 15px; border-radius: 8px;">
+                                <h5>Corregir Asistencia Individual</h5>
+                                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                                    <input type="text" id="admin-search-dni" class="login-input" placeholder="DNI Alumno (Ej: 71234567)" style="margin:0;">
+                                    <button id="btn-search-student" class="login-btn" style="width: auto;">Buscar</button>
+                                </div>
+                                
+                                <div id="admin-student-editor" style="display: none; margin-top: 15px;">
+                                    <strong id="edit-student-name" style="color: var(--primary-blue);"></strong>
+                                    <table class="schedule-table" style="margin-top: 10px;">
+                                        <thead><tr><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead>
+                                        <tbody id="admin-table-asistencia"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </section>
@@ -421,10 +294,9 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             
-            // --- NAVEGACIÓN (Este era el código que se bloqueaba) ---
+            // --- NAVEGACIÓN ---
             const navLinks = document.querySelectorAll('.nav-link');
             const sections = document.querySelectorAll('.content-section');
-
             navLinks.forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault(); 
@@ -439,197 +311,230 @@
 
             // --- BASE DE DATOS LOCAL ---
             const defaultTeachers = [
-                { nombre: 'Lic. Martín Chayán Alache', area: 'Matemática', dias: 'Lunes y Miércoles', horas: '10:00 AM - 11:30 AM' }
+                { nombre: 'Lic. Martín Chayán Alache', area: 'Matemática', dias: 'Lunes y Miércoles', horas: '10:00 AM - 11:30 AM' },
+                { nombre: 'Lic. Rosa Martínez', area: 'Comunicación', dias: 'Martes y Jueves', horas: '08:00 AM - 10:00 AM' }
             ];
-
             const defaultStudents = [
-                { dni: '71234567', nombre: 'Alvarado Rojas, Luis', grado: '5to', seccion: 'A', asistencia: [] },
+                { dni: '71234567', nombre: 'Alvarado Rojas, Luis', grado: '5to', seccion: 'A', asistencia: [{fecha: '2024-10-01', estado: 'Presente', hora: '07:45 AM'}, {fecha: '2024-10-02', estado: 'Falta', hora: '--:--'}] },
                 { dni: '72345678', nombre: 'Benites Quispe, María', grado: '5to', seccion: 'A', asistencia: [] },
-                { dni: '73456789', nombre: 'Carrasco Vega, Jorge', grado: '3ro', seccion: 'B', asistencia: [] },
-                { dni: '74567890', nombre: 'Díaz Guevara, Ana', grado: '3ro', seccion: 'B', asistencia: [] }
             ];
 
-            let teachersDB = JSON.parse(localStorage.getItem('vrht_teachers_v2')) || defaultTeachers;
-            let studentsDB = JSON.parse(localStorage.getItem('vrht_students_v2')) || defaultStudents;
+            let teachersDB = JSON.parse(localStorage.getItem('vrht_teachers_v3')) || defaultTeachers;
+            let studentsDB = JSON.parse(localStorage.getItem('vrht_students_v3')) || defaultStudents;
 
             const saveDB = () => {
-                localStorage.setItem('vrht_teachers_v2', JSON.stringify(teachersDB));
-                localStorage.setItem('vrht_students_v2', JSON.stringify(studentsDB));
+                localStorage.setItem('vrht_teachers_v3', JSON.stringify(teachersDB));
+                localStorage.setItem('vrht_students_v3', JSON.stringify(studentsDB));
+                renderFrontend(); // Actualiza lo que ven los padres/alumnos
+                renderAdminTables(); // Actualiza lo que ve el admin
             };
 
-            // --- GENERACIÓN VISUAL AUTOMÁTICA ---
-            const renderTeachers = () => {
+            // --- RENDERIZADO PÚBLICO (Frontend) ---
+            const renderFrontend = () => {
+                // Docentes
                 const container = document.getElementById('docentes-areas-container');
                 container.innerHTML = ''; 
-
                 const areasMap = {};
-                areasMap['Matemática'] = [{ nombre: 'Lic. Martín Chayán Alache', area: 'Matemática' }];
-
-                teachersDB.forEach(t => {
-                    if(!areasMap[t.area]) areasMap[t.area] = [];
-                    if (!t.nombre.includes('Martín Chayán')) areasMap[t.area].push(t);
-                });
+                teachersDB.forEach(t => { if(!areasMap[t.area]) areasMap[t.area] = []; areasMap[t.area].push(t); });
 
                 for (const [areaName, teachers] of Object.entries(areasMap)) {
-                    let colorClass = '';
-                    if (['Matemática', 'Ciencia y Tecnología'].includes(areaName)) colorClass = 'math';
-                    else if (['Comunicación', 'Inglés', 'Ciencias Sociales (CCSS)', 'Desarrollo Familia y Sociedad (PDCC)'].includes(areaName)) colorClass = 'comu';
-                    else colorClass = 'tecnica'; 
-
+                    let colorClass = ['Matemática', 'Ciencia y Tecnología'].includes(areaName) ? 'math' : (['Comunicación', 'Inglés'].includes(areaName) ? 'comu' : 'tecnica'); 
                     let cardHtml = `<div class="area-card ${colorClass}"><div class="area-header">${areaName}</div><ul class="teacher-list">`;
-                    teachers.forEach(t => {
-                        const highlight = t.nombre.includes('Martín Chayán') ? 'class="highlight-teacher"' : '';
-                        cardHtml += `<li ${highlight}>${t.nombre}</li>`;
-                    });
-                    cardHtml += `</ul></div>`;
-                    container.innerHTML += cardHtml;
+                    teachers.forEach(t => { cardHtml += `<li ${t.nombre.includes('Martín Chayán') ? 'class="highlight-teacher"' : ''}>${t.nombre}</li>`; });
+                    container.innerHTML += cardHtml + `</ul></div>`;
                 }
-            };
 
-            const renderSchedules = () => {
+                // Horarios Padres
                 const tbody = document.getElementById('padres-schedule-body');
-                tbody.innerHTML = `
-                    <tr><td><strong>Dirección</strong></td><td>Lunes, Miérc. y Viernes</td><td>8:00 AM - 10:00 AM</td></tr>
-                    <tr><td><strong>Coordinación Académica</strong></td><td>Lunes a Viernes</td><td>10:30 AM - 12:30 PM</td></tr>
-                    <tr><td><strong>Psicología</strong></td><td>Martes y Jueves (Cita)</td><td>9:00 AM - 1:00 PM</td></tr>
-                `;
-                teachersDB.forEach(t => {
-                    if(t.dias && t.horas) {
-                        tbody.innerHTML += `<tr><td>${t.nombre} (${t.area})</td><td>${t.dias}</td><td>${t.horas}</td></tr>`;
-                    }
-                });
+                tbody.innerHTML = `<tr><td><strong>Dirección</strong></td><td>Lunes, Miérc. y Viernes</td><td>8:00 AM - 10:00 AM</td></tr>`;
+                teachersDB.forEach(t => { tbody.innerHTML += `<tr><td>${t.nombre} (${t.area})</td><td>${t.dias}</td><td>${t.horas}</td></tr>`; });
             };
 
-            renderTeachers();
-            renderSchedules();
-
-            // --- PORTAL DE ASISTENCIA ---
-            const loginContainer = document.getElementById('login-container');
-            const dataContainer = document.getElementById('data-container');
-            const errorMsg = document.getElementById('login-error');
-            const attendanceBody = document.getElementById('attendance-body');
-            
-            document.getElementById('currentDate').textContent = `Actualizado al: ${new Date().toLocaleDateString('es-PE')}`;
-
+            // --- PORTAL DE ASISTENCIA PADRES ---
             document.getElementById('btn-ingresar').addEventListener('click', () => {
-                const user = document.getElementById('dni-user').value.trim();
-                const pass = document.getElementById('dni-pass').value.trim();
-                errorMsg.style.display = 'none';
-
-                if(user === '' || user !== pass) {
-                    errorMsg.textContent = 'DNI incorrecto o no coinciden.';
-                    errorMsg.style.display = 'block';
-                    return;
-                }
-
-                const estudiante = studentsDB.find(e => e.dni === user);
+                const user = document.getElementById('dni-user').value;
+                const errorMsg = document.getElementById('login-error');
+                const estudiante = studentsDB.find(e => e.dni === user && user === document.getElementById('dni-pass').value);
+                
                 if(estudiante) {
-                    loginContainer.style.display = 'none';
-                    dataContainer.style.display = 'block';
+                    document.getElementById('login-container').style.display = 'none';
+                    document.getElementById('data-container').style.display = 'block';
                     document.getElementById('student-name').textContent = estudiante.nombre;
                     document.getElementById('student-dni').textContent = estudiante.dni;
                     document.getElementById('student-section').textContent = `${estudiante.grado} "${estudiante.seccion}"`;
                     
-                    attendanceBody.innerHTML = '';
-                    if(estudiante.asistencia.length === 0) {
-                        attendanceBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Sin registros.</td></tr>';
-                    } else {
-                        [...estudiante.asistencia].reverse().forEach(reg => {
-                            let claseBadge = reg.estado === 'Tardanza' ? 'status-tardanza' : (reg.estado === 'Falta' ? 'status-falta' : 'status-presente');
-                            attendanceBody.innerHTML += `<tr><td>${reg.fecha}</td><td><span class="status-badge ${claseBadge}">${reg.estado}</span></td><td>${reg.hora}</td></tr>`;
+                    const tbody = document.getElementById('attendance-body');
+                    tbody.innerHTML = '';
+                    if(estudiante.asistencia.length === 0) tbody.innerHTML = '<tr><td colspan="3" align="center">Sin registros.</td></tr>';
+                    else {
+                        [...estudiante.asistencia].sort((a,b) => new Date(b.fecha) - new Date(a.fecha)).forEach(reg => {
+                            let badge = reg.estado === 'Tardanza' ? 'status-tardanza' : (reg.estado === 'Falta' ? 'status-falta' : 'status-presente');
+                            tbody.innerHTML += `<tr><td>${reg.fecha}</td><td><span class="status-badge ${badge}">${reg.estado}</span></td><td>${reg.hora}</td></tr>`;
                         });
                     }
-                } else {
-                    errorMsg.textContent = 'Estudiante no encontrado en el sistema.';
-                    errorMsg.style.display = 'block';
-                }
+                } else { errorMsg.style.display = 'block'; }
             });
-
             document.getElementById('btn-salir').addEventListener('click', () => {
-                dataContainer.style.display = 'none';
-                loginContainer.style.display = 'block';
-                document.getElementById('dni-user').value = '';
-                document.getElementById('dni-pass').value = '';
+                document.getElementById('data-container').style.display = 'none';
+                document.getElementById('login-container').style.display = 'block';
             });
 
-            // --- ADMINISTRACIÓN ---
-            const adminLoginContainer = document.getElementById('admin-login-container');
-            const adminDashboardContainer = document.getElementById('admin-dashboard-container');
-            
+            // --- PANEL DE ADMINISTRACIÓN (CRUD) ---
             document.getElementById('btn-admin-ingresar').addEventListener('click', () => {
-                const user = document.getElementById('admin-user').value.trim();
-                const pass = document.getElementById('admin-pass').value.trim();
-                if(user === 'admin' && pass === '123456') {
-                    adminLoginContainer.style.display = 'none';
-                    adminDashboardContainer.style.display = 'block';
+                if(document.getElementById('admin-user').value === 'admin' && document.getElementById('admin-pass').value === '123456') {
+                    document.getElementById('admin-login-container').style.display = 'none';
+                    document.getElementById('admin-dashboard-container').style.display = 'block';
                     document.getElementById('asist-fecha').valueAsDate = new Date();
-                } else {
-                    document.getElementById('admin-error').style.display = 'block';
-                }
+                    renderAdminTables();
+                } else { document.getElementById('admin-error').style.display = 'block'; }
             });
-
             document.getElementById('btn-admin-salir').addEventListener('click', () => {
-                adminDashboardContainer.style.display = 'none';
-                adminLoginContainer.style.display = 'block';
+                document.getElementById('admin-dashboard-container').style.display = 'none';
+                document.getElementById('admin-login-container').style.display = 'block';
             });
 
-            document.getElementById('form-docente').addEventListener('submit', (e) => {
+            // 1. RENDERIZAR TABLAS ADMIN
+            const renderAdminTables = () => {
+                const tbodyDoc = document.getElementById('admin-table-docentes');
+                tbodyDoc.innerHTML = '';
+                teachersDB.forEach((t, index) => {
+                    tbodyDoc.innerHTML += `<tr>
+                        <td><strong>${t.nombre}</strong></td><td>${t.area}</td><td>${t.dias}</td>
+                        <td>
+                            <button class="btn-action btn-edit" onclick="editTeacher(${index})"><i class="fas fa-edit"></i></button>
+                            <button class="btn-action btn-delete" onclick="deleteTeacher(${index})"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+                });
+            };
+
+            // 2. LÓGICA DOCENTES (Crear, Modificar, Eliminar)
+            const formDocente = document.getElementById('form-docente');
+            
+            formDocente.addEventListener('submit', (e) => {
                 e.preventDefault();
-                teachersDB.push({
+                const index = document.getElementById('edit-doc-index').value;
+                const docData = {
                     nombre: document.getElementById('doc-nombre').value,
                     area: document.getElementById('doc-area').value,
                     dias: document.getElementById('doc-dias').value,
                     horas: document.getElementById('doc-horas').value
-                });
+                };
+
+                if (index === "-1") { teachersDB.push(docData); } // Crear
+                else { teachersDB[index] = docData; } // Modificar
+
+                resetDocenteForm();
                 saveDB();
-                renderTeachers();
-                renderSchedules();
-                const msg = document.getElementById('msg-exito-docente');
-                msg.style.display = 'block';
-                setTimeout(() => { msg.style.display = 'none'; document.getElementById('form-docente').reset(); }, 3000);
             });
 
+            window.editTeacher = (index) => {
+                const t = teachersDB[index];
+                document.getElementById('edit-doc-index').value = index;
+                document.getElementById('doc-nombre').value = t.nombre;
+                document.getElementById('doc-area').value = t.area;
+                document.getElementById('doc-dias').value = t.dias;
+                document.getElementById('doc-horas').value = t.horas;
+                document.getElementById('btn-submit-docente').textContent = 'Actualizar Docente';
+                document.getElementById('btn-cancel-docente').style.display = 'inline-block';
+            };
+
+            window.deleteTeacher = (index) => {
+                if(confirm(`¿Seguro que deseas eliminar a ${teachersDB[index].nombre}?`)) {
+                    teachersDB.splice(index, 1);
+                    saveDB();
+                }
+            };
+
+            const resetDocenteForm = () => {
+                formDocente.reset();
+                document.getElementById('edit-doc-index').value = "-1";
+                document.getElementById('btn-submit-docente').textContent = 'Guardar Docente';
+                document.getElementById('btn-cancel-docente').style.display = 'none';
+            };
+            document.getElementById('btn-cancel-docente').addEventListener('click', resetDocenteForm);
+
+            // 3. LÓGICA ASISTENCIA (Crear Masivo, Buscar, Modificar, Eliminar)
             document.getElementById('form-asistencia').addEventListener('submit', (e) => {
                 e.preventDefault();
-                const btnSubmit = document.getElementById('btn-submit-asistencia');
                 const grado = document.getElementById('asist-grado').value;
                 const seccion = document.getElementById('asist-seccion').value;
-                const fechaInput = document.getElementById('asist-fecha').value;
-                const msg = document.getElementById('msg-exito-asistencia');
+                const fecha = document.getElementById('asist-fecha').value;
                 
-                btnSubmit.textContent = 'Procesando archivo...';
-                btnSubmit.disabled = true;
-
-                setTimeout(() => {
-                    let modificados = 0;
-                    studentsDB.forEach(student => {
-                        if(student.grado === grado && student.seccion === seccion) {
-                            if(!student.asistencia.find(a => a.fecha === fechaInput)) {
-                                const estados = ['Presente', 'Presente', 'Presente', 'Tardanza', 'Falta'];
-                                const est = estados[Math.floor(Math.random() * estados.length)];
-                                const hr = est === 'Falta' ? '--:--' : `07:${Math.floor(Math.random() * 59).toString().padStart(2, '0')} AM`;
-                                student.asistencia.push({ fecha: fechaInput, estado: est, hora: hr });
-                                modificados++;
-                            }
-                        }
-                    });
-                    
-                    if (modificados > 0) saveDB();
-
-                    btnSubmit.textContent = 'Subir Registro';
-                    btnSubmit.disabled = false;
-                    
-                    msg.innerHTML = modificados > 0 ? `✅ Actualizados ${modificados} alumnos en ${grado} "${seccion}".` : `⚠️ Sin alumnos o fecha duplicada.`;
-                    msg.style.color = modificados > 0 ? "var(--accent-green)" : "#d92e2e";
-                    msg.style.display = 'block';
-                    
-                    setTimeout(() => {
-                        msg.style.display = 'none';
-                        document.getElementById('form-asistencia').reset();
-                        document.getElementById('asist-fecha').valueAsDate = new Date();
-                    }, 4000);
-                }, 1000);
+                let count = 0;
+                studentsDB.forEach(s => {
+                    if(s.grado === grado && s.seccion === seccion && !s.asistencia.find(a => a.fecha === fecha)) {
+                        s.asistencia.push({ fecha: fecha, estado: 'Presente', hora: '07:30 AM' });
+                        count++;
+                    }
+                });
+                
+                if(count > 0) saveDB();
+                const msg = document.getElementById('msg-asistencia-masiva');
+                msg.textContent = count > 0 ? `✅ Cargados ${count} registros.` : '⚠️ Fecha ya existe o aula vacía.';
+                msg.style.color = count > 0 ? 'var(--accent-green)' : 'var(--secondary-red)';
+                msg.style.display = 'block';
+                setTimeout(() => msg.style.display = 'none', 3000);
             });
+
+            // Administrar Alumno Específico
+            let currentEditDni = null;
+            document.getElementById('btn-search-student').addEventListener('click', () => {
+                const dni = document.getElementById('admin-search-dni').value;
+                const student = studentsDB.find(s => s.dni === dni);
+                const editor = document.getElementById('admin-student-editor');
+                
+                if(student) {
+                    currentEditDni = dni;
+                    document.getElementById('edit-student-name').textContent = `${student.nombre} (${student.grado} "${student.seccion}")`;
+                    renderStudentRecords(student);
+                    editor.style.display = 'block';
+                } else {
+                    alert("Estudiante no encontrado con ese DNI.");
+                    editor.style.display = 'none';
+                }
+            });
+
+            const renderStudentRecords = (student) => {
+                const tbody = document.getElementById('admin-table-asistencia');
+                tbody.innerHTML = '';
+                student.asistencia.forEach((reg, index) => {
+                    let badge = reg.estado === 'Tardanza' ? 'status-tardanza' : (reg.estado === 'Falta' ? 'status-falta' : 'status-presente');
+                    tbody.innerHTML += `<tr>
+                        <td>${reg.fecha}</td>
+                        <td><span class="status-badge ${badge}">${reg.estado}</span></td>
+                        <td>
+                            <button class="btn-action btn-edit" onclick="cycleStatus(${index})" title="Cambiar Estado"><i class="fas fa-sync-alt"></i></button>
+                            <button class="btn-action btn-delete" onclick="deleteRecord(${index})" title="Eliminar"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+                });
+            };
+
+            window.cycleStatus = (recordIndex) => {
+                const student = studentsDB.find(s => s.dni === currentEditDni);
+                const currentStatus = student.asistencia[recordIndex].estado;
+                
+                // Rotar estado: Presente -> Tardanza -> Falta -> Presente
+                let newStatus = currentStatus === 'Presente' ? 'Tardanza' : (currentStatus === 'Tardanza' ? 'Falta' : 'Presente');
+                student.asistencia[recordIndex].estado = newStatus;
+                student.asistencia[recordIndex].hora = newStatus === 'Falta' ? '--:--' : '07:45 AM';
+                
+                saveDB();
+                renderStudentRecords(student); // Re-renderizar la tablita
+            };
+
+            window.deleteRecord = (recordIndex) => {
+                if(confirm("¿Eliminar este registro de asistencia?")) {
+                    const student = studentsDB.find(s => s.dni === currentEditDni);
+                    student.asistencia.splice(recordIndex, 1);
+                    saveDB();
+                    renderStudentRecords(student);
+                }
+            };
+
+            // Inicializar vistas
+            renderFrontend();
         });
     </script>
 </body>
