@@ -238,10 +238,43 @@
                             </div>
                         </form>
 
-                        <table class="schedule-table">
-                            <thead><tr><th>Docente</th><th>Área</th><th>Atención</th><th>Acciones</th></tr></thead>
-                            <tbody id="admin-table-docentes"></tbody>
-                        </table>
+                        <div style="overflow-x: auto;">
+                            <table class="schedule-table">
+                                <thead><tr><th>Docente</th><th>Área</th><th>Atención</th><th>Acciones</th></tr></thead>
+                                <tbody id="admin-table-docentes"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="admin-panel-section">
+                        <h4 style="color: var(--secondary-red); margin-bottom: 15px;"><i class="fas fa-user-graduate"></i> Gestión de Estudiantes (Matrícula)</h4>
+                        
+                        <form id="form-estudiante" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                            <input type="hidden" id="edit-est-index" value="-1">
+                            <div class="admin-form-group"><label>DNI del Estudiante:</label><input type="text" id="est-dni" required pattern="\d{8}" title="Debe contener 8 dígitos"></div>
+                            <div class="admin-form-group"><label>Apellidos y Nombres:</label><input type="text" id="est-nombre" required></div>
+                            <div class="admin-form-group"><label>Grado:</label>
+                                <select id="est-grado" required>
+                                    <option value="1ro">1ro</option><option value="2do">2do</option><option value="3ro">3ro</option><option value="4to">4to</option><option value="5to">5to</option>
+                                </select>
+                            </div>
+                            <div class="admin-form-group"><label>Sección:</label>
+                                <select id="est-seccion" required>
+                                    <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option>
+                                </select>
+                            </div>
+                            <div style="grid-column: span 2;">
+                                <button type="submit" class="login-btn" id="btn-submit-estudiante">Registrar Estudiante</button>
+                                <button type="button" class="login-btn" id="btn-cancel-estudiante" style="background: #666; margin-top: 10px; display: none;">Cancelar Edición</button>
+                            </div>
+                        </form>
+
+                        <div style="overflow-x: auto; max-height: 300px; overflow-y: auto;">
+                            <table class="schedule-table">
+                                <thead style="position: sticky; top: 0;"><tr><th>DNI</th><th>Nombres</th><th>Aula</th><th>Acciones</th></tr></thead>
+                                <tbody id="admin-table-estudiantes"></tbody>
+                            </table>
+                        </div>
                     </div>
 
                     <div class="admin-panel-section">
@@ -273,10 +306,12 @@
                                 
                                 <div id="admin-student-editor" style="display: none; margin-top: 15px;">
                                     <strong id="edit-student-name" style="color: var(--primary-blue);"></strong>
-                                    <table class="schedule-table" style="margin-top: 10px;">
-                                        <thead><tr><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead>
-                                        <tbody id="admin-table-asistencia"></tbody>
-                                    </table>
+                                    <div style="max-height: 200px; overflow-y: auto;">
+                                        <table class="schedule-table" style="margin-top: 10px;">
+                                            <thead><tr><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead>
+                                            <tbody id="admin-table-asistencia"></tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -319,19 +354,18 @@
                 { dni: '72345678', nombre: 'Benites Quispe, María', grado: '5to', seccion: 'A', asistencia: [] },
             ];
 
-            let teachersDB = JSON.parse(localStorage.getItem('vrht_teachers_v3')) || defaultTeachers;
-            let studentsDB = JSON.parse(localStorage.getItem('vrht_students_v3')) || defaultStudents;
+            let teachersDB = JSON.parse(localStorage.getItem('vrht_teachers_v4')) || defaultTeachers;
+            let studentsDB = JSON.parse(localStorage.getItem('vrht_students_v4')) || defaultStudents;
 
             const saveDB = () => {
-                localStorage.setItem('vrht_teachers_v3', JSON.stringify(teachersDB));
-                localStorage.setItem('vrht_students_v3', JSON.stringify(studentsDB));
-                renderFrontend(); // Actualiza lo que ven los padres/alumnos
-                renderAdminTables(); // Actualiza lo que ve el admin
+                localStorage.setItem('vrht_teachers_v4', JSON.stringify(teachersDB));
+                localStorage.setItem('vrht_students_v4', JSON.stringify(studentsDB));
+                renderFrontend(); 
+                renderAdminTables(); 
             };
 
             // --- RENDERIZADO PÚBLICO (Frontend) ---
             const renderFrontend = () => {
-                // Docentes
                 const container = document.getElementById('docentes-areas-container');
                 container.innerHTML = ''; 
                 const areasMap = {};
@@ -344,7 +378,6 @@
                     container.innerHTML += cardHtml + `</ul></div>`;
                 }
 
-                // Horarios Padres
                 const tbody = document.getElementById('padres-schedule-body');
                 tbody.innerHTML = `<tr><td><strong>Dirección</strong></td><td>Lunes, Miérc. y Viernes</td><td>8:00 AM - 10:00 AM</td></tr>`;
                 teachersDB.forEach(t => { tbody.innerHTML += `<tr><td>${t.nombre} (${t.area})</td><td>${t.dias}</td><td>${t.horas}</td></tr>`; });
@@ -395,6 +428,7 @@
 
             // 1. RENDERIZAR TABLAS ADMIN
             const renderAdminTables = () => {
+                // Tabla Docentes
                 const tbodyDoc = document.getElementById('admin-table-docentes');
                 tbodyDoc.innerHTML = '';
                 teachersDB.forEach((t, index) => {
@@ -406,11 +440,23 @@
                         </td>
                     </tr>`;
                 });
+
+                // Tabla Estudiantes
+                const tbodyEst = document.getElementById('admin-table-estudiantes');
+                tbodyEst.innerHTML = '';
+                studentsDB.forEach((s, index) => {
+                    tbodyEst.innerHTML += `<tr>
+                        <td><strong>${s.dni}</strong></td><td>${s.nombre}</td><td>${s.grado} "${s.seccion}"</td>
+                        <td>
+                            <button class="btn-action btn-edit" onclick="editStudent(${index})"><i class="fas fa-edit"></i></button>
+                            <button class="btn-action btn-delete" onclick="deleteStudent(${index})"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+                });
             };
 
             // 2. LÓGICA DOCENTES (Crear, Modificar, Eliminar)
             const formDocente = document.getElementById('form-docente');
-            
             formDocente.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const index = document.getElementById('edit-doc-index').value;
@@ -421,9 +467,7 @@
                     horas: document.getElementById('doc-horas').value
                 };
 
-                if (index === "-1") { teachersDB.push(docData); } // Crear
-                else { teachersDB[index] = docData; } // Modificar
-
+                if (index === "-1") { teachersDB.push(docData); } else { teachersDB[index] = docData; }
                 resetDocenteForm();
                 saveDB();
             });
@@ -454,7 +498,72 @@
             };
             document.getElementById('btn-cancel-docente').addEventListener('click', resetDocenteForm);
 
-            // 3. LÓGICA ASISTENCIA (Crear Masivo, Buscar, Modificar, Eliminar)
+            // 3. NUEVO: LÓGICA ESTUDIANTES (Crear, Modificar, Eliminar)
+            const formEstudiante = document.getElementById('form-estudiante');
+            formEstudiante.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const index = document.getElementById('edit-est-index').value;
+                const newDni = document.getElementById('est-dni').value;
+
+                // Verificar si el DNI ya existe (solo si es nuevo o si se cambió el DNI editando)
+                if (index === "-1" || studentsDB[index].dni !== newDni) {
+                    if (studentsDB.some(s => s.dni === newDni)) {
+                        alert("Error: Ya existe un estudiante registrado con este DNI.");
+                        return;
+                    }
+                }
+
+                if (index === "-1") {
+                    // Crear nuevo estudiante con array de asistencia vacío
+                    studentsDB.push({
+                        dni: newDni,
+                        nombre: document.getElementById('est-nombre').value,
+                        grado: document.getElementById('est-grado').value,
+                        seccion: document.getElementById('est-seccion').value,
+                        asistencia: []
+                    });
+                } else {
+                    // Modificar existente manteniendo su asistencia
+                    studentsDB[index].dni = newDni;
+                    studentsDB[index].nombre = document.getElementById('est-nombre').value;
+                    studentsDB[index].grado = document.getElementById('est-grado').value;
+                    studentsDB[index].seccion = document.getElementById('est-seccion').value;
+                }
+
+                resetEstudianteForm();
+                saveDB();
+            });
+
+            window.editStudent = (index) => {
+                const s = studentsDB[index];
+                document.getElementById('edit-est-index').value = index;
+                document.getElementById('est-dni').value = s.dni;
+                document.getElementById('est-nombre').value = s.nombre;
+                document.getElementById('est-grado').value = s.grado;
+                document.getElementById('est-seccion').value = s.seccion;
+                document.getElementById('btn-submit-estudiante').textContent = 'Actualizar Estudiante';
+                document.getElementById('btn-cancel-estudiante').style.display = 'inline-block';
+                document.getElementById('est-dni').focus();
+            };
+
+            window.deleteStudent = (index) => {
+                if(confirm(`¿Seguro que deseas eliminar definitivamente a ${studentsDB[index].nombre}? Se borrará también su registro de asistencia.`)) {
+                    studentsDB.splice(index, 1);
+                    saveDB();
+                    // Si el estudiante eliminado estaba siendo editado en el panel de asistencia, lo cerramos
+                    document.getElementById('admin-student-editor').style.display = 'none';
+                }
+            };
+
+            const resetEstudianteForm = () => {
+                formEstudiante.reset();
+                document.getElementById('edit-est-index').value = "-1";
+                document.getElementById('btn-submit-estudiante').textContent = 'Registrar Estudiante';
+                document.getElementById('btn-cancel-estudiante').style.display = 'none';
+            };
+            document.getElementById('btn-cancel-estudiante').addEventListener('click', resetEstudianteForm);
+
+            // 4. LÓGICA ASISTENCIA (Crear Masivo, Buscar, Modificar, Eliminar)
             document.getElementById('form-asistencia').addEventListener('submit', (e) => {
                 e.preventDefault();
                 const grado = document.getElementById('asist-grado').value;
@@ -514,14 +623,11 @@
             window.cycleStatus = (recordIndex) => {
                 const student = studentsDB.find(s => s.dni === currentEditDni);
                 const currentStatus = student.asistencia[recordIndex].estado;
-                
-                // Rotar estado: Presente -> Tardanza -> Falta -> Presente
                 let newStatus = currentStatus === 'Presente' ? 'Tardanza' : (currentStatus === 'Tardanza' ? 'Falta' : 'Presente');
                 student.asistencia[recordIndex].estado = newStatus;
                 student.asistencia[recordIndex].hora = newStatus === 'Falta' ? '--:--' : '07:45 AM';
-                
                 saveDB();
-                renderStudentRecords(student); // Re-renderizar la tablita
+                renderStudentRecords(student);
             };
 
             window.deleteRecord = (recordIndex) => {
