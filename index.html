@@ -485,25 +485,82 @@
         <p>© 2026 I.E.S. Víctor Raúl Haya de la Torre - Jaén. Todos los derechos reservados.</p>
     </footer>
 
-    <!-- Firebase SDKs -->
+    <!-- Firebase SDKs y Lógica del Sistema -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, getDocs, onSnapshot, addDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Inicializar Firebase usando variables de entorno globales
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        // =========================================================================
+        // 🔴 CONFIGURACIÓN DE BASE DE DATOS EN LA NUBE (FIREBASE)
+        // =========================================================================
+        let firebaseConfig = {};
+        let isCloudActive = false;
+
+        if (typeof __firebase_config !== 'undefined') {
+            // Entorno de prueba interactivo (Canvas)
+            firebaseConfig = JSON.parse(__firebase_config);
+            isCloudActive = true;
+        } else {
+            // 👇 ENTORNO GITHUB: ¡Martín, aquí debes pegar tu configuración! 👇
+            // 1. Ve a console.firebase.google.com y crea un proyecto gratuito.
+            // 2. Registra una app web (</>) y copia el objeto firebaseConfig.
+            // 3. Reemplaza los valores de abajo con los tuyos.
+            firebaseConfig = {
+                apiKey: "TU_API_KEY",
+                authDomain: "TU_AUTH_DOMAIN",
+                projectId: "TU_PROJECT_ID",
+                storageBucket: "TU_STORAGE_BUCKET",
+                messagingSenderId: "TU_MESSAGING_SENDER_ID",
+                appId: "TU_APP_ID"
+            };
+            
+            if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "TU_API_KEY") {
+                isCloudActive = true; // Activa la nube si detecta que pusiste tus claves
+            } else {
+                console.warn("Nube inactiva: Funcionando con almacenamiento local del navegador para evitar bloqueos.");
+            }
+        }
+
+        let app, auth, db;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'ies-vrht-app';
+
+        if (isCloudActive) {
+            try {
+                app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+            } catch (error) {
+                console.error("Error al inicializar Firebase:", error);
+                isCloudActive = false;
+            }
+        }
 
         let userId = null;
-        let teachersDB = [];
-        let studentsDB = [];
+        
+        // --- BASE DE DATOS LOCAL (Respaldo si no hay nube) ---
+        const defaultTeachers = [
+            { id: "t1", nombre: 'Lic. Martín Chayán Alache', area: 'Matemática', dias: 'Lunes y Miércoles', grado: '5to', seccion: 'A', horas: '10:00 AM - 11:30 AM' },
+            { id: "t2", nombre: 'Lic. Rosa Martínez', area: 'Comunicación', dias: 'Martes y Jueves', grado: '4to', seccion: 'B', horas: '08:00 AM - 10:00 AM' }
+        ];
+        const defaultStudents = [
+            { id: "s1", dni: '71234567', nombre: 'Alvarado Rojas, Luis', grado: '5to', seccion: 'A', asistencia: [{fecha: '2026-09-01', estado: 'Presente', hora: '07:45 AM'}, {fecha: '2026-09-02', estado: 'Falta', hora: '--:--'}] },
+            { id: "s2", dni: '72345678', nombre: 'Benites Quispe, María', grado: '5to', seccion: 'A', asistencia: [] },
+        ];
 
-        // Autenticación obligatoria antes de consultar Firestore (Regla 3)
+        let teachersDB = JSON.parse(localStorage.getItem('vrht_teachers_v7')) || defaultTeachers;
+        let studentsDB = JSON.parse(localStorage.getItem('vrht_students_v7')) || defaultStudents;
+
+        const saveLocalDB = () => {
+            localStorage.setItem('vrht_teachers_v7', JSON.stringify(teachersDB));
+            localStorage.setItem('vrht_students_v7', JSON.stringify(studentsDB));
+            if(window.renderFrontend) window.renderFrontend();
+            if(window.renderAdminTables) window.renderAdminTables();
+        };
+
+        // --- AUTENTICACIÓN EN LA NUBE ---
         const initAuth = async () => {
+            if (!isCloudActive || !auth) return;
             if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                 await signInWithCustomToken(auth, __initial_auth_token);
             } else {
@@ -512,92 +569,98 @@
         };
         initAuth();
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                userId = user.uid;
-                initFirestoreListeners();
-            }
-        });
+        if (auth) {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    userId = user.uid;
+                    initFirestoreListeners();
+                }
+            });
+        }
 
-        // Sincronización en tiempo real con Firestore (Regla 1 y 2)
+        // --- SINCRONIZACIÓN CON FIRESTORE ---
         const initFirestoreListeners = () => {
-            if (!userId) return;
+            if (!userId || !isCloudActive) return;
 
-            // Escuchar colección de Docentes
             const teachersRef = collection(db, 'artifacts', appId, 'public', 'data', 'teachers');
             onSnapshot(teachersRef, (snapshot) => {
                 teachersDB = [];
-                snapshot.forEach((docSnap) => {
-                    teachersDB.push({ id: docSnap.id, ...docSnap.data() });
-                });
+                snapshot.forEach((docSnap) => { teachersDB.push({ id: docSnap.id, ...docSnap.data() }); });
+                
                 if (teachersDB.length === 0) {
-                    // Datos por defecto si está vacío
-                    const defaultTeachers = [
-                        { nombre: 'Lic. Martín Chayán Alache', area: 'Matemática', dias: 'Lunes y Miércoles', grado: '5to', seccion: 'A', horas: '10:00 AM - 11:30 AM' },
-                        { nombre: 'Lic. Rosa Martínez', area: 'Comunicación', dias: 'Martes y Jueves', grado: '4to', seccion: 'B', horas: '08:00 AM - 10:00 AM' }
-                    ];
                     defaultTeachers.forEach(t => addDoc(teachersRef, t));
                 }
-                renderFrontend();
-                renderAdminTables();
-            }, (error) => {
-                console.error("Error cargando docentes:", error);
+                saveLocalDB();
             });
 
-            // Escuchar colección de Estudiantes
             const studentsRef = collection(db, 'artifacts', appId, 'public', 'data', 'students');
             onSnapshot(studentsRef, (snapshot) => {
                 studentsDB = [];
-                snapshot.forEach((docSnap) => {
-                    studentsDB.push({ id: docSnap.id, ...docSnap.data() });
-                });
+                snapshot.forEach((docSnap) => { studentsDB.push({ id: docSnap.id, ...docSnap.data() }); });
+                
                 if (studentsDB.length === 0) {
-                    const defaultStudents = [
-                        { dni: '71234567', nombre: 'Alvarado Rojas, Luis', grado: '5to', seccion: 'A', asistencia: [{fecha: '2026-09-01', estado: 'Presente', hora: '07:45 AM'}, {fecha: '2026-09-02', estado: 'Falta', hora: '--:--'}] },
-                        { dni: '72345678', nombre: 'Benites Quispe, María', grado: '5to', seccion: 'A', asistencia: [] },
-                    ];
                     defaultStudents.forEach(s => addDoc(studentsRef, s));
                 }
-                renderAdminTables();
-            }, (error) => {
-                console.error("Error cargando estudiantes:", error);
+                saveLocalDB();
             });
         };
 
-        // Funciones de guardado en Firestore
+        // --- FUNCIONES DE GUARDADO (NUBE CON RESPALDO LOCAL) ---
         window.saveTeacherToFirestore = async (teacherData, docId = null) => {
-            if (!userId) return;
-            const teachersRef = collection(db, 'artifacts', appId, 'public', 'data', 'teachers');
-            if (docId) {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'teachers', docId), teacherData);
+            if (isCloudActive && db && userId) {
+                const teachersRef = collection(db, 'artifacts', appId, 'public', 'data', 'teachers');
+                if (docId) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'teachers', docId), teacherData);
+                else await addDoc(teachersRef, teacherData);
             } else {
-                await addDoc(teachersRef, teacherData);
+                if (docId) {
+                    const idx = teachersDB.findIndex(t => t.id === docId);
+                    if (idx > -1) teachersDB[idx] = { ...teacherData, id: docId };
+                } else {
+                    teachersDB.push({ ...teacherData, id: Date.now().toString() });
+                }
+                saveLocalDB();
             }
         };
 
         window.deleteTeacherFromFirestore = async (docId) => {
-            if (!userId) return;
-            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'teachers', docId));
+            if (isCloudActive && db && userId) {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'teachers', docId));
+            } else {
+                teachersDB = teachersDB.filter(t => t.id !== docId);
+                saveLocalDB();
+            }
         };
 
         window.saveStudentToFirestore = async (studentData, docId = null) => {
-            if (!userId) return;
-            const studentsRef = collection(db, 'artifacts', appId, 'public', 'data', 'students');
-            if (docId) {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', docId), studentData);
+            if (isCloudActive && db && userId) {
+                const studentsRef = collection(db, 'artifacts', appId, 'public', 'data', 'students');
+                if (docId) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', docId), studentData);
+                else await addDoc(studentsRef, studentData);
             } else {
-                await addDoc(studentsRef, studentData);
+                if (docId) {
+                    const idx = studentsDB.findIndex(s => s.id === docId);
+                    if (idx > -1) studentsDB[idx] = { ...studentData, id: docId };
+                } else {
+                    studentsDB.push({ ...studentData, id: Date.now().toString() });
+                }
+                saveLocalDB();
             }
         };
 
         window.deleteStudentFromFirestore = async (docId) => {
-            if (!userId) return;
-            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', docId));
+            if (isCloudActive && db && userId) {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', docId));
+            } else {
+                studentsDB = studentsDB.filter(s => s.id !== docId);
+                saveLocalDB();
+            }
         };
 
+        // =========================================================================
+        // LÓGICA DE INTERFAZ (UI) Y NAVEGACIÓN
+        // =========================================================================
         document.addEventListener('DOMContentLoaded', () => {
             
-            // --- MODAL PERSONALIZADO ---
             const showModal = (text, onConfirm = null) => {
                 const modal = document.getElementById('custom-modal');
                 const modalText = document.getElementById('custom-modal-text');
@@ -620,7 +683,6 @@
                 }
             };
 
-            // --- NAVEGACIÓN ---
             const navLinks = document.querySelectorAll('.nav-link');
             const sections = document.querySelectorAll('.content-section');
             navLinks.forEach(link => {
@@ -654,7 +716,6 @@
                 });
             });
 
-            // --- RENDERIZADO PÚBLICO (Frontend) ---
             window.renderFrontend = () => {
                 const container = document.getElementById('docentes-areas-container');
                 if (!container) return;
@@ -676,7 +737,6 @@
                 }
             };
 
-            // --- LOGIN PARA HABILITAR MARCAR ASISTENCIA ---
             const loginRegistroEnter = (e) => { if (e.key === 'Enter') document.getElementById('btn-registro-ingresar').click(); };
             document.getElementById('registro-user').addEventListener('keypress', loginRegistroEnter);
             document.getElementById('registro-pass').addEventListener('keypress', loginRegistroEnter);
@@ -700,7 +760,6 @@
                 document.getElementById('registro-pass').value = '';
             });
 
-            // --- LÓGICA: MARCAR ASISTENCIA (ESTUDIANTE) ---
             document.getElementById('reg-asist-dni').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
@@ -775,7 +834,6 @@
                 showMsg(`<strong>${student.nombre}</strong> registró su asistencia ${mensajeEstado}.`, colorEstado);
             });
 
-            // --- PORTAL DE ASISTENCIA PADRES ---
             const loginPadresEnter = (e) => { if (e.key === 'Enter') document.getElementById('btn-ingresar').click(); };
             document.getElementById('dni-user').addEventListener('keypress', loginPadresEnter);
             document.getElementById('dni-pass').addEventListener('keypress', loginPadresEnter);
@@ -813,7 +871,6 @@
                 document.getElementById('login-error').style.display = 'none';
             });
 
-            // --- PANEL DE ADMINISTRACIÓN (CRUD) ---
             const loginAdminEnter = (e) => { if (e.key === 'Enter') document.getElementById('btn-admin-ingresar').click(); };
             document.getElementById('admin-user').addEventListener('keypress', loginAdminEnter);
             document.getElementById('admin-pass').addEventListener('keypress', loginAdminEnter);
@@ -832,7 +889,7 @@
                     document.getElementById('asist-fecha') ? document.getElementById('asist-fecha').value = todayStr : null;
                     document.getElementById('reporte-fecha') ? document.getElementById('reporte-fecha').value = todayStr : null;
                     
-                    renderAdminTables();
+                    if(window.renderAdminTables) window.renderAdminTables();
                 } else { document.getElementById('admin-error').style.display = 'block'; }
             });
             document.getElementById('btn-admin-salir').addEventListener('click', () => {
@@ -843,7 +900,6 @@
                 document.getElementById('admin-error').style.display = 'none';
             });
 
-            // 1. RENDERIZAR TABLAS ADMIN
             window.renderAdminTables = () => {
                 const tbodyDoc = document.getElementById('admin-table-docentes');
                 if (tbodyDoc) {
@@ -874,7 +930,6 @@
                 }
             };
 
-            // 2. LÓGICA DOCENTES
             const formDocente = document.getElementById('form-docente');
             formDocente.addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -925,7 +980,6 @@
             };
             document.getElementById('btn-cancel-docente').addEventListener('click', resetDocenteForm);
 
-            // Carga masiva Docentes
             document.getElementById('form-masivo-docentes').addEventListener('submit', (e) => {
                 e.preventDefault();
                 const fileInput = document.getElementById('masivo-file-docentes');
@@ -965,7 +1019,6 @@
                 reader.readAsArrayBuffer(file);
             });
 
-            // 3. LÓGICA ESTUDIANTES
             const formEstudiante = document.getElementById('form-estudiante');
             formEstudiante.addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -1024,7 +1077,6 @@
             };
             document.getElementById('btn-cancel-estudiante').addEventListener('click', resetEstudianteForm);
 
-            // Carga masiva Estudiantes Excel
             document.getElementById('form-masivo-estudiantes').addEventListener('submit', (e) => {
                 e.preventDefault();
                 const grado = document.getElementById('masivo-grado').value;
@@ -1066,7 +1118,6 @@
                 reader.readAsArrayBuffer(file);
             });
 
-            // 4. LÓGICA ASISTENCIA INDIVIDUAL EN ADMIN
             let currentEditId = null;
             document.getElementById('btn-search-student').addEventListener('click', () => {
                 const dni = document.getElementById('admin-search-dni').value.trim();
@@ -1158,7 +1209,6 @@
                 });
             };
 
-            // --- EXPORTACIÓN (EXCEL Y PDF) ---
             const getReportData = () => {
                 const date = document.getElementById('reporte-fecha').value;
                 const grade = document.getElementById('reporte-grado').value;
@@ -1270,6 +1320,9 @@
 
                 doc.save(`Asistencia_VRHT_${report.date}.pdf`);
             });
+
+            // Llamada inicial para renderizar la página usando datos locales si la nube tarda
+            if(window.renderFrontend) window.renderFrontend();
         });
     </script>
 </body>
