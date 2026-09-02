@@ -160,7 +160,7 @@
 
     <header>
         <div class="logo-container">
-            <img src="https://placehold.co/200x200/005bac/f2c900?text=VRHT" alt="Escudo I.E.S. VRHT" class="logo-img">
+            <img src="logo.jpg" alt="Escudo I.E.S. VRHT" class="logo-img">
             <div class="school-name">
                 I.E.S. Víctor Raúl Haya de la Torre
                 <span>Jaén - Cajamarca</span>
@@ -181,7 +181,7 @@
 
     <main>
         <section id="inicio" class="content-section active">
-            <img src="https://placehold.co/200x200/005bac/f2c900?text=VRHT" alt="Escudo Gigante VRHT" class="hero-logo">
+            <img src="logo.jpg" alt="Escudo Gigante VRHT" class="hero-logo">
             <div class="welcome-text">
                 <h1>Bienvenidos a la Familia Víctorina</h1>
                 <p>Un espacio interactivo para nuestros estudiantes. Comprometidos con la educación secundaria de calidad en Jaén desde 1984. ¡Explora tus recursos!</p>
@@ -222,11 +222,24 @@
             </div>
         </section>
 
-        <!-- NUEVA SECCIÓN: MARCAR ASISTENCIA (ESTUDIANTES) -->
+        <!-- SECCIÓN: MARCAR ASISTENCIA (ESTUDIANTES CON LOGIN PREVIO) -->
         <section id="registro-asistencia" class="content-section">
             <h2 class="section-title">Registro Diario</h2>
-            <div class="card login-form">
-                <h3 style="color: var(--accent-green); margin-bottom: 10px;"><i class="fas fa-clock"></i> Marcar Entrada</h3>
+            
+            <!-- Login para habilitar la toma de asistencia -->
+            <div class="card login-form" id="registro-login-container">
+                <h3>Acceso a Toma de Asistencia</h3>
+                <p style="margin-bottom: 15px; font-size: 0.9rem; color: #666;">Ingrese credenciales para habilitar el registro de estudiantes.</p>
+                <input type="text" id="registro-user" class="login-input" placeholder="Usuario">
+                <input type="password" id="registro-pass" class="login-input" placeholder="Contraseña">
+                <button id="btn-registro-ingresar" class="login-btn">Entrar</button>
+                <p id="registro-error" class="error-msg">Credenciales incorrectas.</p>
+            </div>
+
+            <!-- Formulario real de asistencia (oculto hasta login) -->
+            <div class="card login-form" id="registro-form-container" style="display: none; max-width: 500px;">
+                <button id="btn-registro-salir" class="logout-btn" style="margin-bottom: 15px;">Cerrar Toma de Asistencia</button>
+                <h3 style="color: var(--accent-green); margin-bottom: 10px; clear: both;"><i class="fas fa-clock"></i> Marcar Entrada</h3>
                 <p style="margin-bottom: 20px; font-size: 0.95rem;">Estudiante, ingresa tu DNI y presiona <strong>Enter</strong> para registrar tu asistencia de hoy. <br><i style="color: var(--secondary-red);">Límites: 7:30 AM (1ro y 2do) / 1:25 PM (3ro a 5to).</i></p>
                 <input type="text" id="reg-asist-dni" class="login-input" placeholder="Escribe tu DNI (8 dígitos)" maxlength="8">
                 <button id="btn-registrar-asistencia" class="login-btn" style="background-color: var(--accent-green);">Registrar Asistencia</button>
@@ -245,7 +258,6 @@
                 <button id="btn-ingresar" class="login-btn">Consultar Asistencia</button>
                 <p id="login-error" class="error-msg">DNI incorrecto o no coinciden.</p>
                 <div style="margin-top: 15px; font-size: 0.85rem; color: #666;">
-                    * Datos de prueba: DNI <strong>71234567</strong> / Clave <strong>71234567</strong>
                 </div>
             </div>
 
@@ -271,7 +283,6 @@
                 <button id="btn-admin-ingresar" class="login-btn">Entrar</button>
                 <p id="admin-error" class="error-msg">Credenciales incorrectas.</p>
                 <div style="margin-top: 15px; font-size: 0.85rem; color: #666;">
-                    * Admin: <strong>admin</strong> / Clave: <strong>123456</strong>
                 </div>
             </div>
 
@@ -474,10 +485,119 @@
         <p>© 2026 I.E.S. Víctor Raúl Haya de la Torre - Jaén. Todos los derechos reservados.</p>
     </footer>
 
-    <script>
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, getDocs, onSnapshot, addDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Inicializar Firebase usando variables de entorno globales
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        let userId = null;
+        let teachersDB = [];
+        let studentsDB = [];
+
+        // Autenticación obligatoria antes de consultar Firestore (Regla 3)
+        const initAuth = async () => {
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                await signInWithCustomToken(auth, __initial_auth_token);
+            } else {
+                await signInAnonymously(auth);
+            }
+        };
+        initAuth();
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                userId = user.uid;
+                initFirestoreListeners();
+            }
+        });
+
+        // Sincronización en tiempo real con Firestore (Regla 1 y 2)
+        const initFirestoreListeners = () => {
+            if (!userId) return;
+
+            // Escuchar colección de Docentes
+            const teachersRef = collection(db, 'artifacts', appId, 'public', 'data', 'teachers');
+            onSnapshot(teachersRef, (snapshot) => {
+                teachersDB = [];
+                snapshot.forEach((docSnap) => {
+                    teachersDB.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                if (teachersDB.length === 0) {
+                    // Datos por defecto si está vacío
+                    const defaultTeachers = [
+                        { nombre: 'Lic. Martín Chayán Alache', area: 'Matemática', dias: 'Lunes y Miércoles', grado: '5to', seccion: 'A', horas: '10:00 AM - 11:30 AM' },
+                        { nombre: 'Lic. Rosa Martínez', area: 'Comunicación', dias: 'Martes y Jueves', grado: '4to', seccion: 'B', horas: '08:00 AM - 10:00 AM' }
+                    ];
+                    defaultTeachers.forEach(t => addDoc(teachersRef, t));
+                }
+                renderFrontend();
+                renderAdminTables();
+            }, (error) => {
+                console.error("Error cargando docentes:", error);
+            });
+
+            // Escuchar colección de Estudiantes
+            const studentsRef = collection(db, 'artifacts', appId, 'public', 'data', 'students');
+            onSnapshot(studentsRef, (snapshot) => {
+                studentsDB = [];
+                snapshot.forEach((docSnap) => {
+                    studentsDB.push({ id: docSnap.id, ...docSnap.data() });
+                });
+                if (studentsDB.length === 0) {
+                    const defaultStudents = [
+                        { dni: '71234567', nombre: 'Alvarado Rojas, Luis', grado: '5to', seccion: 'A', asistencia: [{fecha: '2026-09-01', estado: 'Presente', hora: '07:45 AM'}, {fecha: '2026-09-02', estado: 'Falta', hora: '--:--'}] },
+                        { dni: '72345678', nombre: 'Benites Quispe, María', grado: '5to', seccion: 'A', asistencia: [] },
+                    ];
+                    defaultStudents.forEach(s => addDoc(studentsRef, s));
+                }
+                renderAdminTables();
+            }, (error) => {
+                console.error("Error cargando estudiantes:", error);
+            });
+        };
+
+        // Funciones de guardado en Firestore
+        window.saveTeacherToFirestore = async (teacherData, docId = null) => {
+            if (!userId) return;
+            const teachersRef = collection(db, 'artifacts', appId, 'public', 'data', 'teachers');
+            if (docId) {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'teachers', docId), teacherData);
+            } else {
+                await addDoc(teachersRef, teacherData);
+            }
+        };
+
+        window.deleteTeacherFromFirestore = async (docId) => {
+            if (!userId) return;
+            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'teachers', docId));
+        };
+
+        window.saveStudentToFirestore = async (studentData, docId = null) => {
+            if (!userId) return;
+            const studentsRef = collection(db, 'artifacts', appId, 'public', 'data', 'students');
+            if (docId) {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', docId), studentData);
+            } else {
+                await addDoc(studentsRef, studentData);
+            }
+        };
+
+        window.deleteStudentFromFirestore = async (docId) => {
+            if (!userId) return;
+            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', docId));
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
             
-            // --- MODAL PERSONALIZADO (Reemplazo de alert y confirm) ---
+            // --- MODAL PERSONALIZADO ---
             const showModal = (text, onConfirm = null) => {
                 const modal = document.getElementById('custom-modal');
                 const modalText = document.getElementById('custom-modal-text');
@@ -508,21 +628,23 @@
                     e.preventDefault(); 
                     const targetId = link.getAttribute('data-target');
 
-                    // --- NUEVO LOGIC: Cierre automático de sesión al cambiar de pestaña ---
-                    // Resetear vista de Consultas (Padres)
+                    document.getElementById('registro-form-container').style.display = 'none';
+                    document.getElementById('registro-login-container').style.display = 'block';
+                    document.getElementById('registro-user').value = '';
+                    document.getElementById('registro-pass').value = '';
+                    document.getElementById('registro-error').style.display = 'none';
+
                     document.getElementById('data-container').style.display = 'none';
                     document.getElementById('login-container').style.display = 'block';
                     document.getElementById('dni-user').value = '';
                     document.getElementById('dni-pass').value = '';
                     document.getElementById('login-error').style.display = 'none';
                     
-                    // Resetear vista de Administración
                     document.getElementById('admin-dashboard-container').style.display = 'none';
                     document.getElementById('admin-login-container').style.display = 'block';
                     document.getElementById('admin-user').value = '';
                     document.getElementById('admin-pass').value = '';
                     document.getElementById('admin-error').style.display = 'none';
-                    // ------------------------------------------------------------------------
 
                     navLinks.forEach(l => l.classList.remove('active'));
                     sections.forEach(s => s.classList.remove('active'));
@@ -532,29 +654,10 @@
                 });
             });
 
-            // --- BASE DE DATOS LOCAL ---
-            const defaultTeachers = [
-                { nombre: 'Lic. Martín Chayán Alache', area: 'Matemática', dias: 'Lunes y Miércoles', grado: '5to', seccion: 'A', horas: '10:00 AM - 11:30 AM' },
-                { nombre: 'Lic. Rosa Martínez', area: 'Comunicación', dias: 'Martes y Jueves', grado: '4to', seccion: 'B', horas: '08:00 AM - 10:00 AM' }
-            ];
-            const defaultStudents = [
-                { dni: '71234567', nombre: 'Alvarado Rojas, Luis', grado: '5to', seccion: 'A', asistencia: [{fecha: '2026-09-01', estado: 'Presente', hora: '07:45 AM'}, {fecha: '2026-09-02', estado: 'Falta', hora: '--:--'}] },
-                { dni: '72345678', nombre: 'Benites Quispe, María', grado: '5to', seccion: 'A', asistencia: [] },
-            ];
-
-            let teachersDB = JSON.parse(localStorage.getItem('vrht_teachers_v5')) || defaultTeachers;
-            let studentsDB = JSON.parse(localStorage.getItem('vrht_students_v5')) || defaultStudents;
-
-            const saveDB = () => {
-                localStorage.setItem('vrht_teachers_v5', JSON.stringify(teachersDB));
-                localStorage.setItem('vrht_students_v5', JSON.stringify(studentsDB));
-                renderFrontend(); 
-                renderAdminTables(); 
-            };
-
             // --- RENDERIZADO PÚBLICO (Frontend) ---
-            const renderFrontend = () => {
+            window.renderFrontend = () => {
                 const container = document.getElementById('docentes-areas-container');
+                if (!container) return;
                 container.innerHTML = ''; 
                 const areasMap = {};
                 teachersDB.forEach(t => { if(!areasMap[t.area]) areasMap[t.area] = []; areasMap[t.area].push(t); });
@@ -562,17 +665,42 @@
                 for (const [areaName, teachers] of Object.entries(areasMap)) {
                     let colorClass = ['Matemática', 'Ciencia y Tecnología'].includes(areaName) ? 'math' : (['Comunicación', 'Inglés'].includes(areaName) ? 'comu' : 'tecnica'); 
                     let cardHtml = `<div class="area-card ${colorClass}"><div class="area-header">${areaName}</div><ul class="teacher-list">`;
-                    // Añadimos el aula (Grado y Sección) a la vista pública
                     teachers.forEach(t => { cardHtml += `<li ${t.nombre.includes('Martín Chayán') ? 'class="highlight-teacher"' : ''}>${t.nombre} <small style="color:#666;">(${t.grado} "${t.seccion}")</small></li>`; });
                     container.innerHTML += cardHtml + `</ul></div>`;
                 }
 
                 const tbody = document.getElementById('padres-schedule-body');
-                tbody.innerHTML = `<tr><td><strong>Dirección</strong></td><td>Lunes, Miérc. y Viernes</td><td>8:00 AM - 10:00 AM</td></tr>`;
-                teachersDB.forEach(t => { tbody.innerHTML += `<tr><td>${t.nombre} (${t.area} - ${t.grado} "${t.seccion}")</td><td>${t.dias}</td><td>${t.horas}</td></tr>`; });
+                if (tbody) {
+                    tbody.innerHTML = `<tr><td><strong>Dirección</strong></td><td>Lunes, Miérc. y Viernes</td><td>8:00 AM - 10:00 AM</td></tr>`;
+                    teachersDB.forEach(t => { tbody.innerHTML += `<tr><td>${t.nombre} (${t.area} - ${t.grado} "${t.seccion}")</td><td>${t.dias}</td><td>${t.horas}</td></tr>`; });
+                }
             };
 
-            // --- NUEVO: MARCAR ASISTENCIA (ESTUDIANTE) ---
+            // --- LOGIN PARA HABILITAR MARCAR ASISTENCIA ---
+            const loginRegistroEnter = (e) => { if (e.key === 'Enter') document.getElementById('btn-registro-ingresar').click(); };
+            document.getElementById('registro-user').addEventListener('keypress', loginRegistroEnter);
+            document.getElementById('registro-pass').addEventListener('keypress', loginRegistroEnter);
+
+            document.getElementById('btn-registro-ingresar').addEventListener('click', () => {
+                const user = document.getElementById('registro-user').value;
+                const pass = document.getElementById('registro-pass').value;
+                if(user === '16739265' && pass === '16739265') {
+                    document.getElementById('registro-login-container').style.display = 'none';
+                    document.getElementById('registro-form-container').style.display = 'block';
+                    document.getElementById('reg-asist-dni').focus();
+                } else {
+                    document.getElementById('registro-error').style.display = 'block';
+                }
+            });
+
+            document.getElementById('btn-registro-salir').addEventListener('click', () => {
+                document.getElementById('registro-form-container').style.display = 'none';
+                document.getElementById('registro-login-container').style.display = 'block';
+                document.getElementById('registro-user').value = '';
+                document.getElementById('registro-pass').value = '';
+            });
+
+            // --- LÓGICA: MARCAR ASISTENCIA (ESTUDIANTE) ---
             document.getElementById('reg-asist-dni').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
@@ -580,18 +708,17 @@
                 }
             });
 
-            document.getElementById('btn-registrar-asistencia').addEventListener('click', () => {
+            document.getElementById('btn-registrar-asistencia').addEventListener('click', async () => {
                 const dni = document.getElementById('reg-asist-dni').value.trim();
                 const msgBox = document.getElementById('msg-asistencia-rapida');
 
-                // Función auxiliar para mostrar el mensaje sin interrumpir el flujo
                 const showMsg = (text, color = "var(--secondary-red)") => {
                     msgBox.innerHTML = text;
                     msgBox.style.color = color;
                     msgBox.style.display = "block";
-                    document.getElementById('reg-asist-dni').value = ''; // Limpia el recuadro
-                    document.getElementById('reg-asist-dni').focus();    // Lo deja listo para escribir
-                    setTimeout(() => msgBox.style.display = 'none', 4000); // Se oculta en 4 segundos
+                    document.getElementById('reg-asist-dni').value = '';
+                    document.getElementById('reg-asist-dni').focus();
+                    setTimeout(() => msgBox.style.display = 'none', 4000);
                 };
 
                 if (!dni || dni.length !== 8) {
@@ -605,14 +732,12 @@
                     return;
                 }
 
-                // Calcular fecha actual
                 const now = new Date();
                 const year = now.getFullYear();
                 const month = String(now.getMonth() + 1).padStart(2, '0');
                 const day = String(now.getDate()).padStart(2, '0');
                 const currentDate = `${year}-${month}-${day}`;
                 
-                // Calcular hora actual en formato AM/PM
                 let hours = now.getHours();
                 const minutes = String(now.getMinutes()).padStart(2, '0');
                 const ampm = hours >= 12 ? 'PM' : 'AM';
@@ -620,32 +745,30 @@
                 hours = hours ? hours : 12; 
                 const currentTime = `${String(hours).padStart(2, '0')}:${minutes} ${ampm}`;
 
-                // Evitar doble registro en el mismo día
+                if(!student.asistencia) student.asistencia = [];
                 const alreadyRegistered = student.asistencia.find(a => a.fecha === currentDate);
                 if (alreadyRegistered) {
                     showMsg(`<strong>${student.nombre}</strong> ya tiene su asistencia registrada hoy.`);
                     return;
                 }
 
-                // Lógica condicional por grados: 7:30 AM (1ro, 2do) y 1:25 PM (3ro, 4to, 5to)
                 const limitTime = new Date();
                 if (student.grado === '1ro' || student.grado === '2do') {
-                    limitTime.setHours(7, 30, 0, 0); // 7:30 AM
+                    limitTime.setHours(7, 30, 0, 0);
                 } else {
-                    limitTime.setHours(13, 25, 0, 0); // 13:25 -> 1:25 PM
+                    limitTime.setHours(13, 25, 0, 0);
                 }
                 
                 const estado = now > limitTime ? 'Tardanza' : 'Presente';
 
-                // Agregar el registro al array del estudiante
                 student.asistencia.push({
                     fecha: currentDate,
                     estado: estado,
                     hora: currentTime
                 });
 
-                // Guardar en base de datos y mostrar el mensaje final
-                saveDB();
+                await window.saveStudentToFirestore({ asistencia: student.asistencia }, student.id);
+
                 const mensajeEstado = estado === 'Presente' ? 'con éxito' : 'con tardanza';
                 const colorEstado = estado === 'Presente' ? 'var(--accent-green)' : '#d92e2e';
                 
@@ -653,7 +776,6 @@
             });
 
             // --- PORTAL DE ASISTENCIA PADRES ---
-            // Habilitar tecla Enter para el login de padres
             const loginPadresEnter = (e) => { if (e.key === 'Enter') document.getElementById('btn-ingresar').click(); };
             document.getElementById('dni-user').addEventListener('keypress', loginPadresEnter);
             document.getElementById('dni-pass').addEventListener('keypress', loginPadresEnter);
@@ -672,7 +794,7 @@
                     
                     const tbody = document.getElementById('attendance-body');
                     tbody.innerHTML = '';
-                    if(estudiante.asistencia.length === 0) tbody.innerHTML = '<tr><td colspan="4" align="center">Sin registros.</td></tr>';
+                    if(!estudiante.asistencia || estudiante.asistencia.length === 0) tbody.innerHTML = '<tr><td colspan="4" align="center">Sin registros.</td></tr>';
                     else {
                         [...estudiante.asistencia].sort((a,b) => new Date(b.fecha) - new Date(a.fecha)).forEach(reg => {
                             let badge = reg.estado === 'Tardanza' ? 'status-tardanza' : (reg.estado === 'Falta' ? 'status-falta' : (reg.estado === 'Justificado' ? 'status-justificado' : 'status-presente'));
@@ -692,7 +814,6 @@
             });
 
             // --- PANEL DE ADMINISTRACIÓN (CRUD) ---
-            // Habilitar tecla Enter para el login de administrador
             const loginAdminEnter = (e) => { if (e.key === 'Enter') document.getElementById('btn-admin-ingresar').click(); };
             document.getElementById('admin-user').addEventListener('keypress', loginAdminEnter);
             document.getElementById('admin-pass').addEventListener('keypress', loginAdminEnter);
@@ -702,7 +823,6 @@
                     document.getElementById('admin-login-container').style.display = 'none';
                     document.getElementById('admin-dashboard-container').style.display = 'block';
                     
-                    // Obtener la fecha local actual exacta para la carga masiva y reportes
                     const tzDate = new Date();
                     const yyyy = tzDate.getFullYear();
                     const mm = String(tzDate.getMonth() + 1).padStart(2, '0');
@@ -724,39 +844,41 @@
             });
 
             // 1. RENDERIZAR TABLAS ADMIN
-            const renderAdminTables = () => {
-                // Tabla Docentes
+            window.renderAdminTables = () => {
                 const tbodyDoc = document.getElementById('admin-table-docentes');
-                tbodyDoc.innerHTML = '';
-                teachersDB.forEach((t, index) => {
-                    tbodyDoc.innerHTML += `<tr>
-                        <td><strong>${t.nombre}</strong></td><td>${t.area}</td><td>${t.grado} "${t.seccion}"</td><td>${t.dias} (${t.horas})</td>
-                        <td>
-                            <button class="btn-action btn-edit" onclick="editTeacher(${index})"><i class="fas fa-edit"></i></button>
-                            <button class="btn-action btn-delete" onclick="deleteTeacher(${index})"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>`;
-                });
+                if (tbodyDoc) {
+                    tbodyDoc.innerHTML = '';
+                    teachersDB.forEach((t) => {
+                        tbodyDoc.innerHTML += `<tr>
+                            <td><strong>${t.nombre}</strong></td><td>${t.area}</td><td>${t.grado} "${t.seccion}"</td><td>${t.dias} (${t.horas})</td>
+                            <td>
+                                <button class="btn-action btn-edit" onclick="editTeacher('${t.id}')"><i class="fas fa-edit"></i></button>
+                                <button class="btn-action btn-delete" onclick="deleteTeacher('${t.id}')"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>`;
+                    });
+                }
 
-                // Tabla Estudiantes
                 const tbodyEst = document.getElementById('admin-table-estudiantes');
-                tbodyEst.innerHTML = '';
-                studentsDB.forEach((s, index) => {
-                    tbodyEst.innerHTML += `<tr>
-                        <td><strong>${s.dni}</strong></td><td>${s.nombre}</td><td>${s.grado} "${s.seccion}"</td>
-                        <td>
-                            <button class="btn-action btn-edit" onclick="editStudent(${index})"><i class="fas fa-edit"></i></button>
-                            <button class="btn-action btn-delete" onclick="deleteStudent(${index})"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>`;
-                });
+                if (tbodyEst) {
+                    tbodyEst.innerHTML = '';
+                    studentsDB.forEach((s) => {
+                        tbodyEst.innerHTML += `<tr>
+                            <td><strong>${s.dni}</strong></td><td>${s.nombre}</td><td>${s.grado} "${s.seccion}"</td>
+                            <td>
+                                <button class="btn-action btn-edit" onclick="editStudent('${s.id}')"><i class="fas fa-edit"></i></button>
+                                <button class="btn-action btn-delete" onclick="deleteStudent('${s.id}')"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>`;
+                    });
+                }
             };
 
-            // 2. LÓGICA DOCENTES (Crear, Modificar, Eliminar)
+            // 2. LÓGICA DOCENTES
             const formDocente = document.getElementById('form-docente');
-            formDocente.addEventListener('submit', (e) => {
+            formDocente.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const index = document.getElementById('edit-doc-index').value;
+                const docId = document.getElementById('edit-doc-index').value;
                 const docData = {
                     nombre: document.getElementById('doc-nombre').value,
                     area: document.getElementById('doc-area').value,
@@ -766,14 +888,18 @@
                     horas: document.getElementById('doc-horas').value
                 };
 
-                if (index === "-1") { teachersDB.push(docData); } else { teachersDB[index] = docData; }
+                if (docId === "-1") {
+                    await window.saveTeacherToFirestore(docData);
+                } else {
+                    await window.saveTeacherToFirestore(docData, docId);
+                }
                 resetDocenteForm();
-                saveDB();
             });
 
-            window.editTeacher = (index) => {
-                const t = teachersDB[index];
-                document.getElementById('edit-doc-index').value = index;
+            window.editTeacher = (id) => {
+                const t = teachersDB.find(item => item.id === id);
+                if (!t) return;
+                document.getElementById('edit-doc-index').value = t.id;
                 document.getElementById('doc-nombre').value = t.nombre;
                 document.getElementById('doc-area').value = t.area;
                 document.getElementById('doc-dias').value = t.dias;
@@ -784,10 +910,10 @@
                 document.getElementById('btn-cancel-docente').style.display = 'inline-block';
             };
 
-            window.deleteTeacher = (index) => {
-                showModal(`¿Seguro que deseas eliminar a ${teachersDB[index].nombre}?`, () => {
-                    teachersDB.splice(index, 1);
-                    saveDB();
+            window.deleteTeacher = (id) => {
+                const t = teachersDB.find(item => item.id === id);
+                showModal(`¿Seguro que deseas eliminar a ${t ? t.nombre : 'este docente'}?`, async () => {
+                    await window.deleteTeacherFromFirestore(id);
                 });
             };
 
@@ -799,36 +925,25 @@
             };
             document.getElementById('btn-cancel-docente').addEventListener('click', resetDocenteForm);
 
-            // NUEVO: PROCESAR CARGA MASIVA DOCENTES (EXCEL)
+            // Carga masiva Docentes
             document.getElementById('form-masivo-docentes').addEventListener('submit', (e) => {
                 e.preventDefault();
                 const fileInput = document.getElementById('masivo-file-docentes');
                 const file = fileInput.files[0];
-
-                if (!file) {
-                    showModal("Por favor, selecciona un documento Excel.");
-                    return;
-                }
+                if (!file) return;
 
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = async function(e) {
                     try {
                         const data = new Uint8Array(e.target.result);
                         const workbook = XLSX.read(data, {type: 'array'});
-                        const firstSheetName = workbook.SheetNames[0];
-                        const worksheet = workbook.Sheets[firstSheetName];
-                        
+                        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
                         const rows = XLSX.utils.sheet_to_json(worksheet, {header: 1});
 
                         let agregados = 0;
-                        let omitidos = 0;
-
-                        // Empezamos desde i = 1 para saltar la fila de encabezados
                         for (let i = 1; i < rows.length; i++) {
                             const row = rows[i];
                             if (!row || row.length === 0) continue; 
-
-                            // Índices de columna: 0=Nombre, 1=Área, 2=Días, 3=Grado, 4=Sección, 5=Horario
                             let nombre = row[0] ? String(row[0]).trim() : '';
                             let area = row[1] ? String(row[1]).trim() : '';
                             let dias = row[2] ? String(row[2]).trim() : '';
@@ -837,67 +952,53 @@
                             let horas = row[5] ? String(row[5]).trim() : '';
 
                             if (nombre !== '' && area !== '') {
-                                // Prevenir docentes duplicados para la misma aula
-                                const isDuplicate = teachersDB.some(t => t.nombre === nombre && t.grado === grado && t.seccion === seccion);
-                                if (!isDuplicate) {
-                                    teachersDB.push({ nombre, area, dias, grado, seccion, horas });
-                                    agregados++;
-                                } else { 
-                                    omitidos++; 
-                                }
-                            } else { 
-                                if (nombre !== '' || area !== '') omitidos++; 
+                                await window.saveTeacherToFirestore({ nombre, area, dias, grado, seccion, horas });
+                                agregados++;
                             }
                         }
-
-                        saveDB();
-                        fileInput.value = ''; // Limpiar el input
-                        showModal(`Documento Excel de Docentes procesado.\n\n✅ Nuevos registrados: ${agregados}\n⚠️ Omitidos (duplicados o incompletos): ${omitidos}`);
-                        
-                    } catch (error) {
-                        showModal("Error al procesar el archivo. Asegúrate de que sea un archivo de Excel (.xlsx) con la estructura correcta.");
-                        console.error(error);
+                        fileInput.value = '';
+                        showModal(`Carga masiva de docentes completada. Registros nuevos: ${agregados}`);
+                    } catch (err) {
+                        showModal("Error al procesar el archivo Excel de docentes.");
                     }
                 };
                 reader.readAsArrayBuffer(file);
             });
 
-            // 3. LÓGICA ESTUDIANTES (INDIVIDUAL Y MASIVA)
+            // 3. LÓGICA ESTUDIANTES
             const formEstudiante = document.getElementById('form-estudiante');
-            formEstudiante.addEventListener('submit', (e) => {
+            formEstudiante.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const index = document.getElementById('edit-est-index').value;
+                const studentId = document.getElementById('edit-est-index').value;
                 const newDni = document.getElementById('est-dni').value.trim();
 
-                if (index === "-1" || studentsDB[index].dni !== newDni) {
+                const studentData = {
+                    dni: newDni,
+                    nombre: document.getElementById('est-nombre').value,
+                    grado: document.getElementById('est-grado').value,
+                    seccion: document.getElementById('est-seccion').value,
+                    asistencia: []
+                };
+
+                if (studentId === "-1") {
                     if (studentsDB.some(s => s.dni === newDni)) {
                         showModal("Error: Ya existe un estudiante registrado con este DNI.");
                         return;
                     }
-                }
-
-                if (index === "-1") {
-                    studentsDB.push({
-                        dni: newDni,
-                        nombre: document.getElementById('est-nombre').value,
-                        grado: document.getElementById('est-grado').value,
-                        seccion: document.getElementById('est-seccion').value,
-                        asistencia: []
-                    });
+                    await window.saveStudentToFirestore(studentData);
                 } else {
-                    studentsDB[index].dni = newDni;
-                    studentsDB[index].nombre = document.getElementById('est-nombre').value;
-                    studentsDB[index].grado = document.getElementById('est-grado').value;
-                    studentsDB[index].seccion = document.getElementById('est-seccion').value;
+                    const existing = studentsDB.find(item => item.id === studentId);
+                    studentData.asistencia = existing ? existing.asistencia : [];
+                    await window.saveStudentToFirestore(studentData, studentId);
                 }
 
                 resetEstudianteForm();
-                saveDB();
             });
 
-            window.editStudent = (index) => {
-                const s = studentsDB[index];
-                document.getElementById('edit-est-index').value = index;
+            window.editStudent = (id) => {
+                const s = studentsDB.find(item => item.id === id);
+                if (!s) return;
+                document.getElementById('edit-est-index').value = s.id;
                 document.getElementById('est-dni').value = s.dni;
                 document.getElementById('est-nombre').value = s.nombre;
                 document.getElementById('est-grado').value = s.grado;
@@ -907,10 +1008,10 @@
                 document.getElementById('est-dni').focus();
             };
 
-            window.deleteStudent = (index) => {
-                showModal(`¿Seguro que deseas eliminar definitivamente a ${studentsDB[index].nombre}? Se borrará también su registro de asistencia.`, () => {
-                    studentsDB.splice(index, 1);
-                    saveDB();
+            window.deleteStudent = (id) => {
+                const s = studentsDB.find(item => item.id === id);
+                showModal(`¿Seguro que deseas eliminar definitivamente a ${s ? s.nombre : 'este estudiante'}?`, async () => {
+                    await window.deleteStudentFromFirestore(id);
                     document.getElementById('admin-student-editor').style.display = 'none';
                 });
             };
@@ -923,82 +1024,57 @@
             };
             document.getElementById('btn-cancel-estudiante').addEventListener('click', resetEstudianteForm);
 
-            // NUEVO: PROCESAR CARGA MASIVA LEYENDO ARCHIVO EXCEL
+            // Carga masiva Estudiantes Excel
             document.getElementById('form-masivo-estudiantes').addEventListener('submit', (e) => {
                 e.preventDefault();
                 const grado = document.getElementById('masivo-grado').value;
                 const seccion = document.getElementById('masivo-seccion').value;
                 const fileInput = document.getElementById('masivo-file');
                 const file = fileInput.files[0];
-
-                if (!file) {
-                    showModal("Por favor, selecciona un documento Excel.");
-                    return;
-                }
+                if (!file) return;
 
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = async function(e) {
                     try {
                         const data = new Uint8Array(e.target.result);
                         const workbook = XLSX.read(data, {type: 'array'});
-                        const firstSheetName = workbook.SheetNames[0];
-                        const worksheet = workbook.Sheets[firstSheetName];
-                        
-                        // Convertir la hoja de Excel a un arreglo bidimensional (matriz)
+                        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
                         const rows = XLSX.utils.sheet_to_json(worksheet, {header: 1});
 
                         let agregados = 0;
-                        let omitidos = 0; // Por DNI duplicado o formato numérico incorrecto
-
-                        // Empezamos desde i = 1 para saltar la primera fila (los encabezados)
                         for (let i = 1; i < rows.length; i++) {
                             const row = rows[i];
-                            if (!row || row.length === 0) continue; // Saltar filas vacías
-
-                            // Extraer datos usando los índices y asegurarnos de que sean texto (ahora en 3 columnas)
+                            if (!row || row.length === 0) continue; 
                             let dni = row[1] ? String(row[1]).trim() : '';
                             let nombreCompleto = row[2] ? String(row[2]).trim() : '';
 
-                            // Validar que el DNI sea numérico y tenga 8 dígitos
                             if (dni.length === 8 && !isNaN(dni)) {
                                 if (!studentsDB.some(s => s.dni === dni)) {
-                                    studentsDB.push({
-                                        dni: dni,
-                                        nombre: nombreCompleto,
-                                        grado: grado,
-                                        seccion: seccion,
-                                        asistencia: []
+                                    await window.saveStudentToFirestore({
+                                        dni, nombre: nombreCompleto, grado, seccion, asistencia: []
                                     });
                                     agregados++;
-                                } else { omitidos++; }
-                            } else { 
-                                // Si el DNI no cumple, pero hay datos, lo contamos como omitido
-                                if (dni !== '') omitidos++; 
+                                }
                             }
                         }
-
-                        saveDB();
-                        fileInput.value = ''; // Limpiar el cuadro de carga
-                        showModal(`Documento Excel procesado con éxito.\n\n✅ Nuevos estudiantes: ${agregados}\n⚠️ Registros omitidos (ya existían o error de DNI): ${omitidos}`);
-                        
-                    } catch (error) {
-                        showModal("Error al procesar el archivo. Asegúrate de que sea un archivo de Excel válido (.xlsx).");
-                        console.error(error);
+                        fileInput.value = '';
+                        showModal(`Carga masiva de estudiantes completada. Nuevos: ${agregados}`);
+                    } catch (err) {
+                        showModal("Error al procesar el archivo Excel de estudiantes.");
                     }
                 };
                 reader.readAsArrayBuffer(file);
             });
 
-            // 4. LÓGICA ASISTENCIA (Buscar, Modificar, Eliminar)
-            // (Se eliminó la carga masiva ficticia de asistencia; ahora enfocados en estudiantes reales)
-            let currentEditDni = null;
+            // 4. LÓGICA ASISTENCIA INDIVIDUAL EN ADMIN
+            let currentEditId = null;
             document.getElementById('btn-search-student').addEventListener('click', () => {
-                const dni = document.getElementById('admin-search-dni').value;
+                const dni = document.getElementById('admin-search-dni').value.trim();
                 const student = studentsDB.find(s => s.dni === dni);
                 const editor = document.getElementById('admin-student-editor');
                 
                 if(student) {
-                    currentEditDni = dni;
+                    currentEditId = student.id;
                     document.getElementById('edit-student-name').textContent = `${student.nombre} (${student.grado} "${student.seccion}")`;
                     renderStudentRecords(student);
                     editor.style.display = 'block';
@@ -1011,6 +1087,10 @@
             const renderStudentRecords = (student) => {
                 const tbody = document.getElementById('admin-table-asistencia');
                 tbody.innerHTML = '';
+                if (!student.asistencia || student.asistencia.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" align="center">Sin registros de asistencia.</td></tr>';
+                    return;
+                }
                 student.asistencia.forEach((reg, index) => {
                     let badge = reg.estado === 'Tardanza' ? 'status-tardanza' : (reg.estado === 'Falta' ? 'status-falta' : (reg.estado === 'Justificado' ? 'status-justificado' : 'status-presente'));
                     
@@ -1036,8 +1116,9 @@
                 });
             };
 
-            window.updateRecordStatus = (recordIndex, newStatus) => {
-                const student = studentsDB.find(s => s.dni === currentEditDni);
+            window.updateRecordStatus = async (recordIndex, newStatus) => {
+                const student = studentsDB.find(s => s.id === currentEditId);
+                if (!student) return;
                 student.asistencia[recordIndex].estado = newStatus;
                 
                 if (newStatus === 'Falta' || newStatus === 'Justificado') {
@@ -1056,26 +1137,28 @@
                     student.asistencia[recordIndex].fechaJustificacion = `${yyyy}-${mm}-${dd}`;
                 }
                 
-                saveDB();
+                await window.saveStudentToFirestore({ asistencia: student.asistencia }, student.id);
                 renderStudentRecords(student);
             };
 
-            window.updateJustifDate = (recordIndex, newDate) => {
-                const student = studentsDB.find(s => s.dni === currentEditDni);
+            window.updateJustifDate = async (recordIndex, newDate) => {
+                const student = studentsDB.find(s => s.id === currentEditId);
+                if (!student) return;
                 student.asistencia[recordIndex].fechaJustificacion = newDate;
-                saveDB();
+                await window.saveStudentToFirestore({ asistencia: student.asistencia }, student.id);
             };
 
-            window.deleteRecord = (recordIndex) => {
-                showModal("¿Eliminar este registro de asistencia?", () => {
-                    const student = studentsDB.find(s => s.dni === currentEditDni);
+            window.deleteRecord = async (recordIndex) => {
+                showModal("¿Eliminar este registro de asistencia?", async () => {
+                    const student = studentsDB.find(s => s.id === currentEditId);
+                    if (!student) return;
                     student.asistencia.splice(recordIndex, 1);
-                    saveDB();
+                    await window.saveStudentToFirestore({ asistencia: student.asistencia }, student.id);
                     renderStudentRecords(student);
                 });
             };
 
-            // --- NUEVO: LÓGICA DE EXPORTACIÓN (EXCEL Y PDF) ---
+            // --- EXPORTACIÓN (EXCEL Y PDF) ---
             const getReportData = () => {
                 const date = document.getElementById('reporte-fecha').value;
                 const grade = document.getElementById('reporte-grado').value;
@@ -1086,21 +1169,18 @@
                     return null;
                 }
 
-                // Filtrar alumnos por conjunto de Grado y Sección
                 let filteredStudents = studentsDB.filter(s => {
                     let matchGrade = grade === 'Todos' || s.grado === grade;
                     let matchSection = section === 'Todas' || s.seccion === section;
                     return matchGrade && matchSection;
                 });
 
-                // Agrupar matemáticamente en un diccionario { "1ro A": [...], "2do B": [...] }
                 let groupedData = {};
                 filteredStudents.forEach(s => {
                     let key = `${s.grado} "${s.seccion}"`;
                     if(!groupedData[key]) groupedData[key] = [];
                     
-                    // Buscar asistencia de ese estudiante en la fecha indicada
-                    let asist = s.asistencia.find(a => a.fecha === date);
+                    let asist = s.asistencia && s.asistencia.find(a => a.fecha === date);
                     let estado = asist ? asist.estado : 'Falta (No Registrado)';
                     
                     if (estado === 'Justificado' && asist.fechaJustificacion) {
@@ -1128,19 +1208,14 @@
                 }
 
                 const wb = XLSX.utils.book_new();
-                
-                // Ordenar los grupos para que las pestañas del Excel salgan ordenadas
                 const sortedGroups = Object.keys(report.data).sort();
 
                 sortedGroups.forEach(groupName => {
                     let students = report.data[groupName];
-                    students.sort((a,b) => a.Nombres.localeCompare(b.Nombres)); // Orden alfabético
-                    
-                    // Mapeo para añadir columna "N°"
+                    students.sort((a,b) => a.Nombres.localeCompare(b.Nombres));
                     const exportData = students.map((s, i) => ({ "N°": i + 1, ...s }));
-                    
                     const ws = XLSX.utils.json_to_sheet(exportData);
-                    XLSX.utils.book_append_sheet(wb, ws, groupName.substring(0, 31)); // Límite de 31 chars por hoja
+                    XLSX.utils.book_append_sheet(wb, ws, groupName.substring(0, 31));
                 });
                 
                 XLSX.writeFile(wb, `Asistencia_VRHT_${report.date}.xlsx`);
@@ -1160,14 +1235,13 @@
                 const sortedGroups = Object.keys(report.data).sort();
 
                 sortedGroups.forEach(groupName => {
-                    if(!firstPage) doc.addPage(); // Generar salto de página por cada aula
+                    if(!firstPage) doc.addPage();
                     firstPage = false;
 
                     const students = report.data[groupName].sort((a,b) => a.Nombres.localeCompare(b.Nombres));
                     
-                    // Encabezado del PDF
                     doc.setFontSize(16);
-                    doc.setTextColor(0, 91, 172); // var(--primary-blue)
+                    doc.setTextColor(0, 91, 172);
                     doc.text(`Reporte de Asistencia Diario - I.E.S. VRHT`, 14, 20);
                     
                     doc.setFontSize(12);
@@ -1175,7 +1249,6 @@
                     doc.text(`Fecha Registrada: ${report.date}`, 14, 30);
                     doc.text(`Grado y Sección: ${groupName}`, 14, 38);
 
-                    // Preparar matriz de datos para la tabla
                     const tableData = students.map((s, index) => [
                         index + 1,
                         s.DNI,
@@ -1184,7 +1257,6 @@
                         s.Hora
                     ]);
 
-                    // Dibujar la tabla
                     doc.autoTable({
                         startY: 45,
                         head: [['N°', 'DNI', 'Apellidos y Nombres', 'Estado', 'Hora']],
@@ -1198,9 +1270,6 @@
 
                 doc.save(`Asistencia_VRHT_${report.date}.pdf`);
             });
-
-            // Inicializar vistas
-            renderFrontend();
         });
     </script>
 </body>
