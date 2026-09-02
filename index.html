@@ -485,210 +485,74 @@
         <p>© 2026 I.E.S. Víctor Raúl Haya de la Torre - Jaén. Todos los derechos reservados.</p>
     </footer>
 
-    <!-- Firebase SDKs y Lógica del Sistema -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, getDocs, onSnapshot, addDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
+    <!-- LÓGICA DEL SISTEMA Y CONEXIÓN CON GOOGLE SHEETS -->
+    <script>
         // =========================================================================
-        // 🔴 CONFIGURACIÓN DE BASE DE DATOS EN LA NUBE (FIREBASE)
+        // 🟢 CONFIGURACIÓN DE BASE DE DATOS EN LA NUBE (GOOGLE SHEETS)
         // =========================================================================
-        let firebaseConfig = {};
-        let isCloudActive = false;
-
-        if (typeof __firebase_config !== 'undefined') {
-            // Entorno de prueba interactivo (Canvas)
-            firebaseConfig = JSON.parse(__firebase_config);
-            isCloudActive = true;
-        } else {
-            // 👇 ENTORNO GITHUB: ¡Martín, aquí debes pegar tu configuración! 👇
-            // 1. Ve a console.firebase.google.com y crea un proyecto gratuito.
-            // 2. Registra una app web (</>) y copia el objeto firebaseConfig.
-            // 3. Reemplaza los valores de abajo con los tuyos.
-            firebaseConfig = {
-                apiKey: "import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-
-// Replace with your actual configuration from your Firebase Console project settings
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "ies-vrht.firebaseapp.com",
-  projectId: "ies-vrht",
-  storageBucket: "ies-vrht.firebasestorage.app",
-  messagingSenderId: "716783585706",
-  appId: "YOUR_APP_ID"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-
-// Initialize Cloud Firestore and get a reference to the service
-const db = getFirestore(app);
-",
-                authDomain: "TU_AUTH_DOMAIN",
-                projectId: "TU_PROJECT_ID",
-                storageBucket: "TU_STORAGE_BUCKET",
-                messagingSenderId: "TU_MESSAGING_SENDER_ID",
-                appId: "TU_APP_ID"
-            };
-            
-            if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-
-// Replace with your actual configuration from your Firebase Console project settings
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "ies-vrht.firebaseapp.com",
-  projectId: "ies-vrht",
-  storageBucket: "ies-vrht.firebasestorage.app",
-  messagingSenderId: "716783585706",
-  appId: "YOUR_APP_ID"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-
-// Initialize Cloud Firestore and get a reference to the service
-const db = getFirestore(app);
-") {
-                isCloudActive = true; // Activa la nube si detecta que pusiste tus claves
-            } else {
-                console.warn("Nube inactiva: Funcionando con almacenamiento local del navegador para evitar bloqueos.");
-            }
-        }
-
-        let app, auth, db;
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'ies-vrht-app';
-
-        if (isCloudActive) {
-            try {
-                app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-            } catch (error) {
-                console.error("Error al inicializar Firebase:", error);
-                isCloudActive = false;
-            }
-        }
-
-        let userId = null;
+        // 👇 ENTORNO GITHUB: ¡Martín, aquí debes pegar el enlace de tu Google Apps Script! 👇
+        const SCRIPT_URL = "TU_ENLACE_DE_APPS_SCRIPT_AQUI";
         
-        // --- BASE DE DATOS LOCAL (Respaldo si no hay nube) ---
+        let isCloudActive = SCRIPT_URL !== "TU_ENLACE_DE_APPS_SCRIPT_AQUI" && SCRIPT_URL !== "";
+
+        // Datos por defecto
         const defaultTeachers = [
             { id: "t1", nombre: 'Lic. Martín Chayán Alache', area: 'Matemática', dias: 'Lunes y Miércoles', grado: '5to', seccion: 'A', horas: '10:00 AM - 11:30 AM' },
             { id: "t2", nombre: 'Lic. Rosa Martínez', area: 'Comunicación', dias: 'Martes y Jueves', grado: '4to', seccion: 'B', horas: '08:00 AM - 10:00 AM' }
         ];
         const defaultStudents = [
-            { id: "s1", dni: '71234567', nombre: 'Alvarado Rojas, Luis', grado: '5to', seccion: 'A', asistencia: [{fecha: '2026-09-01', estado: 'Presente', hora: '07:45 AM'}, {fecha: '2026-09-02', estado: 'Falta', hora: '--:--'}] },
+            { id: "s1", dni: '71234567', nombre: 'Alvarado Rojas, Luis', grado: '5to', seccion: 'A', asistencia: [{fecha: '2026-09-01', estado: 'Presente', hora: '07:45 AM', fechaJustificacion: null}, {fecha: '2026-09-02', estado: 'Falta', hora: '--:--', fechaJustificacion: null}] },
             { id: "s2", dni: '72345678', nombre: 'Benites Quispe, María', grado: '5to', seccion: 'A', asistencia: [] },
         ];
 
-        let teachersDB = JSON.parse(localStorage.getItem('vrht_teachers_v7')) || defaultTeachers;
-        let studentsDB = JSON.parse(localStorage.getItem('vrht_students_v7')) || defaultStudents;
+        // 1. Cargar caché local primero para que la web sea rapidísima
+        let teachersDB = JSON.parse(localStorage.getItem('vrht_teachers_gs')) || defaultTeachers;
+        let studentsDB = JSON.parse(localStorage.getItem('vrht_students_gs')) || defaultStudents;
 
-        const saveLocalDB = () => {
-            localStorage.setItem('vrht_teachers_v7', JSON.stringify(teachersDB));
-            localStorage.setItem('vrht_students_v7', JSON.stringify(studentsDB));
+        // 2. Función para sincronizar hacia Google Sheets
+        const saveDB = async () => {
+            // Guardado instantáneo en el equipo
+            localStorage.setItem('vrht_teachers_gs', JSON.stringify(teachersDB));
+            localStorage.setItem('vrht_students_gs', JSON.stringify(studentsDB));
+            
+            // Actualizar la pantalla
             if(window.renderFrontend) window.renderFrontend();
             if(window.renderAdminTables) window.renderAdminTables();
-        };
 
-        // --- AUTENTICACIÓN EN LA NUBE ---
-        const initAuth = async () => {
-            if (!isCloudActive || !auth) return;
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-                await signInAnonymously(auth);
+            // Guardado en la nube en segundo plano (si está configurado)
+            if (isCloudActive) {
+                try {
+                    await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            action: 'save',
+                            teachers: teachersDB,
+                            students: studentsDB
+                        })
+                    });
+                } catch (error) {
+                    console.error("Error sincronizando con Google Sheets:", error);
+                }
             }
         };
-        initAuth();
 
-        if (auth) {
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    userId = user.uid;
-                    initFirestoreListeners();
-                }
-            });
-        }
-
-        // --- SINCRONIZACIÓN CON FIRESTORE ---
-        const initFirestoreListeners = () => {
-            if (!userId || !isCloudActive) return;
-
-            const teachersRef = collection(db, 'artifacts', appId, 'public', 'data', 'teachers');
-            onSnapshot(teachersRef, (snapshot) => {
-                teachersDB = [];
-                snapshot.forEach((docSnap) => { teachersDB.push({ id: docSnap.id, ...docSnap.data() }); });
+        // 3. Función para descargar desde Google Sheets al entrar a la página
+        const loadFromCloud = async () => {
+            if (!isCloudActive) return;
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json();
                 
-                if (teachersDB.length === 0) {
-                    defaultTeachers.forEach(t => addDoc(teachersRef, t));
-                }
-                saveLocalDB();
-            });
-
-            const studentsRef = collection(db, 'artifacts', appId, 'public', 'data', 'students');
-            onSnapshot(studentsRef, (snapshot) => {
-                studentsDB = [];
-                snapshot.forEach((docSnap) => { studentsDB.push({ id: docSnap.id, ...docSnap.data() }); });
+                if (data.teachers && data.teachers.length > 0) teachersDB = data.teachers;
+                if (data.students && data.students.length > 0) studentsDB = data.students;
                 
-                if (studentsDB.length === 0) {
-                    defaultStudents.forEach(s => addDoc(studentsRef, s));
-                }
-                saveLocalDB();
-            });
-        };
-
-        // --- FUNCIONES DE GUARDADO (NUBE CON RESPALDO LOCAL) ---
-        window.saveTeacherToFirestore = async (teacherData, docId = null) => {
-            if (isCloudActive && db && userId) {
-                const teachersRef = collection(db, 'artifacts', appId, 'public', 'data', 'teachers');
-                if (docId) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'teachers', docId), teacherData);
-                else await addDoc(teachersRef, teacherData);
-            } else {
-                if (docId) {
-                    const idx = teachersDB.findIndex(t => t.id === docId);
-                    if (idx > -1) teachersDB[idx] = { ...teacherData, id: docId };
-                } else {
-                    teachersDB.push({ ...teacherData, id: Date.now().toString() });
-                }
-                saveLocalDB();
-            }
-        };
-
-        window.deleteTeacherFromFirestore = async (docId) => {
-            if (isCloudActive && db && userId) {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'teachers', docId));
-            } else {
-                teachersDB = teachersDB.filter(t => t.id !== docId);
-                saveLocalDB();
-            }
-        };
-
-        window.saveStudentToFirestore = async (studentData, docId = null) => {
-            if (isCloudActive && db && userId) {
-                const studentsRef = collection(db, 'artifacts', appId, 'public', 'data', 'students');
-                if (docId) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', docId), studentData);
-                else await addDoc(studentsRef, studentData);
-            } else {
-                if (docId) {
-                    const idx = studentsDB.findIndex(s => s.id === docId);
-                    if (idx > -1) studentsDB[idx] = { ...studentData, id: docId };
-                } else {
-                    studentsDB.push({ ...studentData, id: Date.now().toString() });
-                }
-                saveLocalDB();
-            }
-        };
-
-        window.deleteStudentFromFirestore = async (docId) => {
-            if (isCloudActive && db && userId) {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'students', docId));
-            } else {
-                studentsDB = studentsDB.filter(s => s.id !== docId);
-                saveLocalDB();
+                localStorage.setItem('vrht_teachers_gs', JSON.stringify(teachersDB));
+                localStorage.setItem('vrht_students_gs', JSON.stringify(studentsDB));
+                
+                if(window.renderFrontend) window.renderFrontend();
+                if(window.renderAdminTables) window.renderAdminTables();
+            } catch (error) {
+                console.error("No se pudo cargar desde la nube. Usando datos locales.", error);
             }
         };
 
@@ -803,7 +667,7 @@ const db = getFirestore(app);
                 }
             });
 
-            document.getElementById('btn-registrar-asistencia').addEventListener('click', async () => {
+            document.getElementById('btn-registrar-asistencia').addEventListener('click', () => {
                 const dni = document.getElementById('reg-asist-dni').value.trim();
                 const msgBox = document.getElementById('msg-asistencia-rapida');
 
@@ -862,7 +726,8 @@ const db = getFirestore(app);
                     hora: currentTime
                 });
 
-                await window.saveStudentToFirestore({ asistencia: student.asistencia }, student.id);
+                // Iniciar guardado general
+                saveDB();
 
                 const mensajeEstado = estado === 'Presente' ? 'con éxito' : 'con tardanza';
                 const colorEstado = estado === 'Presente' ? 'var(--accent-green)' : '#d92e2e';
@@ -967,7 +832,7 @@ const db = getFirestore(app);
             };
 
             const formDocente = document.getElementById('form-docente');
-            formDocente.addEventListener('submit', async (e) => {
+            formDocente.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const docId = document.getElementById('edit-doc-index').value;
                 const docData = {
@@ -980,11 +845,13 @@ const db = getFirestore(app);
                 };
 
                 if (docId === "-1") {
-                    await window.saveTeacherToFirestore(docData);
+                    teachersDB.push({ ...docData, id: Date.now().toString() });
                 } else {
-                    await window.saveTeacherToFirestore(docData, docId);
+                    const idx = teachersDB.findIndex(t => t.id === docId);
+                    if (idx > -1) teachersDB[idx] = { ...docData, id: docId };
                 }
                 resetDocenteForm();
+                saveDB();
             });
 
             window.editTeacher = (id) => {
@@ -1003,8 +870,9 @@ const db = getFirestore(app);
 
             window.deleteTeacher = (id) => {
                 const t = teachersDB.find(item => item.id === id);
-                showModal(`¿Seguro que deseas eliminar a ${t ? t.nombre : 'este docente'}?`, async () => {
-                    await window.deleteTeacherFromFirestore(id);
+                showModal(`¿Seguro que deseas eliminar a ${t ? t.nombre : 'este docente'}?`, () => {
+                    teachersDB = teachersDB.filter(item => item.id !== id);
+                    saveDB();
                 });
             };
 
@@ -1023,7 +891,7 @@ const db = getFirestore(app);
                 if (!file) return;
 
                 const reader = new FileReader();
-                reader.onload = async function(e) {
+                reader.onload = function(e) {
                     try {
                         const data = new Uint8Array(e.target.result);
                         const workbook = XLSX.read(data, {type: 'array'});
@@ -1042,11 +910,12 @@ const db = getFirestore(app);
                             let horas = row[5] ? String(row[5]).trim() : '';
 
                             if (nombre !== '' && area !== '') {
-                                await window.saveTeacherToFirestore({ nombre, area, dias, grado, seccion, horas });
+                                teachersDB.push({ id: Date.now().toString() + i, nombre, area, dias, grado, seccion, horas });
                                 agregados++;
                             }
                         }
                         fileInput.value = '';
+                        saveDB();
                         showModal(`Carga masiva de docentes completada. Registros nuevos: ${agregados}`);
                     } catch (err) {
                         showModal("Error al procesar el archivo Excel de docentes.");
@@ -1056,7 +925,7 @@ const db = getFirestore(app);
             });
 
             const formEstudiante = document.getElementById('form-estudiante');
-            formEstudiante.addEventListener('submit', async (e) => {
+            formEstudiante.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const studentId = document.getElementById('edit-est-index').value;
                 const newDni = document.getElementById('est-dni').value.trim();
@@ -1074,14 +943,16 @@ const db = getFirestore(app);
                         showModal("Error: Ya existe un estudiante registrado con este DNI.");
                         return;
                     }
-                    await window.saveStudentToFirestore(studentData);
+                    studentsDB.push({ ...studentData, id: Date.now().toString() });
                 } else {
-                    const existing = studentsDB.find(item => item.id === studentId);
-                    studentData.asistencia = existing ? existing.asistencia : [];
-                    await window.saveStudentToFirestore(studentData, studentId);
+                    const idx = studentsDB.findIndex(item => item.id === studentId);
+                    if (idx > -1) {
+                        studentData.asistencia = studentsDB[idx].asistencia;
+                        studentsDB[idx] = { ...studentData, id: studentId };
+                    }
                 }
-
                 resetEstudianteForm();
+                saveDB();
             });
 
             window.editStudent = (id) => {
@@ -1099,8 +970,9 @@ const db = getFirestore(app);
 
             window.deleteStudent = (id) => {
                 const s = studentsDB.find(item => item.id === id);
-                showModal(`¿Seguro que deseas eliminar definitivamente a ${s ? s.nombre : 'este estudiante'}?`, async () => {
-                    await window.deleteStudentFromFirestore(id);
+                showModal(`¿Seguro que deseas eliminar definitivamente a ${s ? s.nombre : 'este estudiante'}?`, () => {
+                    studentsDB = studentsDB.filter(item => item.id !== id);
+                    saveDB();
                     document.getElementById('admin-student-editor').style.display = 'none';
                 });
             };
@@ -1122,7 +994,7 @@ const db = getFirestore(app);
                 if (!file) return;
 
                 const reader = new FileReader();
-                reader.onload = async function(e) {
+                reader.onload = function(e) {
                     try {
                         const data = new Uint8Array(e.target.result);
                         const workbook = XLSX.read(data, {type: 'array'});
@@ -1138,7 +1010,8 @@ const db = getFirestore(app);
 
                             if (dni.length === 8 && !isNaN(dni)) {
                                 if (!studentsDB.some(s => s.dni === dni)) {
-                                    await window.saveStudentToFirestore({
+                                    studentsDB.push({
+                                        id: Date.now().toString() + i,
                                         dni, nombre: nombreCompleto, grado, seccion, asistencia: []
                                     });
                                     agregados++;
@@ -1146,6 +1019,7 @@ const db = getFirestore(app);
                             }
                         }
                         fileInput.value = '';
+                        saveDB();
                         showModal(`Carga masiva de estudiantes completada. Nuevos: ${agregados}`);
                     } catch (err) {
                         showModal("Error al procesar el archivo Excel de estudiantes.");
@@ -1203,7 +1077,7 @@ const db = getFirestore(app);
                 });
             };
 
-            window.updateRecordStatus = async (recordIndex, newStatus) => {
+            window.updateRecordStatus = (recordIndex, newStatus) => {
                 const student = studentsDB.find(s => s.id === currentEditId);
                 if (!student) return;
                 student.asistencia[recordIndex].estado = newStatus;
@@ -1224,23 +1098,23 @@ const db = getFirestore(app);
                     student.asistencia[recordIndex].fechaJustificacion = `${yyyy}-${mm}-${dd}`;
                 }
                 
-                await window.saveStudentToFirestore({ asistencia: student.asistencia }, student.id);
+                saveDB();
                 renderStudentRecords(student);
             };
 
-            window.updateJustifDate = async (recordIndex, newDate) => {
+            window.updateJustifDate = (recordIndex, newDate) => {
                 const student = studentsDB.find(s => s.id === currentEditId);
                 if (!student) return;
                 student.asistencia[recordIndex].fechaJustificacion = newDate;
-                await window.saveStudentToFirestore({ asistencia: student.asistencia }, student.id);
+                saveDB();
             };
 
-            window.deleteRecord = async (recordIndex) => {
-                showModal("¿Eliminar este registro de asistencia?", async () => {
+            window.deleteRecord = (recordIndex) => {
+                showModal("¿Eliminar este registro de asistencia?", () => {
                     const student = studentsDB.find(s => s.id === currentEditId);
                     if (!student) return;
                     student.asistencia.splice(recordIndex, 1);
-                    await window.saveStudentToFirestore({ asistencia: student.asistencia }, student.id);
+                    saveDB();
                     renderStudentRecords(student);
                 });
             };
@@ -1357,8 +1231,9 @@ const db = getFirestore(app);
                 doc.save(`Asistencia_VRHT_${report.date}.pdf`);
             });
 
-            // Llamada inicial para renderizar la página usando datos locales si la nube tarda
+            // Llamada inicial
             if(window.renderFrontend) window.renderFrontend();
+            loadFromCloud(); // Carga de la nube al iniciar
         });
     </script>
 </body>
