@@ -507,7 +507,25 @@
             // 2. Registra una app web (</>) y copia el objeto firebaseConfig.
             // 3. Reemplaza los valores de abajo con los tuyos.
             firebaseConfig = {
-                apiKey: "TU_API_KEY",
+                apiKey: "import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+
+// Replace with your actual configuration from your Firebase Console project settings
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "ies-vrht.firebaseapp.com",
+  projectId: "ies-vrht",
+  storageBucket: "ies-vrht.firebasestorage.app",
+  messagingSenderId: "716783585706",
+  appId: "YOUR_APP_ID"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+// Initialize Cloud Firestore and get a reference to the service
+const db = getFirestore(app);
+",
                 authDomain: "TU_AUTH_DOMAIN",
                 projectId: "TU_PROJECT_ID",
                 storageBucket: "TU_STORAGE_BUCKET",
@@ -515,7 +533,25 @@
                 appId: "TU_APP_ID"
             };
             
-            if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "TU_API_KEY") {
+            if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+
+// Replace with your actual configuration from your Firebase Console project settings
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "ies-vrht.firebaseapp.com",
+  projectId: "ies-vrht",
+  storageBucket: "ies-vrht.firebasestorage.app",
+  messagingSenderId: "716783585706",
+  appId: "YOUR_APP_ID"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+// Initialize Cloud Firestore and get a reference to the service
+const db = getFirestore(app);
+") {
                 isCloudActive = true; // Activa la nube si detecta que pusiste tus claves
             } else {
                 console.warn("Nube inactiva: Funcionando con almacenamiento local del navegador para evitar bloqueos.");
