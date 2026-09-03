@@ -509,7 +509,7 @@
         let teachersDB = JSON.parse(localStorage.getItem('vrht_teachers_gs')) || defaultTeachers;
         let studentsDB = JSON.parse(localStorage.getItem('vrht_students_gs')) || defaultStudents;
 
-        // 2. Función para sincronizar hacia Google Sheets (AHORA CON PERMISO CORS)
+        // 2. Función para sincronizar hacia Google Sheets (NUEVO MÉTODO ANTI-BLOQUEO)
         const saveDB = async () => {
             // Guardado instantáneo en el equipo
             localStorage.setItem('vrht_teachers_gs', JSON.stringify(teachersDB));
@@ -519,20 +519,20 @@
             if(window.renderFrontend) window.renderFrontend();
             if(window.renderAdminTables) window.renderAdminTables();
 
-            // Guardado en la nube en segundo plano (si está configurado)
+            // Guardado en la nube en segundo plano
             if (isCloudActive) {
                 try {
+                    const payload = { action: 'save', teachers: teachersDB, students: studentsDB };
                     await fetch(SCRIPT_URL, {
                         method: 'POST',
+                        mode: 'no-cors', // <-- ESTA ES LA LLAVE MAESTRA QUE SALTA EL BLOQUEO
                         headers: {
-                            'Content-Type': 'text/plain;charset=utf-8',
+                            'Content-Type': 'application/x-www-form-urlencoded',
                         },
-                        body: JSON.stringify({
-                            action: 'save',
-                            teachers: teachersDB,
-                            students: studentsDB
-                        })
+                        // Empaquetamos los datos simulando un formulario simple
+                        body: "data=" + encodeURIComponent(JSON.stringify(payload))
                     });
+                    console.log("Sincronización enviada a Google Sheets exitosamente.");
                 } catch (error) {
                     console.error("Error sincronizando con Google Sheets:", error);
                 }
