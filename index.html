@@ -6,13 +6,13 @@
     <title>I.E.S. Víctor Raúl Haya de la Torre - Jaén</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <!-- Librerías de terceros -->
+    <!-- Librería para leer y exportar archivos Excel (SheetJS) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- Librerías para exportar a PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
-    
     <style>
+        /* --- Variables de Color --- */
         :root {
             --primary-blue: #005bac;
             --secondary-red: #d92e2e;
@@ -23,9 +23,11 @@
             --white: #ffffff;
         }
 
+        /* --- Reseteo Básico --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Poppins', sans-serif; background-color: var(--light-bg); color: var(--dark-text); line-height: 1.6; overflow-x: hidden; }
 
+        /* --- Header y Navegación --- */
         header { background-color: var(--primary-blue); color: var(--white); padding: 1.5rem 5%; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 12px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 15px; }
         .logo-container { display: flex; flex-direction: row; align-items: center; text-align: left; gap: 20px; }
         .logo-img { height: 90px; width: 90px; border-radius: 50%; border: 3px solid var(--accent-yellow); background: white; object-fit: cover; }
@@ -36,6 +38,7 @@
         nav ul li a { text-decoration: none; color: var(--white); font-weight: 600; padding: 10px 20px; border-radius: 25px; transition: all 0.3s ease; background-color: rgba(255,255,255,0.1); display: block; text-align: center; }
         nav ul li a:hover, nav ul li a.active { background-color: var(--accent-yellow); color: var(--primary-blue); transform: translateY(-3px); box-shadow: 0 4px 8px rgba(242, 201, 0, 0.4); }
 
+        /* --- Contenedor Principal --- */
         main { padding: 40px 5%; min-height: 80vh; }
         .content-section { display: none; animation: fadeIn 0.5s ease-in-out; }
         .content-section.active { display: block; }
@@ -45,6 +48,7 @@
         h2.section-title::after { content: ''; width: 80px; height: 4px; background: var(--secondary-red); position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); }
         .card { background: var(--white); padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); margin-bottom: 30px; border-left: 5px solid var(--accent-yellow); }
 
+        /* --- Estilos por Sección --- */
         #inicio { text-align: center; }
         .hero-logo { width: 200px; height: 200px; margin-bottom: 30px; border-radius: 50%; box-shadow: 0 15px 35px rgba(0,91,172,0.3); object-fit: cover; }
         .welcome-text h1 { color: var(--primary-blue); font-size: 3rem; margin-bottom: 20px; }
@@ -89,6 +93,7 @@
         .admin-form-group input, .admin-form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-family: inherit; }
         .success-msg { color: var(--accent-green); font-size: 0.9rem; margin-top: 10px; display: none; font-weight: bold; text-align: center; }
 
+        /* Botones CRUD */
         .btn-action { border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.8rem; margin-right: 5px; color: white;}
         .btn-edit { background-color: var(--accent-yellow); color: var(--primary-blue); }
         .btn-delete { background-color: var(--secondary-red); }
@@ -107,20 +112,42 @@
             .hero-logo { width: 150px; height: 150px; }
         }
 
+        /* Estilos para Modal Personalizado */
         .custom-modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center;
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
         }
         .custom-modal-content {
-            background: white; padding: 30px; border-radius: 12px; max-width: 400px; width: 90%;
-            text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); animation: fadeIn 0.3s ease;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: fadeIn 0.3s ease;
         }
-        .custom-modal-content p { font-size: 1.1rem; margin-bottom: 25px; color: var(--dark-text); }
-        .modal-btn-group { display: flex; justify-content: center; gap: 15px; }
+        .custom-modal-content p {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            color: var(--dark-text);
+        }
+        .modal-btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
     </style>
 </head>
 <body>
 
+    <!-- Modal Personalizado para reemplazar alerts y confirms -->
     <div id="custom-modal" class="custom-modal-overlay">
         <div class="custom-modal-content">
             <p id="custom-modal-text"></p>
@@ -133,7 +160,7 @@
 
     <header>
         <div class="logo-container">
-            <img src="logo.jpg" alt="Escudo I.E.S. VRHT" class="logo-img" onerror="this.src='https://placehold.co/200x200/005bac/f2c900?text=VRHT'">
+            <img src="logo.jpg" alt="Escudo I.E.S. VRHT" class="logo-img">
             <div class="school-name">
                 I.E.S. Víctor Raúl Haya de la Torre
                 <span>Jaén - Cajamarca</span>
@@ -154,7 +181,7 @@
 
     <main>
         <section id="inicio" class="content-section active">
-            <img src="logo.jpg" alt="Escudo Gigante VRHT" class="hero-logo" onerror="this.src='https://placehold.co/200x200/005bac/f2c900?text=VRHT'">
+            <img src="logo.jpg" alt="Escudo Gigante VRHT" class="hero-logo">
             <div class="welcome-text">
                 <h1>Bienvenidos a la Familia Víctorina</h1>
                 <p>Un espacio interactivo para nuestros estudiantes. Comprometidos con la educación secundaria de calidad en Jaén desde 1984. ¡Explora tus recursos!</p>
@@ -195,9 +222,11 @@
             </div>
         </section>
 
+        <!-- SECCIÓN: MARCAR ASISTENCIA (ESTUDIANTES CON LOGIN PREVIO) -->
         <section id="registro-asistencia" class="content-section">
             <h2 class="section-title">Registro Diario</h2>
             
+            <!-- Login para habilitar la toma de asistencia -->
             <div class="card login-form" id="registro-login-container">
                 <h3>Acceso a Toma de Asistencia</h3>
                 <p style="margin-bottom: 15px; font-size: 0.9rem; color: #666;">Ingrese credenciales para habilitar el registro de estudiantes.</p>
@@ -207,12 +236,15 @@
                 <p id="registro-error" class="error-msg">Credenciales incorrectas.</p>
             </div>
 
+            <!-- Formulario real de asistencia (oculto hasta login) -->
             <div class="card login-form" id="registro-form-container" style="display: none; max-width: 500px;">
                 <button id="btn-registro-salir" class="logout-btn" style="margin-bottom: 15px;">Cerrar Toma de Asistencia</button>
                 <h3 style="color: var(--accent-green); margin-bottom: 10px; clear: both;"><i class="fas fa-clock"></i> Marcar Entrada</h3>
                 <p style="margin-bottom: 20px; font-size: 0.95rem;">Estudiante, ingresa tu DNI y presiona <strong>Enter</strong> para registrar tu asistencia de hoy. <br><i style="color: var(--secondary-red);">Límites: 7:30 AM (1ro y 2do) / 1:25 PM (3ro a 5to).</i></p>
                 <input type="text" id="reg-asist-dni" class="login-input" placeholder="Escribe tu DNI (8 dígitos)" maxlength="8">
                 <button id="btn-registrar-asistencia" class="login-btn" style="background-color: var(--accent-green);">Registrar Asistencia</button>
+                
+                <!-- Contenedor para el mensaje rápido que reemplaza al modal -->
                 <p id="msg-asistencia-rapida" class="success-msg" style="margin-top: 15px; font-size: 1rem;"></p>
             </div>
         </section>
@@ -225,6 +257,8 @@
                 <input type="password" id="dni-pass" class="login-input" placeholder="Contraseña (DNI) del estudiante">
                 <button id="btn-ingresar" class="login-btn">Consultar Asistencia</button>
                 <p id="login-error" class="error-msg">DNI incorrecto o no coinciden.</p>
+                <div style="margin-top: 15px; font-size: 0.85rem; color: #666;">
+                </div>
             </div>
 
             <div class="card" id="data-container" style="display: none;">
@@ -248,6 +282,8 @@
                 <input type="password" id="admin-pass" class="login-input" placeholder="Clave: ">
                 <button id="btn-admin-ingresar" class="login-btn">Entrar</button>
                 <p id="admin-error" class="error-msg">Credenciales incorrectas.</p>
+                <div style="margin-top: 15px; font-size: 0.85rem; color: #666;">
+                </div>
             </div>
 
             <div class="card" id="admin-dashboard-container" style="display: none;">
@@ -258,7 +294,9 @@
                     
                     <div class="admin-panel-section">
                         <h4 style="color: var(--secondary-red); margin-bottom: 15px;"><i class="fas fa-chalkboard-teacher"></i> Gestión de Plana Docente</h4>
+                        
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                            <!-- MATRÍCULA INDIVIDUAL DOCENTES -->
                             <div style="background: white; padding: 15px; border-radius: 8px;">
                                 <h5 style="color: var(--primary-blue); margin-bottom: 10px;">Registro Individual</h5>
                                 <form id="form-docente" style="display: grid; grid-template-columns: 1fr; gap: 10px;">
@@ -282,10 +320,14 @@
                                     <div class="admin-form-group"><input type="text" id="doc-dias" required placeholder="Días de Atención (Ej: Lunes y Miércoles)"></div>
                                     <div style="display: flex; gap: 10px;">
                                         <div class="admin-form-group" style="flex: 1;">
-                                            <select id="doc-grado" required><option value="1ro">1ro</option><option value="2do">2do</option><option value="3ro">3ro</option><option value="4to">4to</option><option value="5to">5to</option></select>
+                                            <select id="doc-grado" required>
+                                                <option value="1ro">1ro</option><option value="2do">2do</option><option value="3ro">3ro</option><option value="4to">4to</option><option value="5to">5to</option>
+                                            </select>
                                         </div>
                                         <div class="admin-form-group" style="flex: 1;">
-                                            <select id="doc-seccion" required><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select>
+                                            <select id="doc-seccion" required>
+                                                <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="admin-form-group"><input type="text" id="doc-horas" required placeholder="Horario (Ej: 10:00 AM - 11:30 AM)"></div>
@@ -293,10 +335,12 @@
                                     <button type="button" class="login-btn" id="btn-cancel-docente" style="background: #666; display: none; padding: 8px;">Cancelar Edición</button>
                                 </form>
                             </div>
+
+                            <!-- CARGA MASIVA DOCENTES (ARCHIVOS EXCEL) -->
                             <div style="background: white; padding: 15px; border-radius: 8px;">
                                 <h5 style="color: var(--primary-blue); margin-bottom: 10px;">Carga Masiva (Documento Excel)</h5>
                                 <div style="background: #eef2f7; padding: 8px; border-radius: 5px; margin-bottom: 10px; font-size: 0.8rem; color: var(--primary-blue); border-left: 3px solid var(--accent-yellow);">
-                                    <i class="fas fa-info-circle"></i> Estructura requerida: 1. Nombre | 2. Área | 3. Días | 4. Grado | 5. Sección | 6. Horario.
+                                    <i class="fas fa-info-circle"></i> <strong>Estructura requerida:</strong> El Excel (.xlsx) debe tener las siguientes 6 columnas en este orden exacto: <br><strong>1. Nombre | 2. Área | 3. Días | 4. Grado | 5. Sección | 6. Horario</strong>.
                                 </div>
                                 <form id="form-masivo-docentes" style="display: grid; grid-template-columns: 1fr; gap: 10px;">
                                     <input type="file" id="masivo-file-docentes" class="login-input" accept=".xlsx, .xls" required style="padding: 5px; margin: 0;">
@@ -304,6 +348,7 @@
                                 </form>
                             </div>
                         </div>
+
                         <div style="overflow-x: auto;">
                             <table class="schedule-table">
                                 <thead><tr><th>Docente</th><th>Área</th><th>Aula</th><th>Atención</th><th>Acciones</th></tr></thead>
@@ -314,7 +359,10 @@
 
                     <div class="admin-panel-section">
                         <h4 style="color: var(--secondary-red); margin-bottom: 15px;"><i class="fas fa-user-graduate"></i> Gestión de Estudiantes (Matrícula)</h4>
+                        
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                            
+                            <!-- MATRÍCULA INDIVIDUAL -->
                             <div style="background: white; padding: 15px; border-radius: 8px;">
                                 <h5 style="color: var(--primary-blue); margin-bottom: 10px;">Registro Individual</h5>
                                 <form id="form-estudiante" style="display: grid; grid-template-columns: 1fr; gap: 10px;">
@@ -323,31 +371,47 @@
                                     <div class="admin-form-group"><input type="text" id="est-nombre" required placeholder="Apellidos y Nombres"></div>
                                     <div style="display: flex; gap: 10px;">
                                         <div class="admin-form-group" style="flex: 1;">
-                                            <select id="est-grado" required><option value="1ro">1ro</option><option value="2do">2do</option><option value="3ro">3ro</option><option value="4to">4to</option><option value="5to">5to</option></select>
+                                            <select id="est-grado" required>
+                                                <option value="1ro">1ro</option><option value="2do">2do</option><option value="3ro">3ro</option><option value="4to">4to</option><option value="5to">5to</option>
+                                            </select>
                                         </div>
                                         <div class="admin-form-group" style="flex: 1;">
-                                            <select id="est-seccion" required><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select>
+                                            <select id="est-seccion" required>
+                                                <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <button type="submit" class="login-btn" id="btn-submit-estudiante" style="padding: 8px;">Registrar Estudiante</button>
                                     <button type="button" class="login-btn" id="btn-cancel-estudiante" style="background: #666; display: none; padding: 8px;">Cancelar Edición</button>
                                 </form>
                             </div>
+
+                            <!-- MATRÍCULA MASIVA (ARCHIVOS EXCEL) -->
                             <div style="background: white; padding: 15px; border-radius: 8px;">
                                 <h5 style="color: var(--primary-blue); margin-bottom: 10px;">Carga Masiva (Documento Excel)</h5>
                                 <div style="background: #eef2f7; padding: 8px; border-radius: 5px; margin-bottom: 10px; font-size: 0.8rem; color: var(--primary-blue); border-left: 3px solid var(--accent-yellow);">
-                                    <i class="fas fa-info-circle"></i> Estructura requerida: 1. N° | 2. DNI | 3. Apellidos y Nombres.
+                                    <i class="fas fa-info-circle"></i> <strong>Estructura requerida:</strong> El Excel (.xlsx) debe tener las siguientes columnas en orden: <br><strong>1. N° | 2. DNI | 3. Apellidos y Nombres</strong>.
                                 </div>
                                 <form id="form-masivo-estudiantes" style="display: grid; grid-template-columns: 1fr; gap: 10px;">
                                     <div style="display: flex; gap: 10px;">
-                                        <div class="admin-form-group" style="flex: 1;"><select id="masivo-grado" required><option value="1ro">1ro</option><option value="2do">2do</option><option value="3ro">3ro</option><option value="4to">4to</option><option value="5to" selected>5to</option></select></div>
-                                        <div class="admin-form-group" style="flex: 1;"><select id="masivo-seccion" required><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select></div>
+                                        <div class="admin-form-group" style="flex: 1;">
+                                            <select id="masivo-grado" required>
+                                                <option value="1ro">1ro</option><option value="2do">2do</option><option value="3ro">3ro</option><option value="4to">4to</option><option value="5to" selected>5to</option>
+                                            </select>
+                                        </div>
+                                        <div class="admin-form-group" style="flex: 1;">
+                                            <select id="masivo-seccion" required>
+                                                <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option>
+                                            </select>
+                                        </div>
                                     </div>
                                     <input type="file" id="masivo-file" class="login-input" accept=".xlsx, .xls" required style="padding: 5px; margin: 0;">
                                     <button type="submit" class="login-btn" style="background-color: var(--accent-green); padding: 8px;">Procesar Documento Excel</button>
                                 </form>
                             </div>
+                            
                         </div>
+
                         <div style="overflow-x: auto; max-height: 300px; overflow-y: auto;">
                             <table class="schedule-table">
                                 <thead style="position: sticky; top: 0;"><tr><th>DNI</th><th>Nombres</th><th>Aula</th><th>Acciones</th></tr></thead>
@@ -358,6 +422,7 @@
 
                     <div class="admin-panel-section">
                         <h4 style="color: var(--secondary-red); margin-bottom: 15px;"><i class="fas fa-clipboard-check"></i> Gestión de Asistencia Estudiantil</h4>
+                        
                         <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
                             <div style="background: white; padding: 15px; border-radius: 8px;">
                                 <h5>Corregir / Verificar Asistencia Individual</h5>
@@ -365,6 +430,7 @@
                                     <input type="text" id="admin-search-dni" class="login-input" placeholder="DNI Alumno (Ej: 71234567)" style="margin:0; max-width: 300px;">
                                     <button id="btn-search-student" class="login-btn" style="width: auto;">Buscar</button>
                                 </div>
+                                
                                 <div id="admin-student-editor" style="display: none; margin-top: 15px;">
                                     <strong id="edit-student-name" style="color: var(--primary-blue);"></strong>
                                     <div style="max-height: 200px; overflow-y: auto;">
@@ -376,6 +442,7 @@
                                 </div>
                             </div>
 
+                            <!-- NUEVO: DESCARGA DE REPORTES MASIVOS -->
                             <div style="background: white; padding: 15px; border-radius: 8px;">
                                 <h5><i class="fas fa-file-download" style="color: var(--primary-blue);"></i> Reportes de Asistencia Diaria</h5>
                                 <form id="form-reportes" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
@@ -386,11 +453,17 @@
                                     <div class="admin-form-group" style="display: flex; gap: 10px; align-items: flex-end;">
                                         <div style="flex: 1;">
                                             <label>Grado:</label>
-                                            <select id="reporte-grado" class="login-input" style="margin: 0;"><option value="Todos">Todos</option><option value="1ro">1ro</option><option value="2do">2do</option><option value="3ro">3ro</option><option value="4to">4to</option><option value="5to">5to</option></select>
+                                            <select id="reporte-grado" class="login-input" style="margin: 0;">
+                                                <option value="Todos">Todos</option>
+                                                <option value="1ro">1ro</option><option value="2do">2do</option><option value="3ro">3ro</option><option value="4to">4to</option><option value="5to">5to</option>
+                                            </select>
                                         </div>
                                         <div style="flex: 1;">
                                             <label>Sección:</label>
-                                            <select id="reporte-seccion" class="login-input" style="margin: 0;"><option value="Todas">Todas</option><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option></select>
+                                            <select id="reporte-seccion" class="login-input" style="margin: 0;">
+                                                <option value="Todas">Todas</option>
+                                                <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option>
+                                            </select>
                                         </div>
                                     </div>
                                     <div style="grid-column: span 2; display: flex; gap: 10px; margin-top: 5px;">
@@ -399,8 +472,10 @@
                                     </div>
                                 </form>
                             </div>
+
                         </div>
                     </div>
+
                 </div>
             </div>
         </section>
@@ -410,160 +485,86 @@
         <p>© 2026 I.E.S. Víctor Raúl Haya de la Torre - Jaén. Todos los derechos reservados.</p>
     </footer>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, getDocs, onSnapshot, addDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
+    <!-- LÓGICA DEL SISTEMA Y CONEXIÓN CON GOOGLE SHEETS -->
+    <script>
         // =========================================================================
-        // 🔴 CONFIGURACIÓN DE FIREBASE (¡AQUÍ PEGARÁS TUS CLAVES!)
+        // 🟢 CONFIGURACIÓN DE BASE DE DATOS EN LA NUBE (GOOGLE SHEETS)
         // =========================================================================
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+        // 👇 ENTORNO GITHUB: ¡Martín, aquí debes pegar el enlace de tu Google Apps Script! 👇
+        const SCRIPT_URL = "TU_ENLACE_DE_APPS_SCRIPT_AQUI";
+        
+        let isCloudActive = SCRIPT_URL !== "TU_ENLACE_DE_APPS_SCRIPT_AQUI" && SCRIPT_URL !== "";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyBJ-uhNI7fkEERZSICVaTvHlfzcQ6M8Ksg",
-  authDomain: "portal-vrht.firebaseapp.com",
-  projectId: "portal-vrht",
-  storageBucket: "portal-vrht.firebasestorage.app",
-  messagingSenderId: "79020555051",
-  appId: "1:79020555051:web:52427dbad32d0b5539e36e",
-  measurementId: "G-9EWC5VV69E"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-
-
-        // Soporte interactivo de plataforma
-        if (typeof __firebase_config !== 'undefined') {
-            firebaseConfig = JSON.parse(__firebase_config);
-        }
-
-        const appIdStr = typeof __app_id !== 'undefined' ? __app_id : 'ies-vrht-app';
-        let isCloudActive = firebaseConfig.apiKey && firebaseConfig.apiKey !== "PEGAR_AQUI";
-
-        // Variables Globales
-        let app, auth, db, userId;
-        let teachersDB = [];
-        let studentsDB = [];
-
-        // Base de datos de emergencia (se usa si Firebase no funciona)
+        // Datos por defecto
         const defaultTeachers = [
             { id: "t1", nombre: 'Lic. Martín Chayán Alache', area: 'Matemática', dias: 'Lunes y Miércoles', grado: '5to', seccion: 'A', horas: '10:00 AM - 11:30 AM' },
             { id: "t2", nombre: 'Lic. Rosa Martínez', area: 'Comunicación', dias: 'Martes y Jueves', grado: '4to', seccion: 'B', horas: '08:00 AM - 10:00 AM' }
         ];
         const defaultStudents = [
-            { id: "s1", dni: '71234567', nombre: 'Alvarado Rojas, Luis', grado: '5to', seccion: 'A', asistencia: [{fecha: '2026-09-01', estado: 'Presente', hora: '07:45 AM'}] }
+            { id: "s1", dni: '71234567', nombre: 'Alvarado Rojas, Luis', grado: '5to', seccion: 'A', asistencia: [{fecha: '2026-09-01', estado: 'Presente', hora: '07:45 AM', fechaJustificacion: null}, {fecha: '2026-09-02', estado: 'Falta', hora: '--:--', fechaJustificacion: null}] },
+            { id: "s2", dni: '72345678', nombre: 'Benites Quispe, María', grado: '5to', seccion: 'A', asistencia: [] },
         ];
 
-        // ¡IMPORTANTE! Esto se carga independientemente de Firebase para que las pestañas SIEMPRE funcionen
-        const initUI = () => {
-            const navLinks = document.querySelectorAll('.nav-link');
-            const sections = document.querySelectorAll('.content-section');
+        // 1. Cargar caché local primero para que la web sea rapidísima
+        let teachersDB = JSON.parse(localStorage.getItem('vrht_teachers_gs')) || defaultTeachers;
+        let studentsDB = JSON.parse(localStorage.getItem('vrht_students_gs')) || defaultStudents;
+
+        // 2. Función para sincronizar hacia Google Sheets (NUEVO MÉTODO ANTI-BLOQUEO)
+        const saveDB = async () => {
+            // Guardado instantáneo en el equipo
+            localStorage.setItem('vrht_teachers_gs', JSON.stringify(teachersDB));
+            localStorage.setItem('vrht_students_gs', JSON.stringify(studentsDB));
             
-            navLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault(); 
-                    const targetId = link.getAttribute('data-target');
+            // Actualizar la pantalla
+            if(window.renderFrontend) window.renderFrontend();
+            if(window.renderAdminTables) window.renderAdminTables();
 
-                    // Cerrar sesión al cambiar de pestaña
-                    document.getElementById('registro-form-container').style.display = 'none';
-                    document.getElementById('registro-login-container').style.display = 'block';
-                    document.getElementById('registro-user').value = '';
-                    document.getElementById('registro-pass').value = '';
-                    document.getElementById('registro-error').style.display = 'none';
-
-                    document.getElementById('data-container').style.display = 'none';
-                    document.getElementById('login-container').style.display = 'block';
-                    document.getElementById('dni-user').value = '';
-                    document.getElementById('dni-pass').value = '';
-                    document.getElementById('login-error').style.display = 'none';
-                    
-                    document.getElementById('admin-dashboard-container').style.display = 'none';
-                    document.getElementById('admin-login-container').style.display = 'block';
-                    document.getElementById('admin-user').value = '';
-                    document.getElementById('admin-pass').value = '';
-                    document.getElementById('admin-error').style.display = 'none';
-
-                    // Mover vista
-                    navLinks.forEach(l => l.classList.remove('active'));
-                    sections.forEach(s => s.classList.remove('active'));
-                    link.classList.add('active');
-                    document.getElementById(targetId).classList.add('active');
-                    if (window.innerWidth < 768) window.scrollTo({ top: 0, behavior: 'smooth' });
-                });
-            });
-
-            // Cargar datos locales de inmediato para no dejar pantalla en blanco
-            teachersDB = JSON.parse(localStorage.getItem('vrht_teachers_v8')) || defaultTeachers;
-            studentsDB = JSON.parse(localStorage.getItem('vrht_students_v8')) || defaultStudents;
-            renderFrontend();
-        };
-
-        const renderFrontend = () => {
-            const container = document.getElementById('docentes-areas-container');
-            if (container) {
-                container.innerHTML = ''; 
-                const areasMap = {};
-                teachersDB.forEach(t => { if(!areasMap[t.area]) areasMap[t.area] = []; areasMap[t.area].push(t); });
-
-                for (const [areaName, teachers] of Object.entries(areasMap)) {
-                    let colorClass = ['Matemática', 'Ciencia y Tecnología'].includes(areaName) ? 'math' : (['Comunicación', 'Inglés'].includes(areaName) ? 'comu' : 'tecnica'); 
-                    let cardHtml = `<div class="area-card ${colorClass}"><div class="area-header">${areaName}</div><ul class="teacher-list">`;
-                    teachers.forEach(t => { cardHtml += `<li ${t.nombre.includes('Martín Chayán') ? 'class="highlight-teacher"' : ''}>${t.nombre} <small style="color:#666;">(${t.grado} "${t.seccion}")</small></li>`; });
-                    container.innerHTML += cardHtml + `</ul></div>`;
+            // Guardado en la nube en segundo plano
+            if (isCloudActive) {
+                try {
+                    const payload = { action: 'save', teachers: teachersDB, students: studentsDB };
+                    await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        mode: 'no-cors', // <-- ESTA ES LA LLAVE MAESTRA QUE SALTA EL BLOQUEO
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        // Empaquetamos los datos simulando un formulario simple
+                        body: "data=" + encodeURIComponent(JSON.stringify(payload))
+                    });
+                    console.log("Sincronización enviada a Google Sheets exitosamente.");
+                } catch (error) {
+                    console.error("Error sincronizando con Google Sheets:", error);
                 }
             }
+        };
 
-            const tbody = document.getElementById('padres-schedule-body');
-            if (tbody) {
-                tbody.innerHTML = `<tr><td><strong>Dirección</strong></td><td>Lunes, Miérc. y Viernes</td><td>8:00 AM - 10:00 AM</td></tr>`;
-                teachersDB.forEach(t => { tbody.innerHTML += `<tr><td>${t.nombre} (${t.area} - ${t.grado} "${t.seccion}")</td><td>${t.dias}</td><td>${t.horas}</td></tr>`; });
+        // 3. Función para descargar desde Google Sheets al entrar a la página
+        const loadFromCloud = async () => {
+            if (!isCloudActive) return;
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json();
+                
+                if (data.teachers && data.teachers.length > 0) teachersDB = data.teachers;
+                if (data.students && data.students.length > 0) studentsDB = data.students;
+                
+                localStorage.setItem('vrht_teachers_gs', JSON.stringify(teachersDB));
+                localStorage.setItem('vrht_students_gs', JSON.stringify(studentsDB));
+                
+                if(window.renderFrontend) window.renderFrontend();
+                if(window.renderAdminTables) window.renderAdminTables();
+            } catch (error) {
+                console.error("No se pudo cargar desde la nube. Usando datos locales.", error);
             }
         };
 
-        window.renderAdminTables = () => {
-            const tbodyDoc = document.getElementById('admin-table-docentes');
-            if (tbodyDoc) {
-                tbodyDoc.innerHTML = '';
-                teachersDB.forEach((t) => {
-                    tbodyDoc.innerHTML += `<tr>
-                        <td><strong>${t.nombre}</strong></td><td>${t.area}</td><td>${t.grado} "${t.seccion}"</td><td>${t.dias} (${t.horas})</td>
-                        <td>
-                            <button class="btn-action btn-edit" onclick="window.editTeacher('${t.id}')"><i class="fas fa-edit"></i></button>
-                            <button class="btn-action btn-delete" onclick="window.deleteTeacher('${t.id}')"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>`;
-                });
-            }
-
-            const tbodyEst = document.getElementById('admin-table-estudiantes');
-            if (tbodyEst) {
-                tbodyEst.innerHTML = '';
-                studentsDB.forEach((s) => {
-                    tbodyEst.innerHTML += `<tr>
-                        <td><strong>${s.dni}</strong></td><td>${s.nombre}</td><td>${s.grado} "${s.seccion}"</td>
-                        <td>
-                            <button class="btn-action btn-edit" onclick="window.editStudent('${s.id}')"><i class="fas fa-edit"></i></button>
-                            <button class="btn-action btn-delete" onclick="window.deleteStudent('${s.id}')"><i class="fas fa-trash"></i></button>
-                        </td>
-                    </tr>`;
-                });
-            }
-        };
-
+        // =========================================================================
+        // LÓGICA DE INTERFAZ (UI) Y NAVEGACIÓN
+        // =========================================================================
         document.addEventListener('DOMContentLoaded', () => {
-            initUI();
-
-            // Mensajes modales
-            window.showModal = (text, onConfirm = null) => {
+            
+            const showModal = (text, onConfirm = null) => {
                 const modal = document.getElementById('custom-modal');
                 const modalText = document.getElementById('custom-modal-text');
                 const btnOk = document.getElementById('custom-modal-ok');
@@ -585,116 +586,68 @@ const analytics = getAnalytics(app);
                 }
             };
 
-            // Intentar conectar Firebase si hay claves válidas
-            if (isCloudActive) {
-                try {
-                    app = initializeApp(firebaseConfig);
-                    auth = getAuth(app);
-                    db = getFirestore(app);
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.content-section');
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault(); 
+                    const targetId = link.getAttribute('data-target');
 
-                    const initAuth = async () => {
-                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                            await signInWithCustomToken(auth, __initial_auth_token);
-                        } else {
-                            await signInAnonymously(auth);
-                        }
-                    };
-                    initAuth();
+                    document.getElementById('registro-form-container').style.display = 'none';
+                    document.getElementById('registro-login-container').style.display = 'block';
+                    document.getElementById('registro-user').value = '';
+                    document.getElementById('registro-pass').value = '';
+                    document.getElementById('registro-error').style.display = 'none';
 
-                    onAuthStateChanged(auth, (user) => {
-                        if (user) {
-                            userId = user.uid;
-                            initFirestoreListeners();
-                        }
-                    });
-                } catch (e) {
-                    console.error("Firebase no cargó. Entrando en modo local.");
-                    isCloudActive = false;
+                    document.getElementById('data-container').style.display = 'none';
+                    document.getElementById('login-container').style.display = 'block';
+                    document.getElementById('dni-user').value = '';
+                    document.getElementById('dni-pass').value = '';
+                    document.getElementById('login-error').style.display = 'none';
+                    
+                    document.getElementById('admin-dashboard-container').style.display = 'none';
+                    document.getElementById('admin-login-container').style.display = 'block';
+                    document.getElementById('admin-user').value = '';
+                    document.getElementById('admin-pass').value = '';
+                    document.getElementById('admin-error').style.display = 'none';
+
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    sections.forEach(s => s.classList.remove('active'));
+                    link.classList.add('active');
+                    document.getElementById(targetId).classList.add('active');
+                    if (window.innerWidth < 768) window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            });
+
+            window.renderFrontend = () => {
+                const container = document.getElementById('docentes-areas-container');
+                if (!container) return;
+                container.innerHTML = ''; 
+                const areasMap = {};
+                teachersDB.forEach(t => { if(!areasMap[t.area]) areasMap[t.area] = []; areasMap[t.area].push(t); });
+
+                for (const [areaName, teachers] of Object.entries(areasMap)) {
+                    let colorClass = ['Matemática', 'Ciencia y Tecnología'].includes(areaName) ? 'math' : (['Comunicación', 'Inglés'].includes(areaName) ? 'comu' : 'tecnica'); 
+                    let cardHtml = `<div class="area-card ${colorClass}"><div class="area-header">${areaName}</div><ul class="teacher-list">`;
+                    teachers.forEach(t => { cardHtml += `<li ${t.nombre.includes('Martín Chayán') ? 'class="highlight-teacher"' : ''}>${t.nombre} <small style="color:#666;">(${t.grado} "${t.seccion}")</small></li>`; });
+                    container.innerHTML += cardHtml + `</ul></div>`;
                 }
-            }
-        });
 
-        const initFirestoreListeners = () => {
-            if (!userId || !isCloudActive) return;
-
-            const teachersRef = collection(db, 'artifacts', appIdStr, 'public', 'data', 'teachers');
-            onSnapshot(teachersRef, (snapshot) => {
-                teachersDB = [];
-                snapshot.forEach((docSnap) => { teachersDB.push({ id: docSnap.id, ...docSnap.data() }); });
-                localStorage.setItem('vrht_teachers_v8', JSON.stringify(teachersDB));
-                renderFrontend();
-                if(document.getElementById('admin-dashboard-container').style.display === 'block') window.renderAdminTables();
-            }, (error) => console.error(error));
-
-            const studentsRef = collection(db, 'artifacts', appIdStr, 'public', 'data', 'students');
-            onSnapshot(studentsRef, (snapshot) => {
-                studentsDB = [];
-                snapshot.forEach((docSnap) => { studentsDB.push({ id: docSnap.id, ...docSnap.data() }); });
-                localStorage.setItem('vrht_students_v8', JSON.stringify(studentsDB));
-                if(document.getElementById('admin-dashboard-container').style.display === 'block') window.renderAdminTables();
-            }, (error) => console.error(error));
-        };
-
-        window.saveTeacherToDB = async (data, docId = null) => {
-            if (isCloudActive && userId) {
-                const collRef = collection(db, 'artifacts', appIdStr, 'public', 'data', 'teachers');
-                if (docId) await updateDoc(doc(db, 'artifacts', appIdStr, 'public', 'data', 'teachers', docId), data);
-                else await addDoc(collRef, data);
-            } else {
-                if (docId) {
-                    let idx = teachersDB.findIndex(t => t.id === docId);
-                    if(idx > -1) teachersDB[idx] = {...data, id: docId};
-                } else {
-                    teachersDB.push({...data, id: Date.now().toString()});
+                const tbody = document.getElementById('padres-schedule-body');
+                if (tbody) {
+                    tbody.innerHTML = `<tr><td><strong>Dirección</strong></td><td>Lunes, Miérc. y Viernes</td><td>8:00 AM - 10:00 AM</td></tr>`;
+                    teachersDB.forEach(t => { tbody.innerHTML += `<tr><td>${t.nombre} (${t.area} - ${t.grado} "${t.seccion}")</td><td>${t.dias}</td><td>${t.horas}</td></tr>`; });
                 }
-                localStorage.setItem('vrht_teachers_v8', JSON.stringify(teachersDB));
-                renderFrontend(); window.renderAdminTables();
-            }
-        };
+            };
 
-        window.deleteTeacherFromDB = async (docId) => {
-            if (isCloudActive && userId) await deleteDoc(doc(db, 'artifacts', appIdStr, 'public', 'data', 'teachers', docId));
-            else {
-                teachersDB = teachersDB.filter(t => t.id !== docId);
-                localStorage.setItem('vrht_teachers_v8', JSON.stringify(teachersDB));
-                renderFrontend(); window.renderAdminTables();
-            }
-        };
-
-        window.saveStudentToDB = async (data, docId = null) => {
-            if (isCloudActive && userId) {
-                const collRef = collection(db, 'artifacts', appIdStr, 'public', 'data', 'students');
-                if (docId) await updateDoc(doc(db, 'artifacts', appIdStr, 'public', 'data', 'students', docId), data);
-                else await addDoc(collRef, data);
-            } else {
-                if (docId) {
-                    let idx = studentsDB.findIndex(s => s.id === docId);
-                    if(idx > -1) studentsDB[idx] = {...data, id: docId};
-                } else {
-                    studentsDB.push({...data, id: Date.now().toString()});
-                }
-                localStorage.setItem('vrht_students_v8', JSON.stringify(studentsDB));
-                window.renderAdminTables();
-            }
-        };
-
-        window.deleteStudentFromDB = async (docId) => {
-            if (isCloudActive && userId) await deleteDoc(doc(db, 'artifacts', appIdStr, 'public', 'data', 'students', docId));
-            else {
-                studentsDB = studentsDB.filter(s => s.id !== docId);
-                localStorage.setItem('vrht_students_v8', JSON.stringify(studentsDB));
-                window.renderAdminTables();
-            }
-        };
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // Login Asistencia Estudiante
-            const enterRegistro = (e) => { if (e.key === 'Enter') document.getElementById('btn-registro-ingresar').click(); };
-            document.getElementById('registro-user').addEventListener('keypress', enterRegistro);
-            document.getElementById('registro-pass').addEventListener('keypress', enterRegistro);
+            const loginRegistroEnter = (e) => { if (e.key === 'Enter') document.getElementById('btn-registro-ingresar').click(); };
+            document.getElementById('registro-user').addEventListener('keypress', loginRegistroEnter);
+            document.getElementById('registro-pass').addEventListener('keypress', loginRegistroEnter);
 
             document.getElementById('btn-registro-ingresar').addEventListener('click', () => {
-                if(document.getElementById('registro-user').value === '16739265' && document.getElementById('registro-pass').value === '16739265') {
+                const user = document.getElementById('registro-user').value;
+                const pass = document.getElementById('registro-pass').value;
+                if(user === '16739265' && pass === '16739265') {
                     document.getElementById('registro-login-container').style.display = 'none';
                     document.getElementById('registro-form-container').style.display = 'block';
                     document.getElementById('reg-asist-dni').focus();
@@ -706,108 +659,183 @@ const analytics = getAnalytics(app);
             document.getElementById('btn-registro-salir').addEventListener('click', () => {
                 document.getElementById('registro-form-container').style.display = 'none';
                 document.getElementById('registro-login-container').style.display = 'block';
+                document.getElementById('registro-user').value = '';
+                document.getElementById('registro-pass').value = '';
             });
 
             document.getElementById('reg-asist-dni').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') { e.preventDefault(); document.getElementById('btn-registrar-asistencia').click(); }
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    document.getElementById('btn-registrar-asistencia').click();
+                }
             });
 
-            document.getElementById('btn-registrar-asistencia').addEventListener('click', async () => {
+            document.getElementById('btn-registrar-asistencia').addEventListener('click', () => {
                 const dni = document.getElementById('reg-asist-dni').value.trim();
                 const msgBox = document.getElementById('msg-asistencia-rapida');
-                
-                const displayMsg = (text, color = "var(--secondary-red)") => {
-                    msgBox.innerHTML = text; msgBox.style.color = color; msgBox.style.display = "block";
-                    document.getElementById('reg-asist-dni').value = ''; document.getElementById('reg-asist-dni').focus();
+
+                const showMsg = (text, color = "var(--secondary-red)") => {
+                    msgBox.innerHTML = text;
+                    msgBox.style.color = color;
+                    msgBox.style.display = "block";
+                    document.getElementById('reg-asist-dni').value = '';
+                    document.getElementById('reg-asist-dni').focus();
                     setTimeout(() => msgBox.style.display = 'none', 4000);
                 };
 
-                if (!dni || dni.length !== 8) return displayMsg("Por favor, ingresa un DNI válido de 8 dígitos.");
-                
+                if (!dni || dni.length !== 8) {
+                    showMsg("Por favor, ingresa un DNI válido de 8 dígitos.");
+                    return;
+                }
+
                 const student = studentsDB.find(s => s.dni === dni);
-                if (!student) return displayMsg("Estudiante no encontrado.");
+                if (!student) {
+                    showMsg("Estudiante no encontrado en la base de datos.");
+                    return;
+                }
 
                 const now = new Date();
-                const currentDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                const currentDate = `${year}-${month}-${day}`;
                 
                 let hours = now.getHours();
+                const minutes = String(now.getMinutes()).padStart(2, '0');
                 const ampm = hours >= 12 ? 'PM' : 'AM';
-                hours = hours % 12; hours = hours ? hours : 12; 
-                const currentTime = `${String(hours).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')} ${ampm}`;
+                hours = hours % 12;
+                hours = hours ? hours : 12; 
+                const currentTime = `${String(hours).padStart(2, '0')}:${minutes} ${ampm}`;
 
                 if(!student.asistencia) student.asistencia = [];
-                if (student.asistencia.find(a => a.fecha === currentDate)) return displayMsg(`<strong>${student.nombre}</strong> ya registró asistencia hoy.`);
+                const alreadyRegistered = student.asistencia.find(a => a.fecha === currentDate);
+                if (alreadyRegistered) {
+                    showMsg(`<strong>${student.nombre}</strong> ya tiene su asistencia registrada hoy.`);
+                    return;
+                }
 
                 const limitTime = new Date();
-                if (student.grado === '1ro' || student.grado === '2do') limitTime.setHours(7, 30, 0, 0);
-                else limitTime.setHours(13, 25, 0, 0);
+                if (student.grado === '1ro' || student.grado === '2do') {
+                    limitTime.setHours(7, 30, 0, 0);
+                } else {
+                    limitTime.setHours(13, 25, 0, 0);
+                }
                 
                 const estado = now > limitTime ? 'Tardanza' : 'Presente';
-                student.asistencia.push({ fecha: currentDate, estado: estado, hora: currentTime });
 
-                await window.saveStudentToDB({ asistencia: student.asistencia }, student.id);
-                displayMsg(`<strong>${student.nombre}</strong> registró asistencia ${estado === 'Presente' ? 'con éxito' : 'con tardanza'}.`, estado === 'Presente' ? 'var(--accent-green)' : '#d92e2e');
+                student.asistencia.push({
+                    fecha: currentDate,
+                    estado: estado,
+                    hora: currentTime
+                });
+
+                // Iniciar guardado general
+                saveDB();
+
+                const mensajeEstado = estado === 'Presente' ? 'con éxito' : 'con tardanza';
+                const colorEstado = estado === 'Presente' ? 'var(--accent-green)' : '#d92e2e';
+                
+                showMsg(`<strong>${student.nombre}</strong> registró su asistencia ${mensajeEstado}.`, colorEstado);
             });
 
-            // Login Padres
-            const enterPadres = (e) => { if (e.key === 'Enter') document.getElementById('btn-ingresar').click(); };
-            document.getElementById('dni-user').addEventListener('keypress', enterPadres);
-            document.getElementById('dni-pass').addEventListener('keypress', enterPadres);
+            const loginPadresEnter = (e) => { if (e.key === 'Enter') document.getElementById('btn-ingresar').click(); };
+            document.getElementById('dni-user').addEventListener('keypress', loginPadresEnter);
+            document.getElementById('dni-pass').addEventListener('keypress', loginPadresEnter);
 
             document.getElementById('btn-ingresar').addEventListener('click', () => {
                 const user = document.getElementById('dni-user').value;
-                const est = studentsDB.find(e => e.dni === user && user === document.getElementById('dni-pass').value);
+                const errorMsg = document.getElementById('login-error');
+                const estudiante = studentsDB.find(e => e.dni === user && user === document.getElementById('dni-pass').value);
                 
-                if(est) {
+                if(estudiante) {
                     document.getElementById('login-container').style.display = 'none';
                     document.getElementById('data-container').style.display = 'block';
-                    document.getElementById('student-name').textContent = est.nombre;
-                    document.getElementById('student-dni').textContent = est.dni;
-                    document.getElementById('student-section').textContent = `${est.grado} "${est.seccion}"`;
+                    document.getElementById('student-name').textContent = estudiante.nombre;
+                    document.getElementById('student-dni').textContent = estudiante.dni;
+                    document.getElementById('student-section').textContent = `${estudiante.grado} "${estudiante.seccion}"`;
                     
                     const tbody = document.getElementById('attendance-body');
                     tbody.innerHTML = '';
-                    if(!est.asistencia || est.asistencia.length === 0) tbody.innerHTML = '<tr><td colspan="4" align="center">Sin registros.</td></tr>';
+                    if(!estudiante.asistencia || estudiante.asistencia.length === 0) tbody.innerHTML = '<tr><td colspan="4" align="center">Sin registros.</td></tr>';
                     else {
-                        [...est.asistencia].sort((a,b) => new Date(b.fecha) - new Date(a.fecha)).forEach(reg => {
+                        [...estudiante.asistencia].sort((a,b) => new Date(b.fecha) - new Date(a.fecha)).forEach(reg => {
                             let badge = reg.estado === 'Tardanza' ? 'status-tardanza' : (reg.estado === 'Falta' ? 'status-falta' : (reg.estado === 'Justificado' ? 'status-justificado' : 'status-presente'));
                             let justifText = reg.estado === 'Justificado' && reg.fechaJustificacion ? `<br><small style="color: #666; font-size: 0.75rem;">(Justif: ${reg.fechaJustificacion})</small>` : '';
+                            
                             tbody.innerHTML += `<tr><td>${reg.fecha}</td><td><span class="status-badge ${badge}">${reg.estado}</span>${justifText}</td><td>${reg.hora}</td></tr>`;
                         });
                     }
-                } else { document.getElementById('login-error').style.display = 'block'; }
+                } else { errorMsg.style.display = 'block'; }
             });
-
             document.getElementById('btn-salir').addEventListener('click', () => {
                 document.getElementById('data-container').style.display = 'none';
                 document.getElementById('login-container').style.display = 'block';
+                document.getElementById('dni-user').value = '';
+                document.getElementById('dni-pass').value = '';
+                document.getElementById('login-error').style.display = 'none';
             });
 
-            // Login Admin
-            const enterAdmin = (e) => { if (e.key === 'Enter') document.getElementById('btn-admin-ingresar').click(); };
-            document.getElementById('admin-user').addEventListener('keypress', enterAdmin);
-            document.getElementById('admin-pass').addEventListener('keypress', enterAdmin);
+            const loginAdminEnter = (e) => { if (e.key === 'Enter') document.getElementById('btn-admin-ingresar').click(); };
+            document.getElementById('admin-user').addEventListener('keypress', loginAdminEnter);
+            document.getElementById('admin-pass').addEventListener('keypress', loginAdminEnter);
 
             document.getElementById('btn-admin-ingresar').addEventListener('click', () => {
                 if(document.getElementById('admin-user').value === 'admin' && document.getElementById('admin-pass').value === '123456') {
                     document.getElementById('admin-login-container').style.display = 'none';
                     document.getElementById('admin-dashboard-container').style.display = 'block';
+                    
                     const tzDate = new Date();
-                    document.getElementById('reporte-fecha').value = `${tzDate.getFullYear()}-${String(tzDate.getMonth() + 1).padStart(2, '0')}-${String(tzDate.getDate()).padStart(2, '0')}`;
-                    window.renderAdminTables();
+                    const yyyy = tzDate.getFullYear();
+                    const mm = String(tzDate.getMonth() + 1).padStart(2, '0');
+                    const dd = String(tzDate.getDate()).padStart(2, '0');
+                    const todayStr = `${yyyy}-${mm}-${dd}`;
+                    
+                    document.getElementById('asist-fecha') ? document.getElementById('asist-fecha').value = todayStr : null;
+                    document.getElementById('reporte-fecha') ? document.getElementById('reporte-fecha').value = todayStr : null;
+                    
+                    if(window.renderAdminTables) window.renderAdminTables();
                 } else { document.getElementById('admin-error').style.display = 'block'; }
             });
-
             document.getElementById('btn-admin-salir').addEventListener('click', () => {
                 document.getElementById('admin-dashboard-container').style.display = 'none';
                 document.getElementById('admin-login-container').style.display = 'block';
+                document.getElementById('admin-user').value = '';
+                document.getElementById('admin-pass').value = '';
+                document.getElementById('admin-error').style.display = 'none';
             });
-        });
 
-        document.addEventListener('DOMContentLoaded', () => {
-            
-            // CRUD Docentes
-            document.getElementById('form-docente').addEventListener('submit', async (e) => {
+            window.renderAdminTables = () => {
+                const tbodyDoc = document.getElementById('admin-table-docentes');
+                if (tbodyDoc) {
+                    tbodyDoc.innerHTML = '';
+                    teachersDB.forEach((t) => {
+                        tbodyDoc.innerHTML += `<tr>
+                            <td><strong>${t.nombre}</strong></td><td>${t.area}</td><td>${t.grado} "${t.seccion}"</td><td>${t.dias} (${t.horas})</td>
+                            <td>
+                                <button class="btn-action btn-edit" onclick="editTeacher('${t.id}')"><i class="fas fa-edit"></i></button>
+                                <button class="btn-action btn-delete" onclick="deleteTeacher('${t.id}')"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>`;
+                    });
+                }
+
+                const tbodyEst = document.getElementById('admin-table-estudiantes');
+                if (tbodyEst) {
+                    tbodyEst.innerHTML = '';
+                    studentsDB.forEach((s) => {
+                        tbodyEst.innerHTML += `<tr>
+                            <td><strong>${s.dni}</strong></td><td>${s.nombre}</td><td>${s.grado} "${s.seccion}"</td>
+                            <td>
+                                <button class="btn-action btn-edit" onclick="editStudent('${s.id}')"><i class="fas fa-edit"></i></button>
+                                <button class="btn-action btn-delete" onclick="deleteStudent('${s.id}')"><i class="fas fa-trash"></i></button>
+                            </td>
+                        </tr>`;
+                    });
+                }
+            };
+
+            const formDocente = document.getElementById('form-docente');
+            formDocente.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const docId = document.getElementById('edit-doc-index').value;
                 const docData = {
@@ -818,11 +846,15 @@ const analytics = getAnalytics(app);
                     seccion: document.getElementById('doc-seccion').value,
                     horas: document.getElementById('doc-horas').value
                 };
-                await window.saveTeacherToDB(docData, docId === "-1" ? null : docId);
-                document.getElementById('form-docente').reset();
-                document.getElementById('edit-doc-index').value = "-1";
-                document.getElementById('btn-submit-docente').textContent = 'Guardar Docente';
-                document.getElementById('btn-cancel-docente').style.display = 'none';
+
+                if (docId === "-1") {
+                    teachersDB.push({ ...docData, id: Date.now().toString() });
+                } else {
+                    const idx = teachersDB.findIndex(t => t.id === docId);
+                    if (idx > -1) teachersDB[idx] = { ...docData, id: docId };
+                }
+                resetDocenteForm();
+                saveDB();
             });
 
             window.editTeacher = (id) => {
@@ -839,48 +871,68 @@ const analytics = getAnalytics(app);
                 document.getElementById('btn-cancel-docente').style.display = 'inline-block';
             };
 
-            window.deleteTeacher = (id) => { window.showModal("¿Eliminar este docente?", () => window.deleteTeacherFromDB(id)); };
+            window.deleteTeacher = (id) => {
+                const t = teachersDB.find(item => item.id === id);
+                showModal(`¿Seguro que deseas eliminar a ${t ? t.nombre : 'este docente'}?`, () => {
+                    teachersDB = teachersDB.filter(item => item.id !== id);
+                    saveDB();
+                });
+            };
 
-            document.getElementById('btn-cancel-docente').addEventListener('click', () => {
-                document.getElementById('form-docente').reset();
+            const resetDocenteForm = () => {
+                formDocente.reset();
                 document.getElementById('edit-doc-index').value = "-1";
                 document.getElementById('btn-submit-docente').textContent = 'Guardar Docente';
                 document.getElementById('btn-cancel-docente').style.display = 'none';
-            });
+            };
+            document.getElementById('btn-cancel-docente').addEventListener('click', resetDocenteForm);
 
-            // Masivo Docentes
             document.getElementById('form-masivo-docentes').addEventListener('submit', (e) => {
                 e.preventDefault();
-                const file = document.getElementById('masivo-file-docentes').files[0];
+                const fileInput = document.getElementById('masivo-file-docentes');
+                const file = fileInput.files[0];
                 if (!file) return;
+
                 const reader = new FileReader();
-                reader.onload = async (e) => {
+                reader.onload = function(e) {
                     try {
                         const data = new Uint8Array(e.target.result);
                         const workbook = XLSX.read(data, {type: 'array'});
-                        const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {header: 1});
+                        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                        const rows = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+
                         let agregados = 0;
                         for (let i = 1; i < rows.length; i++) {
-                            const r = rows[i];
-                            if (!r || r.length === 0) continue; 
-                            let nombre = r[0] ? String(r[0]).trim() : '', area = r[1] ? String(r[1]).trim() : '';
-                            if (nombre && area && !teachersDB.some(t => t.nombre === nombre && t.grado === String(r[3]).trim() && t.seccion === String(r[4]).trim())) {
-                                await window.saveTeacherToDB({ nombre, area, dias: r[2]?String(r[2]).trim():'', grado: r[3]?String(r[3]).trim():'', seccion: r[4]?String(r[4]).trim():'', horas: r[5]?String(r[5]).trim():'' });
+                            const row = rows[i];
+                            if (!row || row.length === 0) continue; 
+                            let nombre = row[0] ? String(row[0]).trim() : '';
+                            let area = row[1] ? String(row[1]).trim() : '';
+                            let dias = row[2] ? String(row[2]).trim() : '';
+                            let grado = row[3] ? String(row[3]).trim() : '';
+                            let seccion = row[4] ? String(row[4]).trim() : '';
+                            let horas = row[5] ? String(row[5]).trim() : '';
+
+                            if (nombre !== '' && area !== '') {
+                                teachersDB.push({ id: Date.now().toString() + i, nombre, area, dias, grado, seccion, horas });
                                 agregados++;
                             }
                         }
-                        document.getElementById('masivo-file-docentes').value = '';
-                        window.showModal(`Carga masiva completada. Nuevos docentes: ${agregados}`);
-                    } catch (err) { window.showModal("Error procesando Excel de docentes."); }
+                        fileInput.value = '';
+                        saveDB();
+                        showModal(`Carga masiva de docentes completada. Registros nuevos: ${agregados}`);
+                    } catch (err) {
+                        showModal("Error al procesar el archivo Excel de docentes.");
+                    }
                 };
                 reader.readAsArrayBuffer(file);
             });
 
-            // CRUD Estudiantes
-            document.getElementById('form-estudiante').addEventListener('submit', async (e) => {
+            const formEstudiante = document.getElementById('form-estudiante');
+            formEstudiante.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const studentId = document.getElementById('edit-est-index').value;
                 const newDni = document.getElementById('est-dni').value.trim();
+
                 const studentData = {
                     dni: newDni,
                     nombre: document.getElementById('est-nombre').value,
@@ -890,16 +942,20 @@ const analytics = getAnalytics(app);
                 };
 
                 if (studentId === "-1") {
-                    if (studentsDB.some(s => s.dni === newDni)) return window.showModal("Error: Ya existe estudiante con este DNI.");
-                    await window.saveStudentToDB(studentData);
+                    if (studentsDB.some(s => s.dni === newDni)) {
+                        showModal("Error: Ya existe un estudiante registrado con este DNI.");
+                        return;
+                    }
+                    studentsDB.push({ ...studentData, id: Date.now().toString() });
                 } else {
-                    studentData.asistencia = studentsDB.find(s => s.id === studentId)?.asistencia || [];
-                    await window.saveStudentToDB(studentData, studentId);
+                    const idx = studentsDB.findIndex(item => item.id === studentId);
+                    if (idx > -1) {
+                        studentData.asistencia = studentsDB[idx].asistencia;
+                        studentsDB[idx] = { ...studentData, id: studentId };
+                    }
                 }
-                document.getElementById('form-estudiante').reset();
-                document.getElementById('edit-est-index').value = "-1";
-                document.getElementById('btn-submit-estudiante').textContent = 'Registrar Estudiante';
-                document.getElementById('btn-cancel-estudiante').style.display = 'none';
+                resetEstudianteForm();
+                saveDB();
             });
 
             window.editStudent = (id) => {
@@ -912,157 +968,275 @@ const analytics = getAnalytics(app);
                 document.getElementById('est-seccion').value = s.seccion;
                 document.getElementById('btn-submit-estudiante').textContent = 'Actualizar Estudiante';
                 document.getElementById('btn-cancel-estudiante').style.display = 'inline-block';
+                document.getElementById('est-dni').focus();
             };
 
-            window.deleteStudent = (id) => { window.showModal("¿Eliminar este estudiante?", () => { window.deleteStudentFromDB(id); document.getElementById('admin-student-editor').style.display = 'none'; }); };
-            
-            document.getElementById('btn-cancel-estudiante').addEventListener('click', () => {
-                document.getElementById('form-estudiante').reset();
+            window.deleteStudent = (id) => {
+                const s = studentsDB.find(item => item.id === id);
+                showModal(`¿Seguro que deseas eliminar definitivamente a ${s ? s.nombre : 'este estudiante'}?`, () => {
+                    studentsDB = studentsDB.filter(item => item.id !== id);
+                    saveDB();
+                    document.getElementById('admin-student-editor').style.display = 'none';
+                });
+            };
+
+            const resetEstudianteForm = () => {
+                formEstudiante.reset();
                 document.getElementById('edit-est-index').value = "-1";
                 document.getElementById('btn-submit-estudiante').textContent = 'Registrar Estudiante';
                 document.getElementById('btn-cancel-estudiante').style.display = 'none';
-            });
+            };
+            document.getElementById('btn-cancel-estudiante').addEventListener('click', resetEstudianteForm);
 
-            // Masivo Estudiantes
             document.getElementById('form-masivo-estudiantes').addEventListener('submit', (e) => {
                 e.preventDefault();
-                const file = document.getElementById('masivo-file').files[0];
-                if (!file) return;
                 const grado = document.getElementById('masivo-grado').value;
                 const seccion = document.getElementById('masivo-seccion').value;
+                const fileInput = document.getElementById('masivo-file');
+                const file = fileInput.files[0];
+                if (!file) return;
 
                 const reader = new FileReader();
-                reader.onload = async (e) => {
+                reader.onload = function(e) {
                     try {
                         const data = new Uint8Array(e.target.result);
                         const workbook = XLSX.read(data, {type: 'array'});
-                        const rows = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], {header: 1});
+                        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                        const rows = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+
                         let agregados = 0;
                         for (let i = 1; i < rows.length; i++) {
-                            const r = rows[i];
-                            if (!r || r.length === 0) continue; 
-                            let dni = r[1] ? String(r[1]).trim() : '', nombre = r[2] ? String(r[2]).trim() : '';
-                            if (dni.length === 8 && !isNaN(dni) && !studentsDB.some(s => s.dni === dni)) {
-                                await window.saveStudentToDB({ dni, nombre, grado, seccion, asistencia: [] });
-                                agregados++;
+                            const row = rows[i];
+                            if (!row || row.length === 0) continue; 
+                            let dni = row[1] ? String(row[1]).trim() : '';
+                            let nombreCompleto = row[2] ? String(row[2]).trim() : '';
+
+                            if (dni.length === 8 && !isNaN(dni)) {
+                                if (!studentsDB.some(s => s.dni === dni)) {
+                                    studentsDB.push({
+                                        id: Date.now().toString() + i,
+                                        dni, nombre: nombreCompleto, grado, seccion, asistencia: []
+                                    });
+                                    agregados++;
+                                }
                             }
                         }
-                        document.getElementById('masivo-file').value = '';
-                        window.showModal(`Carga masiva completada. Nuevos estudiantes: ${agregados}`);
-                    } catch (err) { window.showModal("Error procesando Excel de estudiantes."); }
+                        fileInput.value = '';
+                        saveDB();
+                        showModal(`Carga masiva de estudiantes completada. Nuevos: ${agregados}`);
+                    } catch (err) {
+                        showModal("Error al procesar el archivo Excel de estudiantes.");
+                    }
                 };
                 reader.readAsArrayBuffer(file);
             });
 
-            // Edición de Asistencia
             let currentEditId = null;
             document.getElementById('btn-search-student').addEventListener('click', () => {
                 const dni = document.getElementById('admin-search-dni').value.trim();
                 const student = studentsDB.find(s => s.dni === dni);
+                const editor = document.getElementById('admin-student-editor');
+                
                 if(student) {
                     currentEditId = student.id;
                     document.getElementById('edit-student-name').textContent = `${student.nombre} (${student.grado} "${student.seccion}")`;
-                    window.renderStudentRecords(student);
-                    document.getElementById('admin-student-editor').style.display = 'block';
-                } else window.showModal("Estudiante no encontrado.");
+                    renderStudentRecords(student);
+                    editor.style.display = 'block';
+                } else {
+                    showModal("Estudiante no encontrado con ese DNI.");
+                    editor.style.display = 'none';
+                }
             });
 
-            window.renderStudentRecords = (student) => {
+            const renderStudentRecords = (student) => {
                 const tbody = document.getElementById('admin-table-asistencia');
                 tbody.innerHTML = '';
-                if (!student.asistencia || student.asistencia.length === 0) return tbody.innerHTML = '<tr><td colspan="4" align="center">Sin registros.</td></tr>';
-                
+                if (!student.asistencia || student.asistencia.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" align="center">Sin registros de asistencia.</td></tr>';
+                    return;
+                }
                 student.asistencia.forEach((reg, index) => {
                     let badge = reg.estado === 'Tardanza' ? 'status-tardanza' : (reg.estado === 'Falta' ? 'status-falta' : (reg.estado === 'Justificado' ? 'status-justificado' : 'status-presente'));
-                    let justifDateHtml = reg.estado === 'Justificado' ? `<input type="date" class="login-input" style="padding: 2px 5px; margin: 0; width: auto;" value="${reg.fechaJustificacion || ''}" onchange="window.updateJustifDate(${index}, this.value)">` : `<span style="color: #aaa;">-</span>`;
                     
+                    let justifDateHtml = reg.estado === 'Justificado' ? 
+                        `<input type="date" class="login-input" style="padding: 2px 5px; margin: 0; font-size: 0.8rem; width: auto;" value="${reg.fechaJustificacion || ''}" onchange="updateJustifDate(${index}, this.value)">` : 
+                        `<span style="color: #aaa; font-size: 0.8rem;">-</span>`;
+
                     tbody.innerHTML += `<tr>
                         <td>${reg.fecha}</td>
-                        <td><select class="login-input ${badge}" style="padding: 2px 5px; margin: 0; width: auto;" onchange="window.updateRecordStatus(${index}, this.value)">
-                            <option value="Presente" ${reg.estado === 'Presente' ? 'selected' : ''} style="color:black;">Presente</option>
-                            <option value="Tardanza" ${reg.estado === 'Tardanza' ? 'selected' : ''} style="color:black;">Tardanza</option>
-                            <option value="Falta" ${reg.estado === 'Falta' ? 'selected' : ''} style="color:black;">Falta</option>
-                            <option value="Justificado" ${reg.estado === 'Justificado' ? 'selected' : ''} style="color:black;">Justificado</option>
-                        </select></td>
+                        <td>
+                            <select class="login-input ${badge}" style="padding: 2px 5px; margin: 0; width: auto; font-size: 0.85rem; border: 1px solid #ccc; font-weight: 600;" onchange="updateRecordStatus(${index}, this.value)">
+                                <option value="Presente" ${reg.estado === 'Presente' ? 'selected' : ''} style="background: white; color: black;">Presente</option>
+                                <option value="Tardanza" ${reg.estado === 'Tardanza' ? 'selected' : ''} style="background: white; color: black;">Tardanza</option>
+                                <option value="Falta" ${reg.estado === 'Falta' ? 'selected' : ''} style="background: white; color: black;">Falta</option>
+                                <option value="Justificado" ${reg.estado === 'Justificado' ? 'selected' : ''} style="background: white; color: black;">Justificado</option>
+                            </select>
+                        </td>
                         <td>${justifDateHtml}</td>
-                        <td><button class="btn-action btn-delete" onclick="window.deleteRecord(${index})"><i class="fas fa-trash"></i></button></td>
+                        <td>
+                            <button class="btn-action btn-delete" onclick="deleteRecord(${index})" title="Eliminar"><i class="fas fa-trash"></i></button>
+                        </td>
                     </tr>`;
                 });
             };
 
-            window.updateRecordStatus = async (idx, newStatus) => {
+            window.updateRecordStatus = (recordIndex, newStatus) => {
                 const student = studentsDB.find(s => s.id === currentEditId);
-                student.asistencia[idx].estado = newStatus;
-                student.asistencia[idx].hora = (newStatus === 'Falta' || newStatus === 'Justificado') ? '--:--' : '07:45 AM';
+                if (!student) return;
+                student.asistencia[recordIndex].estado = newStatus;
                 
-                if (newStatus !== 'Justificado') delete student.asistencia[idx].fechaJustificacion;
-                else if (!student.asistencia[idx].fechaJustificacion) {
-                    const tzDate = new Date();
-                    student.asistencia[idx].fechaJustificacion = `${tzDate.getFullYear()}-${String(tzDate.getMonth() + 1).padStart(2, '0')}-${String(tzDate.getDate()).padStart(2, '0')}`;
+                if (newStatus === 'Falta' || newStatus === 'Justificado') {
+                    student.asistencia[recordIndex].hora = '--:--';
+                } else if (!student.asistencia[recordIndex].hora || student.asistencia[recordIndex].hora === '--:--') {
+                    student.asistencia[recordIndex].hora = '07:45 AM';
                 }
-                await window.saveStudentToDB({ asistencia: student.asistencia }, student.id);
-                window.renderStudentRecords(student);
+
+                if (newStatus !== 'Justificado') {
+                    delete student.asistencia[recordIndex].fechaJustificacion;
+                } else if (!student.asistencia[recordIndex].fechaJustificacion) {
+                    const tzDate = new Date();
+                    const yyyy = tzDate.getFullYear();
+                    const mm = String(tzDate.getMonth() + 1).padStart(2, '0');
+                    const dd = String(tzDate.getDate()).padStart(2, '0');
+                    student.asistencia[recordIndex].fechaJustificacion = `${yyyy}-${mm}-${dd}`;
+                }
+                
+                saveDB();
+                renderStudentRecords(student);
             };
 
-            window.updateJustifDate = async (idx, newDate) => {
+            window.updateJustifDate = (recordIndex, newDate) => {
                 const student = studentsDB.find(s => s.id === currentEditId);
-                student.asistencia[idx].fechaJustificacion = newDate;
-                await window.saveStudentToDB({ asistencia: student.asistencia }, student.id);
+                if (!student) return;
+                student.asistencia[recordIndex].fechaJustificacion = newDate;
+                saveDB();
             };
 
-            window.deleteRecord = async (idx) => {
-                window.showModal("¿Eliminar este registro?", async () => {
+            window.deleteRecord = (recordIndex) => {
+                showModal("¿Eliminar este registro de asistencia?", () => {
                     const student = studentsDB.find(s => s.id === currentEditId);
-                    student.asistencia.splice(idx, 1);
-                    await window.saveStudentToDB({ asistencia: student.asistencia }, student.id);
-                    window.renderStudentRecords(student);
+                    if (!student) return;
+                    student.asistencia.splice(recordIndex, 1);
+                    saveDB();
+                    renderStudentRecords(student);
                 });
             };
 
-            // Reportes
             const getReportData = () => {
                 const date = document.getElementById('reporte-fecha').value;
                 const grade = document.getElementById('reporte-grado').value;
                 const section = document.getElementById('reporte-seccion').value;
 
-                if(!date) { window.showModal("Selecciona una fecha."); return null; }
+                if(!date) {
+                    showModal("Por favor, selecciona una fecha para el reporte.");
+                    return null;
+                }
 
-                let grouped = {};
-                studentsDB.filter(s => (grade === 'Todos' || s.grado === grade) && (section === 'Todas' || s.seccion === section)).forEach(s => {
-                    let key = `${s.grado} "${s.seccion}"`;
-                    if(!grouped[key]) grouped[key] = [];
-                    let asist = s.asistencia && s.asistencia.find(a => a.fecha === date);
-                    let est = asist ? asist.estado : 'Falta (No Registrado)';
-                    if (est === 'Justificado' && asist.fechaJustificacion) est += ` (Justif: ${asist.fechaJustificacion})`;
-                    grouped[key].push({ DNI: s.dni, Nombres: s.nombre, Estado: est, Hora: asist ? asist.hora : '--:--' });
+                let filteredStudents = studentsDB.filter(s => {
+                    let matchGrade = grade === 'Todos' || s.grado === grade;
+                    let matchSection = section === 'Todas' || s.seccion === section;
+                    return matchGrade && matchSection;
                 });
-                return { date, data: grouped };
+
+                let groupedData = {};
+                filteredStudents.forEach(s => {
+                    let key = `${s.grado} "${s.seccion}"`;
+                    if(!groupedData[key]) groupedData[key] = [];
+                    
+                    let asist = s.asistencia && s.asistencia.find(a => a.fecha === date);
+                    let estado = asist ? asist.estado : 'Falta (No Registrado)';
+                    
+                    if (estado === 'Justificado' && asist.fechaJustificacion) {
+                        estado += ` (Justif: ${asist.fechaJustificacion})`;
+                    }
+
+                    let hora = asist ? asist.hora : '--:--';
+
+                    groupedData[key].push({
+                        DNI: s.dni,
+                        Nombres: s.nombre,
+                        Estado: estado,
+                        Hora: hora
+                    });
+                });
+
+                return { date, data: groupedData };
             };
 
             document.getElementById('btn-export-excel').addEventListener('click', () => {
                 const report = getReportData();
-                if(!report || Object.keys(report.data).length === 0) return window.showModal("No hay estudiantes.");
+                if(!report || Object.keys(report.data).length === 0) {
+                    if(report) showModal("No hay estudiantes matriculados en los criterios seleccionados.");
+                    return;
+                }
+
                 const wb = XLSX.utils.book_new();
-                Object.keys(report.data).sort().forEach(group => {
-                    const ws = XLSX.utils.json_to_sheet(report.data[group].sort((a,b)=>a.Nombres.localeCompare(b.Nombres)).map((s,i)=>({"N°":i+1,...s})));
-                    XLSX.utils.book_append_sheet(wb, ws, group.substring(0, 31));
+                const sortedGroups = Object.keys(report.data).sort();
+
+                sortedGroups.forEach(groupName => {
+                    let students = report.data[groupName];
+                    students.sort((a,b) => a.Nombres.localeCompare(b.Nombres));
+                    const exportData = students.map((s, i) => ({ "N°": i + 1, ...s }));
+                    const ws = XLSX.utils.json_to_sheet(exportData);
+                    XLSX.utils.book_append_sheet(wb, ws, groupName.substring(0, 31));
                 });
-                XLSX.writeFile(wb, `Asistencia_${report.date}.xlsx`);
+                
+                XLSX.writeFile(wb, `Asistencia_VRHT_${report.date}.xlsx`);
             });
 
             document.getElementById('btn-export-pdf').addEventListener('click', () => {
                 const report = getReportData();
-                if(!report || Object.keys(report.data).length === 0) return window.showModal("No hay estudiantes.");
-                const doc = new window.jspdf.jsPDF();
-                let first = true;
-                Object.keys(report.data).sort().forEach(group => {
-                    if(!first) doc.addPage(); first = false;
-                    doc.setFontSize(16); doc.setTextColor(0, 91, 172); doc.text(`Reporte Diario - VRHT`, 14, 20);
-                    doc.setFontSize(12); doc.setTextColor(51); doc.text(`Fecha: ${report.date} | Aula: ${group}`, 14, 30);
-                    doc.autoTable({ startY: 38, head: [['N°','DNI','Nombres','Estado','Hora']], body: report.data[group].sort((a,b)=>a.Nombres.localeCompare(b.Nombres)).map((s,i)=>[i+1,s.DNI,s.Nombres,s.Estado,s.Hora]), headStyles: { fillColor: [0, 91, 172] } });
+                if(!report || Object.keys(report.data).length === 0) {
+                    if(report) showModal("No hay estudiantes matriculados en los criterios seleccionados.");
+                    return;
+                }
+
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                let firstPage = true;
+                const sortedGroups = Object.keys(report.data).sort();
+
+                sortedGroups.forEach(groupName => {
+                    if(!firstPage) doc.addPage();
+                    firstPage = false;
+
+                    const students = report.data[groupName].sort((a,b) => a.Nombres.localeCompare(b.Nombres));
+                    
+                    doc.setFontSize(16);
+                    doc.setTextColor(0, 91, 172);
+                    doc.text(`Reporte de Asistencia Diario - I.E.S. VRHT`, 14, 20);
+                    
+                    doc.setFontSize(12);
+                    doc.setTextColor(51, 51, 51);
+                    doc.text(`Fecha Registrada: ${report.date}`, 14, 30);
+                    doc.text(`Grado y Sección: ${groupName}`, 14, 38);
+
+                    const tableData = students.map((s, index) => [
+                        index + 1,
+                        s.DNI,
+                        s.Nombres,
+                        s.Estado,
+                        s.Hora
+                    ]);
+
+                    doc.autoTable({
+                        startY: 45,
+                        head: [['N°', 'DNI', 'Apellidos y Nombres', 'Estado', 'Hora']],
+                        body: tableData,
+                        theme: 'grid',
+                        headStyles: { fillColor: [0, 91, 172], textColor: [255, 255, 255] },
+                        alternateRowStyles: { fillColor: [244, 247, 249] },
+                        styles: { fontSize: 9, font: 'helvetica' }
+                    });
                 });
-                doc.save(`Asistencia_${report.date}.pdf`);
+
+                doc.save(`Asistencia_VRHT_${report.date}.pdf`);
             });
+
+            // Llamada inicial
+            if(window.renderFrontend) window.renderFrontend();
+            loadFromCloud(); // Carga de la nube al iniciar
         });
     </script>
 </body>
