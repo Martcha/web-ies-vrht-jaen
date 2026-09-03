@@ -409,7 +409,7 @@
                                     <button type="submit" class="login-btn" style="background-color: var(--accent-green); padding: 8px;">Procesar Documento Excel</button>
                                 </form>
                             </div>
-                         https://script.google.com/macros/s/AKfycbyaHM-kcBdjfo70Berh7z5amHTc6EqcUfsnXTIxvGMlq1tuAsUPSfMkSpadEy3uNxxU/exec   
+                            
                         </div>
 
                         <div style="overflow-x: auto; max-height: 300px; overflow-y: auto;">
@@ -491,9 +491,9 @@
         // 🟢 CONFIGURACIÓN DE BASE DE DATOS EN LA NUBE (GOOGLE SHEETS)
         // =========================================================================
         // 👇 ENTORNO GITHUB: ¡Martín, aquí debes pegar el enlace de tu Google Apps Script! 👇
-        const SCRIPT_URL = "TU_ENLACE_DE_APPS_SCRIPT_AQUI";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzxYQA_AlSXezUbD75o_T22sdvsO77uvE2E0v2LPiNU2nLfrmWEDMULbohDTFy5lrL8Ag/exec";
         
-        let isCloudActive = SCRIPT_URL !== "TU_ENLACE_DE_APPS_SCRIPT_AQUI" && SCRIPT_URL !== "";
+        let isCloudActive = SCRIPT_URL !== "https://script.google.com/macros/s/AKfycbzxYQA_AlSXezUbD75o_T22sdvsO77uvE2E0v2LPiNU2nLfrmWEDMULbohDTFy5lrL8Ag/exec" && SCRIPT_URL !== "";
 
         // Datos por defecto
         const defaultTeachers = [
@@ -509,7 +509,7 @@
         let teachersDB = JSON.parse(localStorage.getItem('vrht_teachers_gs')) || defaultTeachers;
         let studentsDB = JSON.parse(localStorage.getItem('vrht_students_gs')) || defaultStudents;
 
-        // 2. Función para sincronizar hacia Google Sheets
+        // 2. Función para sincronizar hacia Google Sheets (AHORA CON PERMISO CORS)
         const saveDB = async () => {
             // Guardado instantáneo en el equipo
             localStorage.setItem('vrht_teachers_gs', JSON.stringify(teachersDB));
@@ -524,6 +524,9 @@
                 try {
                     await fetch(SCRIPT_URL, {
                         method: 'POST',
+                        headers: {
+                            'Content-Type': 'text/plain;charset=utf-8',
+                        },
                         body: JSON.stringify({
                             action: 'save',
                             teachers: teachersDB,
