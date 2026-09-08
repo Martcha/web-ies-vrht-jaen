@@ -262,8 +262,8 @@
             <h2 class="section-title">Panel de Administración</h2>
             <div class="card login-form" id="admin-login-container">
                 <h3>Acceso Restringido</h3>
-                <input type="text" id="admin-user" class="login-input" placeholder="Usuario: admin">
-                <input type="password" id="admin-pass" class="login-input" placeholder="Clave: 123456">
+                <input type="text" id="admin-user" class="login-input" placeholder="Usuario: ">
+                <input type="password" id="admin-pass" class="login-input" placeholder="Clave: ">
                 <button id="btn-admin-ingresar" class="login-btn">Entrar</button>
                 <p id="admin-error" class="error-msg">Credenciales incorrectas.</p>
             </div>
@@ -660,7 +660,7 @@
 
                 const tbody = document.getElementById('padres-schedule-body');
                 if (tbody) {
-                    tbody.innerHTML = `<tr><td><strong>Dirección</strong></td><td>Lunes, Miérc. y Viernes</td><td>8:00 AM - 10:00 AM</td></tr>`;
+                   // tbody.innerHTML = `<tr><td><strong>Dirección</strong></td><td>Lunes, Miérc. y Viernes</td><td>8:00 AM - 10:00 AM</td></tr>`;
                     teachersDB.forEach(t => { tbody.innerHTML += `<tr><td>${t.nombre} (${t.area} - ${t.grado} "${t.seccion}")</td><td>${t.dias}</td><td>${t.horas}</td></tr>`; });
                 }
             };
