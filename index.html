@@ -376,6 +376,19 @@
                             </div>
                         </div>
 
+                        <!-- BARRA DE FILTROS AÑADIDA AQUÍ -->
+                        <div style="background: #eef2f7; padding: 12px; border-radius: 8px; margin-bottom: 15px; display: flex; gap: 15px; align-items: center; border-left: 4px solid var(--accent-yellow);">
+                            <strong style="color: var(--primary-blue); font-size: 0.9rem;"><i class="fas fa-filter"></i> Filtrar Tabla:</strong>
+                            <select id="filter-est-grado" class="login-input" style="margin: 0; padding: 6px; width: auto; font-size: 0.9rem; cursor: pointer;">
+                                <option value="Todos">Todos los Grados</option>
+                                <option value="1ro">1ro</option><option value="2do">2do</option><option value="3ro">3ro</option><option value="4to">4to</option><option value="5to">5to</option>
+                            </select>
+                            <select id="filter-est-seccion" class="login-input" style="margin: 0; padding: 6px; width: auto; font-size: 0.9rem; cursor: pointer;">
+                                <option value="Todas">Todas las Secciones</option>
+                                <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option>
+                            </select>
+                        </div>
+
                         <div style="overflow-x: auto; max-height: 300px; overflow-y: auto;">
                             <table class="schedule-table">
                                 <thead style="position: sticky; top: 0;"><tr><th>DNI</th><th>Nombres</th><th>Aula</th><th>Acciones</th></tr></thead>
@@ -785,8 +798,18 @@
 
                 const tbodyEst = document.getElementById('admin-table-estudiantes');
                 if (tbodyEst) {
+                    const filterGrado = document.getElementById('filter-est-grado') ? document.getElementById('filter-est-grado').value : 'Todos';
+                    const filterSeccion = document.getElementById('filter-est-seccion') ? document.getElementById('filter-est-seccion').value : 'Todas';
+
                     tbodyEst.innerHTML = '';
-                    studentsDB.forEach((s) => {
+                    
+                    const filteredStudents = studentsDB.filter(s => {
+                        const matchGrado = filterGrado === 'Todos' || s.grado === filterGrado;
+                        const matchSeccion = filterSeccion === 'Todas' || s.seccion === filterSeccion;
+                        return matchGrado && matchSeccion;
+                    });
+
+                    filteredStudents.forEach((s) => {
                         tbodyEst.innerHTML += `<tr>
                             <td><strong>${s.dni}</strong></td><td>${s.nombre}</td><td>${s.grado} "${s.seccion}"</td>
                             <td>
@@ -795,8 +818,17 @@
                             </td>
                         </tr>`;
                     });
+
+                    if (filteredStudents.length === 0) {
+                        tbodyEst.innerHTML = '<tr><td colspan="4" align="center" style="color: #666;">No se encontraron estudiantes para este grado y sección.</td></tr>';
+                    }
                 }
             };
+            
+            const filterGradoEl = document.getElementById('filter-est-grado');
+            const filterSeccionEl = document.getElementById('filter-est-seccion');
+            if(filterGradoEl) filterGradoEl.addEventListener('change', window.renderAdminTables);
+            if(filterSeccionEl) filterSeccionEl.addEventListener('change', window.renderAdminTables);
 
             const formDocente = document.getElementById('form-docente');
             formDocente.addEventListener('submit', (e) => {
