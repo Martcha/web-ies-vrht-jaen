@@ -9,6 +9,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    
     <style>
         :root {
             --primary-blue: #005bac;
@@ -46,7 +47,8 @@
         .welcome-text h1 { color: var(--primary-blue); font-size: 3rem; margin-bottom: 20px; }
         .welcome-text p { font-size: 1.2rem; color: #666; max-width: 800px; margin: 0 auto; }
 
-        .nosotros-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .nosotros-top-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 30px; }
+        .nosotros-card { text-align: justify; }
         .nosotros-card h3 { color: var(--primary-blue); margin-bottom: 15px; }
 
         .areas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
@@ -123,7 +125,7 @@
 
     <header>
         <div class="logo-container">
-            <img src="logo.jpg" alt="Escudo I.E.S. VRHT" class="logo-img">
+            <img src="logo.jpg" alt="Escudo I.E.S. VRHT" class="logo-img" onerror="this.src='https://placehold.co/90x90/005bac/ffffff?text=VRHT'">
             <div class="school-name">
                 I.E.S. Víctor Raúl Haya de la Torre
                 <span>Jaén - Cajamarca</span>
@@ -144,16 +146,17 @@
 
     <main>
         <section id="inicio" class="content-section active">
-            <img src="logo.jpg" alt="Escudo Gigante VRHT" class="hero-logo">
+            <img src="logo.jpg" alt="Escudo Gigante VRHT" class="hero-logo" onerror="this.src='https://placehold.co/200x200/005bac/ffffff?text=VRHT'">
             <div class="welcome-text">
                 <h1>Bienvenidos a la Familia Víctorina</h1>
                 <p>Un espacio interactivo para nuestros estudiantes. Comprometidos con la educación secundaria de calidad en Jaén desde 1984. ¡Explora tus recursos!</p>
+            <h2>¡ESTUDIO UNIÓN DISCIPLINA Y ACCIÓN!</h2>
             </div>
         </section>
 
         <section id="nosotros" class="content-section">
             <h2 class="section-title">Nuestra Institución</h2>
-            <div class="nosotros-grid">
+            <div class="nosotros-top-grid">
                 <div class="card nosotros-card">
                     <h3>Misión</h3>
                     <p>Formar estudiantes íntegros con pensamiento crítico y valores sólidos, capaces de enfrentar los retos del mundo moderno mediante una educación humanista, científica y tecnológica de calidad.</p>
@@ -162,11 +165,16 @@
                     <h3>Visión</h3>
                     <p>Ser una institución educativa líder en Jaén y la región, reconocida por su excelencia académica, innovación pedagógica y compromiso con el desarrollo sostenible de la comunidad.</p>
                 </div>
-                <div class="card nosotros-card" style="border-left-color: var(--secondary-red);">
-                    <h3>Nuestra Historia</h3>
-                    <p><strong>Fundado el 23 de Mayo de 1984.</strong></p>
-                    <p>Con casi cuatro décadas de servicio, la I.E.S. Víctor Raúl Haya de la Torre se ha consolidado como un pilar de la educación secundaria en Jaén, honrando el legado de su patrono.</p>
-                </div>
+            </div>
+            <div class="card nosotros-card" style="border-left-color: var(--secondary-red);">
+                <h3>Nuestra Historia</h3>
+                <p><strong>Fundado el 25 de Junio de 1984.</strong></p><br>
+                <p>La I.E.S. “Víctor Raúl Haya de la Torre” fue fundada en el año 1984 por el profesor Néstor Armando Suárez Ramos, quien en aquel entonces se desempeñaba como teniente alcalde del Concejo Provincial de Jaén. La institución inició sus actividades académicas en los ambientes de la Biblioteca Municipal, contando con el apoyo de docentes de la Dirección Zonal de Educación que laboraban ad honórem. Las clases se desarrollaban en el horario de 3:00 p.m. a 8:00 p.m., de lunes a sábado, permitiendo así que muchos adolescentes que trabajaban pudieran continuar sus estudios y financiar su educación. El colegio fue reconocido oficialmente mediante la Resolución Zonal N° 0386, de fecha 25 de junio de 1984.</p><br>
+                <p>En 1986, el señor Julio Ávalos Loyola realizó la generosa donación de un terreno para la construcción del local institucional. Posteriormente, el Concejo Provincial de Jaén, bajo la gestión del alcalde Felipe Pita Gastelumendi, inició la construcción de la infraestructura propia, inaugurándose en 1987 cuatro aulas. En el año 1988, durante la gestión del alcalde Víctor Hugo Puican Descalzi, se construyeron los servicios higiénicos y un aula en el segundo piso. Asimismo, la COOPOP contribuyó con la construcción del pabellón administrativo y dos aulas adicionales. En 1989, el Proyecto Especial JSIB apoyó con la construcción del Aula Magna, concebida como un moderno auditorio para el desarrollo de actividades académicas y culturales.</p><br>
+                <p>Gracias al esfuerzo conjunto de padres de familia, docentes y estudiantes, también se construyó el ambiente destinado al laboratorio, espacio que en la actualidad funciona como el área de Industrias Alimentarias, el cual posteriormente fue implementado con recursos propios y aportes voluntarios de los estudiantes. Más adelante, el Proyecto Binacional contribuyó con la construcción de un moderno Laboratorio de Ciencias. En la actualidad, la institución cuenta además con un Aula de Innovación Pedagógica equipada con servicio de internet, equipos multimedia, laptops XO y netbooks, recursos tecnológicos que fortalecen el proceso de enseñanza-aprendizaje y permiten desarrollar clases más dinámicas e innovadoras.</p><br>
+                <p>A lo largo de sus más de cuatro décadas de vida institucional, la I.E.S. “Víctor Raúl Haya de la Torre” ha formado generaciones de estudiantes y profesionales que contribuyen al desarrollo de la provincia de Jaén y de la región. Actualmente, la institución continúa comprometida con la mejora y optimización del servicio educativo, fortaleciendo los logros de aprendizaje y promoviendo el perfil de egreso establecido en el Currículo Nacional de la Educación Básica (CNEB), en concordancia con las demandas y necesidades de la sociedad actual.</p><br>
+                <p>La institución brinda servicio educativo en dos turnos: en el turno mañana asisten los estudiantes de 1° y 2° grado, mientras que en el turno tarde lo hacen los estudiantes de 3°, 4° y 5° grado. Actualmente, la institución cuenta con 24 secciones distribuidas entre los diferentes grados y aulas, atendiendo a una importante población estudiantil de la provincia de Jaén. Finalmente, la Dirección, Subdirección, personal docente, administrativo y padres de familia hacemos votos para que la Municipalidad Provincial de Jaén realice la transferencia del proyecto de Mejoramiento del Servicio Educativo al Gobierno Regional de Cajamarca, a fin de que se elabore y apruebe el expediente técnico para su pronta ejecución, permitiendo así convertirnos en una institución educativa con infraestructura moderna, segura y adecuadamente equipada al servicio de nuestros estudiantes.</p><br>
+                <p><strong>EL EQUIPO DIRECTIVO</strong></p>
             </div>
         </section>
 
@@ -200,7 +208,7 @@
             <div class="card login-form" id="registro-form-container" style="display: none; max-width: 500px;">
                 <button id="btn-registro-salir" class="logout-btn" style="margin-bottom: 15px;">Cerrar Toma de Asistencia</button>
                 <h3 style="color: var(--accent-green); margin-bottom: 10px; clear: both;"><i class="fas fa-clock"></i> Marcar Entrada</h3>
-                <p style="margin-bottom: 20px; font-size: 0.95rem;">Estudiante, ingresa tu DNI y presiona <strong>Enter</strong> para registrar tu asistencia de hoy. <br><i style="color: var(--secondary-red);">Límites: 7:30 AM (1ro y 2do) / 1:25 PM (3ro a 5to).</i></p>
+                <p style="margin-bottom: 20px; font-size: 0.95rem;">Estudiante, ingresa tu DNI y presiona <strong>Enter</strong> para registrar tu asistencia de hoy. <br><i style="color: var(--secondary-red);">Límites: 7:35 AM (1ro y 2do) / 1:25 PM (3ro a 5to).</i></p>
                 <input type="text" id="reg-asist-dni" class="login-input" placeholder="Escribe tu DNI (8 dígitos)" maxlength="8">
                 <button id="btn-registrar-asistencia" class="login-btn" style="background-color: var(--accent-green);">Registrar Asistencia</button>
                 <p id="msg-asistencia-rapida" class="success-msg" style="margin-top: 15px; font-size: 1rem;"></p>
@@ -210,7 +218,7 @@
         <section id="asistencia" class="content-section">
             <h2 class="section-title">Portal de Asistencia</h2>
             <div class="card login-form" id="login-container">
-                <h3>Acceso para Padres</h3>
+                <h3>Acceso para Padres y Estudiantes</h3>
                 <input type="text" id="dni-user" class="login-input" placeholder="Usuario (DNI) del estudiante">
                 <input type="password" id="dni-pass" class="login-input" placeholder="Contraseña (DNI) del estudiante">
                 <button id="btn-ingresar" class="login-btn">Consultar Asistencia</button>
@@ -223,6 +231,26 @@
                     <h3 id="student-name">Nombre</h3>
                     <p><strong>DNI:</strong> <span id="student-dni"></span> | <strong>Sección:</strong> <span id="student-section"></span></p>
                 </div>
+                
+                <div style="background: #eef2f7; padding: 12px; border-radius: 8px; margin-bottom: 15px; display: flex; gap: 15px; align-items: center; border-left: 4px solid var(--accent-yellow); flex-wrap: wrap;">
+                    <strong style="color: var(--primary-blue); font-size: 0.9rem;"><i class="fas fa-calendar-alt"></i> Filtrar Historial:</strong>
+                    <select id="filter-period" class="login-input" style="margin: 0; padding: 6px; width: auto; font-size: 0.9rem;">
+                        <option value="todos">Todos los registros</option>
+                        <option value="dia">Por Día</option>
+                        <option value="semana">Última Semana (7 días)</option>
+                        <option value="mes">Por Mes</option>
+                    </select>
+                    <input type="date" id="filter-date" class="login-input" style="display: none; margin: 0; padding: 6px; width: auto; font-size: 0.9rem;">
+                    <input type="month" id="filter-month" class="login-input" style="display: none; margin: 0; padding: 6px; width: auto; font-size: 0.9rem;">
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; justify-content: center;">
+                     <span class="status-badge status-presente" style="font-size: 0.95rem;">Presentes: <strong id="std-count-presente">0</strong></span>
+                     <span class="status-badge status-tardanza" style="font-size: 0.95rem;">Tardanzas: <strong id="std-count-tardanza">0</strong></span>
+                     <span class="status-badge status-falta" style="font-size: 0.95rem;">Faltas: <strong id="std-count-falta">0</strong></span>
+                     <span class="status-badge status-justificado" style="font-size: 0.95rem;">Justificados: <strong id="std-count-justificado">0</strong></span>
+                </div>
+
                 <table class="schedule-table">
                     <thead><tr><th>Fecha</th><th>Estado</th><th>Hora</th></tr></thead>
                     <tbody id="attendance-body"></tbody>
@@ -234,8 +262,8 @@
             <h2 class="section-title">Panel de Administración</h2>
             <div class="card login-form" id="admin-login-container">
                 <h3>Acceso Restringido</h3>
-                <input type="text" id="admin-user" class="login-input" placeholder="Usuario: ">
-                <input type="password" id="admin-pass" class="login-input" placeholder="Clave: ">
+                <input type="text" id="admin-user" class="login-input" placeholder="Usuario: admin">
+                <input type="password" id="admin-pass" class="login-input" placeholder="Clave: 123456">
                 <button id="btn-admin-ingresar" class="login-btn">Entrar</button>
                 <p id="admin-error" class="error-msg">Credenciales incorrectas.</p>
             </div>
@@ -246,17 +274,16 @@
                 
                 <div class="admin-dashboard">
                     
-                    <!-- PANEL DE CONEXIÓN CON GOOGLE DRIVE Y EXCEL AÑADIDO A PETICIÓN DEL USUARIO -->
                     <div class="admin-panel-section" style="border-left: 4px solid var(--accent-green); background-color: #f0fdf4;">
                         <h4 style="color: var(--accent-green); margin-bottom: 15px;"><i class="fas fa-cloud-upload-alt"></i> Conexión con Base de Datos (Google Sheets)</h4>
-                        <p style="font-size: 0.9rem; margin-bottom: 15px; color: #333;">La plataforma está enlazada de forma segura a tu cuenta de Drive. Los registros se organizan por columnas automáticamente.</p>
+                        <p style="font-size: 0.9rem; margin-bottom: 15px; color: #333;">La plataforma está enlazada de forma segura a tu cuenta de Drive. Los registros se organizan por columnas automáticamente en las hojas respectivas.</p>
                         
                         <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                             <a href="https://docs.google.com/spreadsheets/d/13io73wcWglbmbApg84yIWucTLGiKUTeOAEwrEJdwupY/edit?usp=sharing" target="_blank" class="login-btn" style="background-color: #107c41; text-align: center; text-decoration: none; display: inline-block; width: auto; padding: 10px 15px; font-size: 0.85rem;">
                                 <i class="fas fa-file-excel"></i> Abrir Base de Datos Excel
                             </a>
                             <button id="btn-force-sync" class="login-btn" style="background-color: var(--primary-blue); width: auto; padding: 10px 15px; font-size: 0.85rem;">
-                                <i class="fas fa-sync-alt"></i> Forzar Sincronización
+                                <i class="fas fa-sync-alt"></i> Forzar Sincronización Manual
                             </button>
                         </div>
                         <p id="sync-status-msg" class="success-msg" style="text-align: left; margin-top: 10px;"></p>
@@ -376,8 +403,7 @@
                             </div>
                         </div>
 
-                        <!-- BARRA DE FILTROS AÑADIDA AQUÍ -->
-                        <div style="background: #eef2f7; padding: 12px; border-radius: 8px; margin-bottom: 15px; display: flex; gap: 15px; align-items: center; border-left: 4px solid var(--accent-yellow);">
+                        <div style="background: #eef2f7; padding: 12px; border-radius: 8px; margin-bottom: 15px; display: flex; gap: 15px; align-items: center; border-left: 4px solid var(--accent-yellow); flex-wrap: wrap;">
                             <strong style="color: var(--primary-blue); font-size: 0.9rem;"><i class="fas fa-filter"></i> Filtrar Tabla:</strong>
                             <select id="filter-est-grado" class="login-input" style="margin: 0; padding: 6px; width: auto; font-size: 0.9rem; cursor: pointer;">
                                 <option value="Todos">Todos los Grados</option>
@@ -387,6 +413,9 @@
                                 <option value="Todas">Todas las Secciones</option>
                                 <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option>
                             </select>
+                            <div style="margin-left: auto; background: var(--primary-blue); color: white; padding: 6px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+                                Total: <span id="contador-matriculados">0</span> estudiantes
+                            </div>
                         </div>
 
                         <div style="overflow-x: auto; max-height: 300px; overflow-y: auto;">
@@ -442,9 +471,39 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div style="grid-column: span 2; display: flex; gap: 10px; margin-top: 5px;">
+                                    <div style="grid-column: span 2; display: flex; gap: 10px; margin-top: 5px; flex-wrap: wrap;">
+                                        <button type="button" id="btn-view-report" class="login-btn" style="background-color: var(--primary-blue);"><i class="fas fa-desktop"></i> Ver en Pantalla</button>
                                         <button type="button" id="btn-export-excel" class="login-btn" style="background-color: #107c41;"><i class="fas fa-file-excel"></i> Descargar Excel</button>
                                         <button type="button" id="btn-export-pdf" class="login-btn" style="background-color: #d32f2f;"><i class="fas fa-file-pdf"></i> Descargar PDF</button>
+                                    </div>
+
+                                    <div id="visual-report-container" style="grid-column: span 2; display: none; margin-top: 20px; border-top: 2px dashed #ccc; padding-top: 15px;">
+                                        <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; justify-content: center;">
+                                            <div style="background: #eef2f7; padding: 10px 15px; border-radius: 8px; text-align: center; border-bottom: 3px solid #333; min-width: 100px;">
+                                                <span style="display:block; font-size: 0.8rem; color:#666;">Total Estudiantes</span>
+                                                <strong id="count-total" style="font-size: 1.2rem; color:#333;">0</strong>
+                                            </div>
+                                            <div style="background: #d4edda; padding: 10px 15px; border-radius: 8px; text-align: center; border-bottom: 3px solid var(--accent-green); min-width: 100px;">
+                                                <span style="display:block; font-size: 0.8rem; color:#666;">Asistieron</span>
+                                                <strong id="count-presentes" style="font-size: 1.2rem; color: var(--accent-green);">0</strong>
+                                            </div>
+                                            <div style="background: #f8d7da; padding: 10px 15px; border-radius: 8px; text-align: center; border-bottom: 3px solid var(--secondary-red); min-width: 100px;">
+                                                <span style="display:block; font-size: 0.8rem; color:#666;">No Registrados / Faltas</span>
+                                                <strong id="count-faltas" style="font-size: 1.2rem; color: var(--secondary-red);">0</strong>
+                                            </div>
+                                            <div style="background: #cce5ff; padding: 10px 15px; border-radius: 8px; text-align: center; border-bottom: 3px solid #004085; min-width: 100px;">
+                                                <span style="display:block; font-size: 0.8rem; color:#666;">Justificados</span>
+                                                <strong id="count-justificados" style="font-size: 1.2rem; color: #004085;">0</strong>
+                                            </div>
+                                        </div>
+                                        <div style="overflow-y: auto; max-height: 300px;">
+                                            <table class="schedule-table">
+                                                <thead style="position: sticky; top: 0;">
+                                                    <tr><th>Aula</th><th>DNI</th><th>Nombres</th><th>Estado</th><th>Hora</th></tr>
+                                                </thead>
+                                                <tbody id="visual-report-body"></tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </form>
                             </div>
@@ -461,21 +520,12 @@
     </footer>
 
     <script>
-        // EL ENLACE EXACTO PROPORCIONADO PARA CONECTAR EL MOTOR CON LA NUBE
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwwHix9WgIVLB246NjSzuL1c9l2AZELfOOQBD6IVo01h8eRSeK-sLbluEzTtTruuGN8_w/exec";
         
-        // Datos por defecto
-        const defaultTeachers = [
-            { id: "t1", nombre: 'Lic. Martín Chayán Alache', area: 'Matemática', dias: 'Lunes y Miércoles', grado: '5to', seccion: 'A', horas: '10:00 AM - 11:30 AM' },
-            { id: "t2", nombre: 'Lic. Rosa Martínez', area: 'Comunicación', dias: 'Martes y Jueves', grado: '4to', seccion: 'B', horas: '08:00 AM - 10:00 AM' }
-        ];
-        const defaultStudents = [
-            { id: "s1", dni: '71234567', nombre: 'Alvarado Rojas, Luis', grado: '5to', seccion: 'A', asistencia: [{fecha: '2026-09-01', estado: 'Presente', hora: '07:45 AM', fechaJustificacion: null}, {fecha: '2026-09-02', estado: 'Falta', hora: '--:--', fechaJustificacion: null}] },
-            { id: "s2", dni: '72345678', nombre: 'Benites Quispe, María', grado: '5to', seccion: 'A', asistencia: [] },
-        ];
-
-        let teachersDB = JSON.parse(localStorage.getItem('vrht_teachers_gs')) || defaultTeachers;
-        let studentsDB = JSON.parse(localStorage.getItem('vrht_students_gs')) || defaultStudents;
+        let teachersDB = JSON.parse(localStorage.getItem('vrht_teachers_gs')) || [];
+        let studentsDB = JSON.parse(localStorage.getItem('vrht_students_gs')) || [];
+        
+        let currentLoggedStudent = null;
 
         const syncToCloud = async (showMsg = false) => {
             const msgEl = document.getElementById('sync-status-msg');
@@ -487,7 +537,6 @@
 
             try {
                 const payload = { action: 'save', teachers: teachersDB, students: studentsDB };
-                // Enviamos los datos usando 'no-cors' para evitar bloqueos del navegador
                 await fetch(SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
@@ -692,7 +741,7 @@
 
                 const limitTime = new Date();
                 if (student.grado === '1ro' || student.grado === '2do') {
-                    limitTime.setHours(7, 30, 0, 0);
+                    limitTime.setHours(7, 35, 0, 0); 
                 } else {
                     limitTime.setHours(13, 25, 0, 0);
                 }
@@ -717,33 +766,107 @@
             document.getElementById('dni-user').addEventListener('keypress', loginPadresEnter);
             document.getElementById('dni-pass').addEventListener('keypress', loginPadresEnter);
 
+            window.renderParentAttendance = () => {
+                if (!currentLoggedStudent) return;
+                const period = document.getElementById('filter-period').value;
+                const dateVal = document.getElementById('filter-date').value;
+                const monthVal = document.getElementById('filter-month').value;
+                
+                const tbody = document.getElementById('attendance-body');
+                tbody.innerHTML = '';
+                
+                let filtered = currentLoggedStudent.asistencia || [];
+                const today = new Date();
+                
+                if (period === 'dia' && dateVal) {
+                    filtered = filtered.filter(a => a.fecha === dateVal);
+                } else if (period === 'semana') {
+                    const past7Days = new Date(today);
+                    past7Days.setDate(past7Days.getDate() - 7);
+                    filtered = filtered.filter(a => {
+                        const d = new Date(a.fecha);
+                        return d >= past7Days && d <= today;
+                    });
+                } else if (period === 'mes' && monthVal) {
+                    filtered = filtered.filter(a => a.fecha.startsWith(monthVal));
+                }
+
+                let cp = 0, ct = 0, cf = 0, cj = 0;
+
+                if (filtered.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" align="center">Sin registros para este periodo.</td></tr>';
+                } else {
+                    [...filtered].sort((a,b) => new Date(b.fecha) - new Date(a.fecha)).forEach(reg => {
+                        if(reg.estado === 'Presente') cp++;
+                        if(reg.estado === 'Tardanza') ct++;
+                        if(reg.estado === 'Falta') cf++;
+                        if(reg.estado === 'Justificado') cj++;
+
+                        let badge = reg.estado === 'Tardanza' ? 'status-tardanza' : (reg.estado === 'Falta' ? 'status-falta' : (reg.estado === 'Justificado' ? 'status-justificado' : 'status-presente'));
+                        let justifText = reg.estado === 'Justificado' && reg.fechaJustificacion ? `<br><small style="color: #666; font-size: 0.75rem;">(Justif: ${reg.fechaJustificacion})</small>` : '';
+                        
+                        tbody.innerHTML += `<tr><td>${reg.fecha}</td><td><span class="status-badge ${badge}">${reg.estado}</span>${justifText}</td><td>${reg.hora}</td></tr>`;
+                    });
+                }
+
+                document.getElementById('std-count-presente').textContent = cp;
+                document.getElementById('std-count-tardanza').textContent = ct;
+                document.getElementById('std-count-falta').textContent = cf;
+                document.getElementById('std-count-justificado').textContent = cj;
+            };
+
             document.getElementById('btn-ingresar').addEventListener('click', () => {
                 const user = document.getElementById('dni-user').value;
                 const errorMsg = document.getElementById('login-error');
                 const estudiante = studentsDB.find(e => e.dni === user && user === document.getElementById('dni-pass').value);
                 
                 if(estudiante) {
+                    currentLoggedStudent = estudiante;
                     document.getElementById('login-container').style.display = 'none';
                     document.getElementById('data-container').style.display = 'block';
                     document.getElementById('student-name').textContent = estudiante.nombre;
                     document.getElementById('student-dni').textContent = estudiante.dni;
                     document.getElementById('student-section').textContent = `${estudiante.grado} "${estudiante.seccion}"`;
                     
-                    const tbody = document.getElementById('attendance-body');
-                    tbody.innerHTML = '';
-                    if(!estudiante.asistencia || estudiante.asistencia.length === 0) tbody.innerHTML = '<tr><td colspan="4" align="center">Sin registros.</td></tr>';
-                    else {
-                        [...estudiante.asistencia].sort((a,b) => new Date(b.fecha) - new Date(a.fecha)).forEach(reg => {
-                            let badge = reg.estado === 'Tardanza' ? 'status-tardanza' : (reg.estado === 'Falta' ? 'status-falta' : (reg.estado === 'Justificado' ? 'status-justificado' : 'status-presente'));
-                            let justifText = reg.estado === 'Justificado' && reg.fechaJustificacion ? `<br><small style="color: #666; font-size: 0.75rem;">(Justif: ${reg.fechaJustificacion})</small>` : '';
-                            
-                            tbody.innerHTML += `<tr><td>${reg.fecha}</td><td><span class="status-badge ${badge}">${reg.estado}</span>${justifText}</td><td>${reg.hora}</td></tr>`;
-                        });
-                    }
-                } else { errorMsg.style.display = 'block'; }
+                    document.getElementById('filter-period').value = 'todos';
+                    document.getElementById('filter-date').style.display = 'none';
+                    document.getElementById('filter-month').style.display = 'none';
+                    
+                    renderParentAttendance();
+                } else { 
+                    errorMsg.style.display = 'block'; 
+                }
             });
-            
+
+            document.getElementById('filter-period').addEventListener('change', (e) => {
+                const v = e.target.value;
+                const fd = document.getElementById('filter-date');
+                const fm = document.getElementById('filter-month');
+                
+                fd.style.display = 'none';
+                fm.style.display = 'none';
+                
+                if(v === 'dia') {
+                     fd.style.display = 'inline-block';
+                     if(!fd.value) {
+                         const tzDate = new Date();
+                         fd.value = `${tzDate.getFullYear()}-${String(tzDate.getMonth() + 1).padStart(2, '0')}-${String(tzDate.getDate()).padStart(2, '0')}`;
+                     }
+                } else if (v === 'mes') {
+                     fm.style.display = 'inline-block';
+                     if(!fm.value) {
+                         const tzDate = new Date();
+                         fm.value = `${tzDate.getFullYear()}-${String(tzDate.getMonth() + 1).padStart(2, '0')}`;
+                     }
+                }
+                renderParentAttendance();
+            });
+
+            document.getElementById('filter-date').addEventListener('change', renderParentAttendance);
+            document.getElementById('filter-month').addEventListener('change', renderParentAttendance);
+
             document.getElementById('btn-salir').addEventListener('click', () => {
+                currentLoggedStudent = null;
                 document.getElementById('data-container').style.display = 'none';
                 document.getElementById('login-container').style.display = 'block';
                 document.getElementById('dni-user').value = '';
@@ -766,7 +889,6 @@
                     const dd = String(tzDate.getDate()).padStart(2, '0');
                     const todayStr = `${yyyy}-${mm}-${dd}`;
                     
-                    document.getElementById('asist-fecha') ? document.getElementById('asist-fecha').value = todayStr : null;
                     document.getElementById('reporte-fecha') ? document.getElementById('reporte-fecha').value = todayStr : null;
                     
                     if(window.renderAdminTables) window.renderAdminTables();
@@ -808,6 +930,9 @@
                         const matchSeccion = filterSeccion === 'Todas' || s.seccion === filterSeccion;
                         return matchGrado && matchSeccion;
                     });
+
+                    const countSpan = document.getElementById('contador-matriculados');
+                    if(countSpan) countSpan.textContent = filteredStudents.length;
 
                     filteredStudents.forEach((s) => {
                         tbodyEst.innerHTML += `<tr>
@@ -1159,6 +1284,60 @@
                 return { date, data: groupedData };
             };
 
+            const btnViewReport = document.getElementById('btn-view-report');
+            if (btnViewReport) {
+                btnViewReport.addEventListener('click', () => {
+                    const report = getReportData();
+                    const container = document.getElementById('visual-report-container');
+                    
+                    if(!report || Object.keys(report.data).length === 0) {
+                        if(report) showModal("No hay estudiantes matriculados en los criterios seleccionados.");
+                        container.style.display = 'none';
+                        return;
+                    }
+
+                    let total = 0, presentes = 0, faltas = 0, justificados = 0;
+                    const tbody = document.getElementById('visual-report-body');
+                    tbody.innerHTML = '';
+
+                    const sortedGroups = Object.keys(report.data).sort();
+                    sortedGroups.forEach(groupName => {
+                        let students = report.data[groupName];
+                        students.sort((a,b) => a.Nombres.localeCompare(b.Nombres));
+                        
+                        students.forEach(s => {
+                            total++;
+                            
+                            if (s.Estado.includes('Presente') || s.Estado.includes('Tardanza')) {
+                                presentes++;
+                            } else if (s.Estado.includes('Falta') || s.Estado.includes('No Registrado')) {
+                                faltas++;
+                            } else if (s.Estado.includes('Justificado')) {
+                                justificados++;
+                            }
+
+                            let estadoColor = (s.Estado.includes('Falta') || s.Estado.includes('No Registrado')) ? 'color: var(--secondary-red); font-weight: bold;' : 
+                                             (s.Estado.includes('Justificado') ? 'color: #004085; font-weight: bold;' : 'color: var(--accent-green); font-weight: bold;');
+
+                            tbody.innerHTML += `<tr>
+                                <td style="font-size: 0.8rem; color: #666; font-weight: bold;">${groupName}</td>
+                                <td style="font-size: 0.85rem;">${s.DNI}</td>
+                                <td style="font-size: 0.9rem;">${s.Nombres}</td>
+                                <td style="${estadoColor} font-size: 0.85rem;">${s.Estado}</td>
+                                <td style="font-size: 0.85rem;">${s.Hora}</td>
+                            </tr>`;
+                        });
+                    });
+
+                    document.getElementById('count-total').textContent = total;
+                    document.getElementById('count-presentes').textContent = presentes;
+                    document.getElementById('count-faltas').textContent = faltas;
+                    document.getElementById('count-justificados').textContent = justificados;
+
+                    container.style.display = 'block';
+                });
+            }
+
             document.getElementById('btn-export-excel').addEventListener('click', () => {
                 const report = getReportData();
                 if(!report || Object.keys(report.data).length === 0) {
@@ -1230,7 +1409,6 @@
                 doc.save(`Asistencia_VRHT_${report.date}.pdf`);
             });
 
-            // Llamadas iniciales
             if(window.renderFrontend) window.renderFrontend();
             loadFromCloud(); 
         });
