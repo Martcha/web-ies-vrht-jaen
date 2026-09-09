@@ -48,7 +48,6 @@
         .welcome-text p { font-size: 1.2rem; color: #666; max-width: 800px; margin: 0 auto; }
 
         .nosotros-top-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 30px; }
-        .nosotros-card { text-align: justify; }
         .nosotros-card h3 { color: var(--primary-blue); margin-bottom: 15px; text-align: center; }
         .nosotros-card p { text-align: justify; margin-bottom: 15px; }
 
@@ -113,7 +112,6 @@
     </style>
 </head>
 <body>
-
     <div id="custom-modal" class="custom-modal-overlay">
         <div class="custom-modal-content">
             <p id="custom-modal-text"></p>
@@ -151,7 +149,7 @@
             <div class="welcome-text">
                 <h1>Bienvenidos a la Familia Víctorina</h1>
                 <p>Un espacio interactivo para nuestros estudiantes. Comprometidos con la educación secundaria de calidad en Jaén desde 1984. ¡Explora tus recursos!</p>
-            <h2>¡ESTUDIO UNIÓN DISCIPLINA Y ACCIÓN!</h2>
+                <h2>¡ESTUDIO UNIÓN DISCIPLINA Y ACCIÓN!</h2>
             </div>
         </section>
 
@@ -168,7 +166,6 @@
                 </div>
             </div>
             
-            <!-- Recuadro para la historia con texto justificado -->
             <div class="card nosotros-card" style="border-left-color: var(--secondary-red);">
                 <h3>Nuestra Historia</h3>
                 <p><strong>Fundado el 25 de Junio de 1984.</strong></p><br>
@@ -219,7 +216,7 @@
             <div class="card login-form" id="registro-form-container" style="display: none; max-width: 500px;">
                 <button id="btn-registro-salir" class="logout-btn" style="margin-bottom: 15px;">Cerrar Toma de Asistencia</button>
                 <h3 style="color: var(--accent-green); margin-bottom: 10px; clear: both;"><i class="fas fa-clock"></i> Marcar Entrada</h3>
-                <p style="margin-bottom: 20px; font-size: 0.95rem;">Estudiante, ingresa tu DNI y presiona <strong>Enter</strong> para registrar tu asistencia de hoy. <br><i style="color: var(--secondary-red);">Límites: 7:35 AM (1ro y 2do) / 1:25 PM (3ro a 5to).</i></p>
+                <p style="margin-bottom: 20px; font-size: 0.95rem;">Estudiante, ingresa tu DNI y presiona <strong>Enter</strong> para registrar tu asistencia de hoy. <br><i style="color: var(--secondary-red);">Límites exactos: 7:35 AM (1ro y 2do) / 1:25 PM (3ro a 5to).</i></p>
                 <input type="text" id="reg-asist-dni" class="login-input" placeholder="Escribe tu DNI (8 dígitos)" maxlength="8">
                 <button id="btn-registrar-asistencia" class="login-btn" style="background-color: var(--accent-green);">Registrar Asistencia</button>
                 <p id="msg-asistencia-rapida" class="success-msg" style="margin-top: 15px; font-size: 1rem;"></p>
@@ -243,7 +240,6 @@
                     <p><strong>DNI:</strong> <span id="student-dni"></span> | <strong>Sección:</strong> <span id="student-section"></span></p>
                 </div>
                 
-                <!-- Botonera de Filtro Interactiva para Estudiantes -->
                 <div style="background: #eef2f7; padding: 12px; border-radius: 8px; margin-bottom: 15px; display: flex; gap: 15px; align-items: center; border-left: 4px solid var(--accent-yellow); flex-wrap: wrap;">
                     <strong style="color: var(--primary-blue); font-size: 0.9rem;"><i class="fas fa-calendar-alt"></i> Filtrar Historial:</strong>
                     <select id="filter-period" class="login-input" style="margin: 0; padding: 6px; width: auto; font-size: 0.9rem;">
@@ -256,7 +252,6 @@
                     <input type="month" id="filter-month" class="login-input" style="display: none; margin: 0; padding: 6px; width: auto; font-size: 0.9rem;">
                 </div>
 
-                <!-- Resumen de Estadísticas del Estudiante -->
                 <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; justify-content: center;">
                      <span class="status-badge status-presente" style="font-size: 0.95rem;">Presentes: <strong id="std-count-presente">0</strong></span>
                      <span class="status-badge status-tardanza" style="font-size: 0.95rem;">Tardanzas: <strong id="std-count-tardanza">0</strong></span>
@@ -275,8 +270,8 @@
             <h2 class="section-title">Panel de Administración</h2>
             <div class="card login-form" id="admin-login-container">
                 <h3>Acceso Restringido</h3>
-                <input type="text" id="admin-user" class="login-input" placeholder="Usuario: admin">
-                <input type="password" id="admin-pass" class="login-input" placeholder="Clave: 123456">
+                <input type="text" id="admin-user" class="login-input" placeholder="Usuario: ">
+                <input type="password" id="admin-pass" class="login-input" placeholder="Clave: ">
                 <button id="btn-admin-ingresar" class="login-btn">Entrar</button>
                 <p id="admin-error" class="error-msg">Credenciales incorrectas.</p>
             </div>
@@ -286,8 +281,7 @@
                 <h3 style="color: var(--primary-blue);">Gestión Escolar (CRUD)</h3>
                 
                 <div class="admin-dashboard">
-                    
-                    <!-- Enlaces hacia Google Sheets -->
+                    <!-- Base de datos connection -->
                     <div class="admin-panel-section" style="border-left: 4px solid var(--accent-green); background-color: #f0fdf4;">
                         <h4 style="color: var(--accent-green); margin-bottom: 15px;"><i class="fas fa-cloud-upload-alt"></i> Conexión con Base de Datos (Google Sheets)</h4>
                         <p style="font-size: 0.9rem; margin-bottom: 15px; color: #333;">La plataforma está enlazada de forma segura a tu cuenta de Drive. Los registros se organizan por columnas automáticamente en las hojas respectivas.</p>
@@ -303,6 +297,7 @@
                         <p id="sync-status-msg" class="success-msg" style="text-align: left; margin-top: 10px;"></p>
                     </div>
 
+                    <!-- Docentes Management -->
                     <div class="admin-panel-section">
                         <h4 style="color: var(--secondary-red); margin-bottom: 15px;"><i class="fas fa-chalkboard-teacher"></i> Gestión de Plana Docente</h4>
                         
@@ -487,13 +482,11 @@
                                         </div>
                                     </div>
                                     <div style="grid-column: span 2; display: flex; gap: 10px; margin-top: 5px; flex-wrap: wrap;">
-                                        <!-- Botón Nuevo -->
                                         <button type="button" id="btn-view-report" class="login-btn" style="background-color: var(--primary-blue);"><i class="fas fa-desktop"></i> Ver en Pantalla</button>
                                         <button type="button" id="btn-export-excel" class="login-btn" style="background-color: #107c41;"><i class="fas fa-file-excel"></i> Descargar Excel</button>
                                         <button type="button" id="btn-export-pdf" class="login-btn" style="background-color: #d32f2f;"><i class="fas fa-file-pdf"></i> Descargar PDF</button>
                                     </div>
 
-                                    <!-- Panel visual de Estadísticas (Reporte) -->
                                     <div id="visual-report-container" style="grid-column: span 2; display: none; margin-top: 20px; border-top: 2px dashed #ccc; padding-top: 15px;">
                                         <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; justify-content: center;">
                                             <div style="background: #eef2f7; padding: 10px 15px; border-radius: 8px; text-align: center; border-bottom: 3px solid #333; min-width: 100px;">
@@ -544,29 +537,24 @@
         
         let currentLoggedStudent = null;
 
-        /* FUNCION DEFINITIVA PARA FORZAR LA FECHA AL FORMATO: DÍA/MES/AÑO */
         const formatFechaToPeru = (fechaStr) => {
             if (!fechaStr) return '';
             try {
                 let f = String(fechaStr).trim();
-                // Si la fecha viene con la "T" del servidor (ej. 2026-09-08T05:00:00) la quitamos
                 if(f.includes('T')) f = f.split('T')[0];
                 
-                // Si está separada por guiones "-"
                 let p1 = f.split('-');
                 if (p1.length === 3) {
-                    if (p1[0].length === 4) return `${p1[2]}/${p1[1]}/${p1[0]}`; // Era YYYY-MM-DD
-                    if (p1[2].length === 4) return `${p1[0]}/${p1[1]}/${p1[2]}`; // Era DD-MM-YYYY
+                    if (p1[0].length === 4) return `${p1[2]}/${p1[1]}/${p1[0]}`; 
+                    if (p1[2].length === 4) return `${p1[0]}/${p1[1]}/${p1[2]}`; 
                 }
                 
-                // Si está separada por slashes "/"
                 let p2 = f.split('/');
                 if (p2.length === 3) {
-                    if (p2[0].length === 4) return `${p2[2]}/${p2[1]}/${p2[0]}`; // Era YYYY/MM/DD
-                    // Si ya es DD/MM/YYYY pasará de largo y retornará f
+                    if (p2[0].length === 4) return `${p2[2]}/${p2[1]}/${p2[0]}`; 
                 }
                 
-                return f; // Si no encaja en nada raro, la devolvemos como vino.
+                return f; 
             } catch(e) {
                 return fechaStr;
             }
@@ -630,9 +618,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             
             const forceBtn = document.getElementById('btn-force-sync');
-            if (forceBtn) {
-                forceBtn.addEventListener('click', () => { syncToCloud(true); });
-            }
+            if (forceBtn) forceBtn.addEventListener('click', () => { syncToCloud(true); });
 
             const showModal = (text, onConfirm = null) => {
                 const modal = document.getElementById('custom-modal');
@@ -703,7 +689,6 @@
                     container.innerHTML += cardHtml + `</ul></div>`;
                 }
 
-                // Llenar dinámicamente el selector de áreas en Atención a Familias
                 const selectArea = document.getElementById('filter-padres-area');
                 if (selectArea) {
                     const currentSelection = selectArea.value;
@@ -715,7 +700,6 @@
                         selectArea.value = currentSelection;
                     }
                 }
-                
                 renderPadresTable();
             };
 
@@ -742,9 +726,7 @@
             };
 
             const filterPadresAreaEl = document.getElementById('filter-padres-area');
-            if (filterPadresAreaEl) {
-                filterPadresAreaEl.addEventListener('change', window.renderPadresTable);
-            }
+            if (filterPadresAreaEl) filterPadresAreaEl.addEventListener('change', window.renderPadresTable);
 
             const loginRegistroEnter = (e) => { if (e.key === 'Enter') document.getElementById('btn-registro-ingresar').click(); };
             document.getElementById('registro-user').addEventListener('keypress', loginRegistroEnter);
@@ -822,9 +804,9 @@
 
                 const limitTime = new Date();
                 if (student.grado === '1ro' || student.grado === '2do') {
-                    limitTime.setHours(7, 35, 59, 0); // Límite exacto 7:35 AM para 1ro y 2do
+                    limitTime.setHours(7, 35, 59, 0); 
                 } else {
-                    limitTime.setHours(13, 25, 59, 0); // Límite exacto 1:25 PM para 3ro a 5to
+                    limitTime.setHours(13, 25, 59, 0); 
                 }
                 
                 const estado = now > limitTime ? 'Tardanza' : 'Presente';
@@ -882,7 +864,6 @@
                 if (filtered.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="3" align="center">Sin registros para este periodo.</td></tr>';
                 } else {
-                    // Ordenamos para que lo más reciente salga primero
                     [...filtered].sort((a,b) => {
                         let d1 = a.fecha.includes('-') && a.fecha.split('-')[0].length === 4 ? new Date(a.fecha) : 0;
                         let d2 = b.fecha.includes('-') && b.fecha.split('-')[0].length === 4 ? new Date(b.fecha) : 0;
@@ -895,7 +876,6 @@
 
                         let badge = reg.estado === 'Tardanza' ? 'status-tardanza' : (reg.estado === 'Falta' ? 'status-falta' : (reg.estado === 'Justificado' ? 'status-justificado' : 'status-presente'));
                         
-                        // Uso OBLIGATORIO de la función infalible formatFechaToPeru
                         let fechaMostrada = formatFechaToPeru(reg.fecha);
 
                         let justifText = '';
@@ -988,7 +968,7 @@
                     const dd = String(tzDate.getDate()).padStart(2, '0');
                     const todayStr = `${yyyy}-${mm}-${dd}`;
                     
-                    document.getElementById('reporte-fecha') ? document.getElementById('reporte-fecha').value = todayStr : null;
+                    if(document.getElementById('reporte-fecha')) document.getElementById('reporte-fecha').value = todayStr;
                     
                     if(window.renderAdminTables) window.renderAdminTables();
                 } else { document.getElementById('admin-error').style.display = 'block'; }
@@ -1282,7 +1262,6 @@
                         `<input type="date" class="login-input" style="padding: 2px 5px; margin: 0; font-size: 0.8rem; width: auto;" value="${reg.fechaJustificacion || ''}" onchange="updateJustifDate(${index}, this.value)">` : 
                         `<span style="color: #aaa; font-size: 0.8rem;">-</span>`;
 
-                    // Forzamos la fecha al formato DD/MM/YYYY también en el panel de corrección
                     let fechaMostrada = formatFechaToPeru(reg.fecha);
 
                     tbody.innerHTML += `<tr>
@@ -1469,27 +1448,70 @@
                 }
 
                 const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
+                const doc = new jsPDF('p', 'mm', 'a4'); 
                 
                 let firstPage = true;
                 const sortedGroups = Object.keys(report.data).sort();
-                let fechaHeader = formatFechaToPeru(report.date); // Aquí también forzamos el formato
+                let fechaHeader = formatFechaToPeru(report.date);
 
                 sortedGroups.forEach(groupName => {
+                    // Crea una página nueva por cada sección (excepto en la primera iteración)
                     if(!firstPage) doc.addPage();
                     firstPage = false;
 
                     const students = report.data[groupName].sort((a,b) => a.Nombres.localeCompare(b.Nombres));
                     
-                    doc.setFontSize(16);
+                    let totalEstudiantes = students.length;
+                    let asis = 0, faltas = 0, justif = 0;
+                    
+                    students.forEach(s => {
+                        if (s.Estado.includes('Presente') || s.Estado.includes('Tardanza')) {
+                            asis++;
+                        } else if (s.Estado.includes('Falta') || s.Estado.includes('No Registrado')) {
+                            faltas++;
+                        } else if (s.Estado.includes('Justificado')) {
+                            justif++;
+                        }
+                    });
+
+                    // Título Principal
+                    doc.setFontSize(12);
                     doc.setTextColor(0, 91, 172);
                     doc.text(`Reporte de Asistencia Diario - I.E.S. VRHT`, 14, 20);
                     
-                    doc.setFontSize(12);
+                    // Fecha
+                    doc.setFontSize(9);
                     doc.setTextColor(51, 51, 51);
-                    doc.text(`Fecha Registrada: ${fechaHeader}`, 14, 30);
-                    doc.text(`Grado y Sección: ${groupName}`, 14, 38);
+                    doc.text(`Fecha: ${fechaHeader}`, 14, 26);
+                    
+                    // Aula y Total General (En negrita para resaltar)
+                    doc.setFont(undefined, 'bold');
+                    doc.text(`Aula: ${groupName}   |   Total matriculados: ${totalEstudiantes}`, 14, 32);
+                    
+                    // Estadísticas Detalladas a color
+                    doc.setFont(undefined, 'normal');
+                    doc.setFontSize(8);
+                    
+                    doc.text(`Asistieron: `, 14, 38);
+                    doc.setFont(undefined, 'bold');
+                    doc.setTextColor(0, 151, 57); // Verde
+                    doc.text(`${asis}`, 30, 38);
+                    
+                    doc.setFont(undefined, 'normal');
+                    doc.setTextColor(51, 51, 51);
+                    doc.text(`Faltaron: `, 45, 38);
+                    doc.setFont(undefined, 'bold');
+                    doc.setTextColor(217, 46, 46); // Rojo
+                    doc.text(`${faltas}`, 57, 38);
 
+                    doc.setFont(undefined, 'normal');
+                    doc.setTextColor(51, 51, 51);
+                    doc.text(`Justificados: `, 75, 38);
+                    doc.setFont(undefined, 'bold');
+                    doc.setTextColor(0, 64, 133); // Azul
+                    doc.text(`${justif}`, 93, 38);
+
+                    // Formato de tabla con letra compacta 8
                     const tableData = students.map((s, index) => [
                         index + 1,
                         s.DNI,
@@ -1499,13 +1521,13 @@
                     ]);
 
                     doc.autoTable({
-                        startY: 45,
+                        startY: 42, 
                         head: [['N°', 'DNI', 'Apellidos y Nombres', 'Estado', 'Hora']],
                         body: tableData,
                         theme: 'grid',
                         headStyles: { fillColor: [0, 91, 172], textColor: [255, 255, 255] },
                         alternateRowStyles: { fillColor: [244, 247, 249] },
-                        styles: { fontSize: 9, font: 'helvetica' }
+                        styles: { fontSize: 8, font: 'helvetica' }
                     });
                 });
 
