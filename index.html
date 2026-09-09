@@ -49,7 +49,7 @@
 
         .nosotros-top-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 30px; }
         .nosotros-card { text-align: justify; }
-        .nosotros-card h3 { color: var(--primary-blue); margin-bottom: 15px; text-align: left; }
+        .nosotros-card h3 { color: var(--primary-blue); margin-bottom: 15px; text-align: center; }
         .nosotros-card p { text-align: justify; margin-bottom: 15px; }
 
         .areas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
@@ -167,6 +167,8 @@
                     <p>Ser una institución educativa líder en Jaén y la región, reconocida por su excelencia académica, innovación pedagógica y compromiso con el desarrollo sostenible de la comunidad.</p>
                 </div>
             </div>
+            
+            <!-- Recuadro para la historia con texto justificado -->
             <div class="card nosotros-card" style="border-left-color: var(--secondary-red);">
                 <h3>Nuestra Historia</h3>
                 <p><strong>Fundado el 25 de Junio de 1984.</strong></p><br>
@@ -175,7 +177,7 @@
                 <p>Gracias al esfuerzo conjunto de padres de familia, docentes y estudiantes, también se construyó el ambiente destinado al laboratorio, espacio que en la actualidad funciona como el área de Industrias Alimentarias, el cual posteriormente fue implementado con recursos propios y aportes voluntarios de los estudiantes. Más adelante, el Proyecto Binacional contribuyó con la construcción de un moderno Laboratorio de Ciencias. En la actualidad, la institución cuenta además con un Aula de Innovación Pedagógica equipada con servicio de internet, equipos multimedia, laptops XO y netbooks, recursos tecnológicos que fortalecen el proceso de enseñanza-aprendizaje y permiten desarrollar clases más dinámicas e innovadoras.</p><br>
                 <p>A lo largo de sus más de cuatro décadas de vida institucional, la I.E.S. “Víctor Raúl Haya de la Torre” ha formado generaciones de estudiantes y profesionales que contribuyen al desarrollo de la provincia de Jaén y de la región. Actualmente, la institución continúa comprometida con la mejora y optimización del servicio educativo, fortaleciendo los logros de aprendizaje y promoviendo el perfil de egreso establecido en el Currículo Nacional de la Educación Básica (CNEB), en concordancia con las demandas y necesidades de la sociedad actual.</p><br>
                 <p>La institución brinda servicio educativo en dos turnos: en el turno mañana asisten los estudiantes de 1° y 2° grado, mientras que en el turno tarde lo hacen los estudiantes de 3°, 4° y 5° grado. Actualmente, la institución cuenta con 24 secciones distribuidas entre los diferentes grados y aulas, atendiendo a una importante población estudiantil de la provincia de Jaén. Finalmente, la Dirección, Subdirección, personal docente, administrativo y padres de familia hacemos votos para que la Municipalidad Provincial de Jaén realice la transferencia del proyecto de Mejoramiento del Servicio Educativo al Gobierno Regional de Cajamarca, a fin de que se elabore y apruebe el expediente técnico para su pronta ejecución, permitiendo así convertirnos en una institución educativa con infraestructura moderna, segura y adecuadamente equipada al servicio de nuestros estudiantes.</p><br>
-                <p><strong>EL EQUIPO DIRECTIVO</strong></p>
+                <p style="text-align: center;"><strong>EL EQUIPO DIRECTIVO</strong></p>
             </div>
         </section>
 
@@ -241,6 +243,7 @@
                     <p><strong>DNI:</strong> <span id="student-dni"></span> | <strong>Sección:</strong> <span id="student-section"></span></p>
                 </div>
                 
+                <!-- Botonera de Filtro Interactiva para Estudiantes -->
                 <div style="background: #eef2f7; padding: 12px; border-radius: 8px; margin-bottom: 15px; display: flex; gap: 15px; align-items: center; border-left: 4px solid var(--accent-yellow); flex-wrap: wrap;">
                     <strong style="color: var(--primary-blue); font-size: 0.9rem;"><i class="fas fa-calendar-alt"></i> Filtrar Historial:</strong>
                     <select id="filter-period" class="login-input" style="margin: 0; padding: 6px; width: auto; font-size: 0.9rem;">
@@ -253,6 +256,7 @@
                     <input type="month" id="filter-month" class="login-input" style="display: none; margin: 0; padding: 6px; width: auto; font-size: 0.9rem;">
                 </div>
 
+                <!-- Resumen de Estadísticas del Estudiante -->
                 <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; justify-content: center;">
                      <span class="status-badge status-presente" style="font-size: 0.95rem;">Presentes: <strong id="std-count-presente">0</strong></span>
                      <span class="status-badge status-tardanza" style="font-size: 0.95rem;">Tardanzas: <strong id="std-count-tardanza">0</strong></span>
@@ -283,6 +287,7 @@
                 
                 <div class="admin-dashboard">
                     
+                    <!-- Enlaces hacia Google Sheets -->
                     <div class="admin-panel-section" style="border-left: 4px solid var(--accent-green); background-color: #f0fdf4;">
                         <h4 style="color: var(--accent-green); margin-bottom: 15px;"><i class="fas fa-cloud-upload-alt"></i> Conexión con Base de Datos (Google Sheets)</h4>
                         <p style="font-size: 0.9rem; margin-bottom: 15px; color: #333;">La plataforma está enlazada de forma segura a tu cuenta de Drive. Los registros se organizan por columnas automáticamente en las hojas respectivas.</p>
@@ -412,6 +417,7 @@
                             </div>
                         </div>
 
+                        <!-- Filtros del Administrador de Grado y Sección -->
                         <div style="background: #eef2f7; padding: 12px; border-radius: 8px; margin-bottom: 15px; display: flex; gap: 15px; align-items: center; border-left: 4px solid var(--accent-yellow); flex-wrap: wrap;">
                             <strong style="color: var(--primary-blue); font-size: 0.9rem;"><i class="fas fa-filter"></i> Filtrar Tabla:</strong>
                             <select id="filter-est-grado" class="login-input" style="margin: 0; padding: 6px; width: auto; font-size: 0.9rem; cursor: pointer;">
@@ -481,11 +487,13 @@
                                         </div>
                                     </div>
                                     <div style="grid-column: span 2; display: flex; gap: 10px; margin-top: 5px; flex-wrap: wrap;">
+                                        <!-- Botón Nuevo -->
                                         <button type="button" id="btn-view-report" class="login-btn" style="background-color: var(--primary-blue);"><i class="fas fa-desktop"></i> Ver en Pantalla</button>
                                         <button type="button" id="btn-export-excel" class="login-btn" style="background-color: #107c41;"><i class="fas fa-file-excel"></i> Descargar Excel</button>
                                         <button type="button" id="btn-export-pdf" class="login-btn" style="background-color: #d32f2f;"><i class="fas fa-file-pdf"></i> Descargar PDF</button>
                                     </div>
 
+                                    <!-- Panel visual de Estadísticas (Reporte) -->
                                     <div id="visual-report-container" style="grid-column: span 2; display: none; margin-top: 20px; border-top: 2px dashed #ccc; padding-top: 15px;">
                                         <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; justify-content: center;">
                                             <div style="background: #eef2f7; padding: 10px 15px; border-radius: 8px; text-align: center; border-bottom: 3px solid #333; min-width: 100px;">
@@ -535,6 +543,34 @@
         let studentsDB = JSON.parse(localStorage.getItem('vrht_students_gs')) || [];
         
         let currentLoggedStudent = null;
+
+        /* FUNCION DEFINITIVA PARA FORZAR LA FECHA AL FORMATO: DÍA/MES/AÑO */
+        const formatFechaToPeru = (fechaStr) => {
+            if (!fechaStr) return '';
+            try {
+                let f = String(fechaStr).trim();
+                // Si la fecha viene con la "T" del servidor (ej. 2026-09-08T05:00:00) la quitamos
+                if(f.includes('T')) f = f.split('T')[0];
+                
+                // Si está separada por guiones "-"
+                let p1 = f.split('-');
+                if (p1.length === 3) {
+                    if (p1[0].length === 4) return `${p1[2]}/${p1[1]}/${p1[0]}`; // Era YYYY-MM-DD
+                    if (p1[2].length === 4) return `${p1[0]}/${p1[1]}/${p1[2]}`; // Era DD-MM-YYYY
+                }
+                
+                // Si está separada por slashes "/"
+                let p2 = f.split('/');
+                if (p2.length === 3) {
+                    if (p2[0].length === 4) return `${p2[2]}/${p2[1]}/${p2[0]}`; // Era YYYY/MM/DD
+                    // Si ya es DD/MM/YYYY pasará de largo y retornará f
+                }
+                
+                return f; // Si no encaja en nada raro, la devolvemos como vino.
+            } catch(e) {
+                return fechaStr;
+            }
+        };
 
         const syncToCloud = async (showMsg = false) => {
             const msgEl = document.getElementById('sync-status-msg');
@@ -667,6 +703,7 @@
                     container.innerHTML += cardHtml + `</ul></div>`;
                 }
 
+                // Llenar dinámicamente el selector de áreas en Atención a Familias
                 const selectArea = document.getElementById('filter-padres-area');
                 if (selectArea) {
                     const currentSelection = selectArea.value;
@@ -785,9 +822,9 @@
 
                 const limitTime = new Date();
                 if (student.grado === '1ro' || student.grado === '2do') {
-                    limitTime.setHours(7, 35, 0, 0); 
+                    limitTime.setHours(7, 35, 59, 0); // Límite exacto 7:35 AM para 1ro y 2do
                 } else {
-                    limitTime.setHours(13, 25, 0, 0);
+                    limitTime.setHours(13, 25, 59, 0); // Límite exacto 1:25 PM para 3ro a 5to
                 }
                 
                 const estado = now > limitTime ? 'Tardanza' : 'Presente';
@@ -827,12 +864,17 @@
                 } else if (period === 'semana') {
                     const past7Days = new Date(today);
                     past7Days.setDate(past7Days.getDate() - 7);
+                    
                     filtered = filtered.filter(a => {
-                        const d = new Date(a.fecha);
-                        return d >= past7Days && d <= today;
+                        let parts = String(a.fecha).split('T')[0].split('-');
+                        if(parts.length === 3 && parts[0].length === 4) {
+                            let d = new Date(parts[0], parts[1]-1, parts[2]);
+                            return d >= past7Days && d <= today;
+                        }
+                        return false;
                     });
                 } else if (period === 'mes' && monthVal) {
-                    filtered = filtered.filter(a => a.fecha.startsWith(monthVal));
+                    filtered = filtered.filter(a => String(a.fecha).startsWith(monthVal));
                 }
 
                 let cp = 0, ct = 0, cf = 0, cj = 0;
@@ -840,16 +882,29 @@
                 if (filtered.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="3" align="center">Sin registros para este periodo.</td></tr>';
                 } else {
-                    [...filtered].sort((a,b) => new Date(b.fecha) - new Date(a.fecha)).forEach(reg => {
+                    // Ordenamos para que lo más reciente salga primero
+                    [...filtered].sort((a,b) => {
+                        let d1 = a.fecha.includes('-') && a.fecha.split('-')[0].length === 4 ? new Date(a.fecha) : 0;
+                        let d2 = b.fecha.includes('-') && b.fecha.split('-')[0].length === 4 ? new Date(b.fecha) : 0;
+                        return d2 - d1;
+                    }).forEach(reg => {
                         if(reg.estado === 'Presente') cp++;
                         if(reg.estado === 'Tardanza') ct++;
                         if(reg.estado === 'Falta') cf++;
                         if(reg.estado === 'Justificado') cj++;
 
                         let badge = reg.estado === 'Tardanza' ? 'status-tardanza' : (reg.estado === 'Falta' ? 'status-falta' : (reg.estado === 'Justificado' ? 'status-justificado' : 'status-presente'));
-                        let justifText = reg.estado === 'Justificado' && reg.fechaJustificacion ? `<br><small style="color: #666; font-size: 0.75rem;">(Justif: ${reg.fechaJustificacion})</small>` : '';
                         
-                        tbody.innerHTML += `<tr><td>${reg.fecha}</td><td><span class="status-badge ${badge}">${reg.estado}</span>${justifText}</td><td>${reg.hora}</td></tr>`;
+                        // Uso OBLIGATORIO de la función infalible formatFechaToPeru
+                        let fechaMostrada = formatFechaToPeru(reg.fecha);
+
+                        let justifText = '';
+                        if (reg.estado === 'Justificado' && reg.fechaJustificacion) {
+                            let jFormateada = formatFechaToPeru(reg.fechaJustificacion);
+                            justifText = `<br><small style="color: #666; font-size: 0.75rem;">(Justif: ${jFormateada})</small>`;
+                        }
+                        
+                        tbody.innerHTML += `<tr><td><strong>${fechaMostrada}</strong></td><td><span class="status-badge ${badge}">${reg.estado}</span>${justifText}</td><td>${reg.hora}</td></tr>`;
                     });
                 }
 
@@ -1227,8 +1282,11 @@
                         `<input type="date" class="login-input" style="padding: 2px 5px; margin: 0; font-size: 0.8rem; width: auto;" value="${reg.fechaJustificacion || ''}" onchange="updateJustifDate(${index}, this.value)">` : 
                         `<span style="color: #aaa; font-size: 0.8rem;">-</span>`;
 
+                    // Forzamos la fecha al formato DD/MM/YYYY también en el panel de corrección
+                    let fechaMostrada = formatFechaToPeru(reg.fecha);
+
                     tbody.innerHTML += `<tr>
-                        <td>${reg.fecha}</td>
+                        <td><strong>${fechaMostrada}</strong></td>
                         <td>
                             <select class="login-input ${badge}" style="padding: 2px 5px; margin: 0; width: auto; font-size: 0.85rem; border: 1px solid #ccc; font-weight: 600;" onchange="updateRecordStatus(${index}, this.value)">
                                 <option value="Presente" ${reg.estado === 'Presente' ? 'selected' : ''} style="background: white; color: black;">Presente</option>
@@ -1312,7 +1370,7 @@
                     let estado = asist ? asist.estado : 'Falta (No Registrado)';
                     
                     if (estado === 'Justificado' && asist.fechaJustificacion) {
-                        estado += ` (Justif: ${asist.fechaJustificacion})`;
+                        estado += ` (Justif: ${formatFechaToPeru(asist.fechaJustificacion)})`;
                     }
 
                     let hora = asist ? asist.hora : '--:--';
@@ -1415,6 +1473,7 @@
                 
                 let firstPage = true;
                 const sortedGroups = Object.keys(report.data).sort();
+                let fechaHeader = formatFechaToPeru(report.date); // Aquí también forzamos el formato
 
                 sortedGroups.forEach(groupName => {
                     if(!firstPage) doc.addPage();
@@ -1428,7 +1487,7 @@
                     
                     doc.setFontSize(12);
                     doc.setTextColor(51, 51, 51);
-                    doc.text(`Fecha Registrada: ${report.date}`, 14, 30);
+                    doc.text(`Fecha Registrada: ${fechaHeader}`, 14, 30);
                     doc.text(`Grado y Sección: ${groupName}`, 14, 38);
 
                     const tableData = students.map((s, index) => [
