@@ -49,7 +49,8 @@
 
         .nosotros-top-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 30px; }
         .nosotros-card { text-align: justify; }
-        .nosotros-card h3 { color: var(--primary-blue); margin-bottom: 15px; }
+        .nosotros-card h3 { color: var(--primary-blue); margin-bottom: 15px; text-align: left; }
+        .nosotros-card p { text-align: justify; margin-bottom: 15px; }
 
         .areas-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
         .area-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
@@ -185,6 +186,14 @@
 
         <section id="padres" class="content-section">
             <h2 class="section-title">Atención a Familias</h2>
+            
+            <div style="background: #eef2f7; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 15px; align-items: center; border-left: 4px solid var(--primary-blue); flex-wrap: wrap;">
+                <strong style="color: var(--primary-blue); font-size: 0.95rem;"><i class="fas fa-search"></i> Buscar por Área:</strong>
+                <select id="filter-padres-area" class="login-input" style="margin: 0; padding: 8px; width: auto; font-size: 0.95rem; min-width: 200px; cursor: pointer;">
+                    <option value="Todas">Todas las Áreas</option>
+                </select>
+            </div>
+
             <div class="card">
                 <table class="schedule-table">
                     <thead><tr><th>Dependencia / Docente</th><th>Días de Atención</th><th>Horario</th></tr></thead>
@@ -262,8 +271,8 @@
             <h2 class="section-title">Panel de Administración</h2>
             <div class="card login-form" id="admin-login-container">
                 <h3>Acceso Restringido</h3>
-                <input type="text" id="admin-user" class="login-input" placeholder="Usuario: ">
-                <input type="password" id="admin-pass" class="login-input" placeholder="Clave: ">
+                <input type="text" id="admin-user" class="login-input" placeholder="Usuario: admin">
+                <input type="password" id="admin-pass" class="login-input" placeholder="Clave: 123456">
                 <button id="btn-admin-ingresar" class="login-btn">Entrar</button>
                 <p id="admin-error" class="error-msg">Credenciales incorrectas.</p>
             </div>
@@ -658,12 +667,47 @@
                     container.innerHTML += cardHtml + `</ul></div>`;
                 }
 
+                const selectArea = document.getElementById('filter-padres-area');
+                if (selectArea) {
+                    const currentSelection = selectArea.value;
+                    selectArea.innerHTML = '<option value="Todas">Todas las Áreas</option>';
+                    Object.keys(areasMap).sort().forEach(area => {
+                        selectArea.innerHTML += `<option value="${area}">${area}</option>`;
+                    });
+                    if (Object.keys(areasMap).includes(currentSelection)) {
+                        selectArea.value = currentSelection;
+                    }
+                }
+                
+                renderPadresTable();
+            };
+
+            window.renderPadresTable = () => {
                 const tbody = document.getElementById('padres-schedule-body');
+                const filterArea = document.getElementById('filter-padres-area') ? document.getElementById('filter-padres-area').value : 'Todas';
+                
                 if (tbody) {
-                   // tbody.innerHTML = `<tr><td><strong>Dirección</strong></td><td>Lunes, Miérc. y Viernes</td><td>8:00 AM - 10:00 AM</td></tr>`;
-                    teachersDB.forEach(t => { tbody.innerHTML += `<tr><td>${t.nombre} (${t.area} - ${t.grado} "${t.seccion}")</td><td>${t.dias}</td><td>${t.horas}</td></tr>`; });
+                    tbody.innerHTML = '';
+                    if (filterArea === 'Todas') {
+                        tbody.innerHTML += `<tr><td><strong>Dirección</strong></td><td>Lunes, Miérc. y Viernes</td><td>8:00 AM - 10:00 AM</td></tr>`;
+                    }
+                    
+                    const filteredTeachers = filterArea === 'Todas' ? teachersDB : teachersDB.filter(t => t.area === filterArea);
+                    
+                    filteredTeachers.forEach(t => { 
+                        tbody.innerHTML += `<tr><td>${t.nombre} <br><small style="color:#666;">(${t.area} - ${t.grado} "${t.seccion}")</small></td><td>${t.dias}</td><td>${t.horas}</td></tr>`; 
+                    });
+                    
+                    if (filteredTeachers.length === 0) {
+                        tbody.innerHTML += `<tr><td colspan="3" style="text-align: center; color: #666; padding: 20px;">No hay docentes registrados en esta área.</td></tr>`;
+                    }
                 }
             };
+
+            const filterPadresAreaEl = document.getElementById('filter-padres-area');
+            if (filterPadresAreaEl) {
+                filterPadresAreaEl.addEventListener('change', window.renderPadresTable);
+            }
 
             const loginRegistroEnter = (e) => { if (e.key === 'Enter') document.getElementById('btn-registro-ingresar').click(); };
             document.getElementById('registro-user').addEventListener('keypress', loginRegistroEnter);
